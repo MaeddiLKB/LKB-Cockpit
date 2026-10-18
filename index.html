@@ -115,8 +115,30 @@
         }
 
         /* ==========================================================================
-           KOPFLEISTE
+           AUTO-HIDE TOP SECTION (HEADER + NAV BIS ZUR GRÜNEN LINIE)
            ========================================================================== */
+        #top-collapsible {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-height: 140px;
+            opacity: 1;
+            overflow: hidden;
+            transform: translateY(0);
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 0.35s ease,
+                        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 30;
+        }
+
+        body:not(.practice-mode) #top-collapsible.hidden-top {
+            max-height: 0 !important;
+            opacity: 0;
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+
+        /* 1. KOPFLEISTE */
         header {
             background: var(--surface);
             border-bottom: 2px solid var(--border);
@@ -125,7 +147,6 @@
             justify-content: space-between;
             align-items: center;
             gap: 6px;
-            z-index: 30;
         }
         .header-group { display: flex; align-items: center; gap: 6px; }
 
@@ -151,6 +172,52 @@
             font-weight: 900;
         }
 
+        /* 2. GIG-NAVIGATION BIS ZUR GRÜNEN LINIE */
+        #cockpit-nav {
+            background: var(--surface);
+            border-bottom: 2px solid var(--primary);
+            padding: 5px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-nav {
+            background: var(--surface-card);
+            color: var(--text);
+            border: 2px solid var(--border-highlight);
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            flex: 1;
+            max-width: 190px;
+            text-align: center;
+            user-select: none;
+        }
+        body.practice-mode .btn-nav {
+            padding: 6px 12px;
+            font-size: 0.88rem;
+            border-width: 1px;
+        }
+        .btn-nav:active:not(:disabled) {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+        }
+        .btn-nav:disabled { opacity: 0.25; cursor: not-allowed; }
+        .nav-center-box { text-align: center; }
+        .nav-counter { font-size: 1.15rem; font-weight: 900; color: var(--primary); line-height: 1; }
+        .nav-block-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-top: 2px;
+        }
+
         /* ==========================================================================
            WORKSPACE & SIDEBAR DRAWER
            ========================================================================== */
@@ -167,7 +234,7 @@
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            z-index: 25;
+            z-index: 40;
             box-shadow: 4px 0 20px rgba(0,0,0,0.4);
         }
         #sidebar.hidden { display: none; }
@@ -266,54 +333,6 @@
             z-index: 0;
         }
 
-        /* 1. GIG-NAVIGATION */
-        #cockpit-nav {
-            background: var(--surface);
-            border-bottom: 2px solid var(--primary);
-            padding: 5px 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            z-index: 10;
-        }
-        .btn-nav {
-            background: var(--surface-card);
-            color: var(--text);
-            border: 2px solid var(--border-highlight);
-            padding: 9px 16px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 900;
-            cursor: pointer;
-            flex: 1;
-            max-width: 190px;
-            text-align: center;
-            user-select: none;
-        }
-        body.practice-mode .btn-nav {
-            padding: 6px 12px;
-            font-size: 0.88rem;
-            border-width: 1px;
-        }
-        .btn-nav:active:not(:disabled) {
-            background: var(--primary);
-            color: #000;
-            border-color: var(--primary);
-        }
-        .btn-nav:disabled { opacity: 0.25; cursor: not-allowed; }
-        .nav-center-box { text-align: center; }
-        .nav-counter { font-size: 1.15rem; font-weight: 900; color: var(--primary); line-height: 1; }
-        .nav-block-label {
-            font-size: 0.65rem;
-            font-weight: 800;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1.2px;
-            margin-top: 2px;
-        }
-
-        /* 2. CONTENT BEREICH */
         #song-content {
             flex: 1;
             padding: 8px 12px;
@@ -333,6 +352,8 @@
             border-bottom: 1px solid var(--border);
             padding-bottom: 4px;
             flex-wrap: wrap;
+            cursor: pointer;
+            user-select: none;
         }
         .song-title-heading {
             font-family: Georgia, "Times New Roman", serif;
@@ -350,7 +371,7 @@
         }
 
         /* ==========================================================================
-           3. ÜBE-MODUS TOOLBAR & STIMMGERÄT
+           ÜBE-MODUS TOOLBAR & STIMMGERÄT
            ========================================================================== */
         #practice-dashboard {
             background: var(--surface);
@@ -533,7 +554,7 @@
         .tuner-needle.in-tune { background: var(--primary); }
 
         /* ==========================================================================
-           4. PRE-SONG TELEMETRIE (GIG HUD)
+           PRE-SONG TELEMETRIE (GIG HUD)
            ========================================================================== */
         .stage-hud {
             display: grid;
@@ -627,7 +648,7 @@
         .transition-select { color: var(--text); font-size: 0.92rem; font-weight: 700; text-align: right; text-align-last: right; }
 
         /* ==========================================================================
-           5. CUES & AKKORDE
+           CUES & AKKORDE
            ========================================================================== */
         .cue-banner {
             background: var(--danger-bg);
@@ -683,7 +704,7 @@
         }
 
         /* ==========================================================================
-           6. NÄCHSTER SONG WARNER
+           NÄCHSTER SONG WARNER
            ========================================================================== */
         #next-song-banner {
             background: var(--surface);
@@ -755,7 +776,7 @@
 </head>
 <body>
 
-    <!-- START-SPLASH-SCREEN (3 SEKUNDEN, GARANTIERTES LKB-LOGO & SOFORT-BYPASS) -->
+    <!-- START-SPLASH-SCREEN -->
     <div id="lkb-splash" onclick="dismissSplash()" title="Tippen zum Überspringen">
         <div class="splash-logo-wrap">
             <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
@@ -796,19 +817,30 @@
         <div class="splash-hint">Tippen zum Überspringen</div>
     </div>
 
-    <header>
-        <div class="header-group">
-            <button class="btn-tool" onclick="toggleSidebar()">🔍 Suche</button>
-            <button class="btn-tool" onclick="toggleFullScreen()">⛶ Vollbild</button>
+    <!-- DER BEREICH BIS ZUR GRÜNEN LINIE (BLENDET NACH 3 SEKUNDEN WEICH AUS) -->
+    <div id="top-collapsible">
+        <header>
+            <div class="header-group">
+                <button class="btn-tool" onclick="toggleSidebar()">🔍 Suche</button>
+                <button class="btn-tool" onclick="toggleFullScreen()">⛶ Vollbild</button>
+            </div>
+            <div class="header-group">
+                <button class="btn-tool" id="btn-mode-toggle" onclick="togglePracticeMode()">🏋️ Übe-Modus</button>
+                <button class="btn-tool" onclick="openSyncModal()">🔄 Sync</button>
+            </div>
+        </header>
+
+        <div id="cockpit-nav">
+            <button class="btn-nav" id="btn-prev" onclick="stepSong(-1)">◀ ZURÜCK</button>
+            <div class="nav-center-box">
+                <div class="nav-counter" id="nav-counter">1 / 3</div>
+                <div class="nav-block-label" id="nav-block">SET 1</div>
+            </div>
+            <button class="btn-nav" id="btn-next" onclick="stepSong(1)">WEITER ▶</button>
         </div>
-        <div class="header-group">
-            <button class="btn-tool" id="btn-mode-toggle" onclick="togglePracticeMode()">🏋️ Übe-Modus</button>
-            <button class="btn-tool" onclick="openSyncModal()">🔄 Sync</button>
-        </div>
-    </header>
+    </div>
 
     <div id="workspace">
-        <!-- SIDEBAR DRAWER -->
         <div id="sidebar" class="hidden">
             <div class="sidebar-controls">
                 <input type="text" id="search" placeholder="Song oder Artist suchen..." autocomplete="off">
@@ -831,7 +863,6 @@
             <ul id="song-list"></ul>
         </div>
 
-        <!-- MAIN COCKPIT -->
         <div id="main">
             <svg class="lkb-watermark" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
                 <circle cx="100" cy="100" r="92" fill="none" stroke="currentColor" stroke-width="4"/>
@@ -845,16 +876,6 @@
                 <text x="162" y="108" text-anchor="middle" font-family="Georgia, serif" font-size="24" font-weight="bold" fill="currentColor">B</text>
                 <text x="100" y="165" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="bold" letter-spacing="1.5" fill="currentColor">SINCE 2013</text>
             </svg>
-
-            <!-- 1. NAVIGATION -->
-            <div id="cockpit-nav">
-                <button class="btn-nav" id="btn-prev" onclick="stepSong(-1)">◀ ZURÜCK</button>
-                <div class="nav-center-box">
-                    <div class="nav-counter" id="nav-counter">1 / 3</div>
-                    <div class="nav-block-label" id="nav-block">SET 1</div>
-                </div>
-                <button class="btn-nav" id="btn-next" onclick="stepSong(1)">WEITER ▶</button>
-            </div>
 
             <!-- 2. HAUPT-INHALT -->
             <div id="song-content"></div>
@@ -894,12 +915,49 @@
     </div>
 
 <script>
+    // AUTO-HIDE STEUERUNG (KOPF BIS ZUR GRÜNEN LINIE)
+    let autoHideTimer = null;
+
+    function resetTopAutoHide() {
+        if (isPracticeMode) {
+            showTopBar();
+            return;
+        }
+        showTopBar();
+        clearTimeout(autoHideTimer);
+        autoHideTimer = setTimeout(() => {
+            if (!isPracticeMode) {
+                hideTopBar();
+            }
+        }, 3000);
+    }
+
+    function showTopBar() {
+        const topEl = document.getElementById('top-collapsible');
+        if (topEl) topEl.classList.remove('hidden-top');
+    }
+
+    function hideTopBar() {
+        const topEl = document.getElementById('top-collapsible');
+        if (topEl) topEl.classList.add('hidden-top');
+    }
+
+    function toggleTopBar() {
+        const topEl = document.getElementById('top-collapsible');
+        if (topEl && topEl.classList.contains('hidden-top')) {
+            resetTopAutoHide();
+        } else {
+            hideTopBar();
+        }
+    }
+
     // SPLASH-SCREEN LOGIK (3 Sekunden + Sofort-Bypass)
     function dismissSplash() {
         const splash = document.getElementById('lkb-splash');
         if (splash && !splash.classList.contains('splash-hidden')) {
             splash.classList.add('splash-hidden');
             setTimeout(() => { if (splash.parentNode) splash.style.display = 'none'; }, 500);
+            resetTopAutoHide();
         }
     }
     setTimeout(dismissSplash, 3000);
@@ -1261,6 +1319,8 @@
 
     function renderCurrentSong() {
         stopMetronomeIfRunning();
+        resetTopAutoHide();
+
         const contentEl = document.getElementById('song-content');
         const prevBtn = document.getElementById('btn-prev');
         const nextBtn = document.getElementById('btn-next');
@@ -1285,7 +1345,7 @@
         const hasKapo = song.Kapo && song.Kapo !== '-';
 
         contentEl.innerHTML = `
-            <div class="header-title-row">
+            <div class="header-title-row" onclick="toggleTopBar()" title="Tippen zum Ein-/Ausblenden der Menüleisten">
                 <div class="song-title-heading">${song.Setlist_Pos && !isPracticeMode ? song.Setlist_Pos + '. ' : ''}${song.Titel}</div>
                 <div class="song-artist-heading">${song.Artist}</div>
             </div>
@@ -1445,12 +1505,15 @@
             btn.classList.add('active-mode');
             btn.innerText = '☀️ Übe-Modus: AN';
             document.getElementById('view-filter').value = 'ALL';
+            clearTimeout(autoHideTimer);
+            showTopBar();
         } else {
             document.body.classList.remove('practice-mode');
             btn.classList.remove('active-mode');
             btn.innerText = '🏋️ Übe-Modus';
             document.getElementById('view-filter').value = 'SETLIST';
             document.getElementById('status-filter').value = 'ALL';
+            resetTopAutoHide();
         }
         rebuildActiveList();
     }
@@ -1555,7 +1618,7 @@
     requestWakeLock();
     loadSavedData();
 
-    // Wischgesten
+    // Wischgesten (Blättern)
     let touchstartX = 0, touchendX = 0, isDraggingSlider = false;
     const mainArea = document.getElementById('main');
     mainArea.addEventListener('touchstart', e => {
