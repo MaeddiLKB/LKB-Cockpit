@@ -1,0 +1,1545 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LKB Live Cockpit</title>
+    <style>
+        /* ==========================================================================
+           DESIGN SYSTEM (LKB IDENTITY - HKS 64 K BAND GREEN)
+           ========================================================================== */
+        :root {
+            --bg: #050705;
+            --surface: #0e120f;
+            --surface-card: #141a15;
+            --surface-elevated: #1b231d;
+            --primary: #00d643;
+            --primary-dim: #00962c;
+            --primary-glow: rgba(0, 214, 67, 0.18);
+            --danger: #ff2a2a;
+            --danger-bg: #220909;
+            --danger-border: #591616;
+            --warning: #ffb700;
+            --warning-bg: rgba(255, 183, 0, 0.14);
+            --text: #f5f8f6;
+            --text-dim: #8fa093;
+            --border: #222c24;
+            --border-highlight: #314234;
+            --watermark-opacity: 0.03;
+        }
+
+        body.practice-mode {
+            --bg: #eef2ee;
+            --surface: #ffffff;
+            --surface-card: #f5f8f5;
+            --surface-elevated: #e6ece7;
+            --primary: #008726;
+            --primary-dim: #006b1e;
+            --primary-glow: rgba(0, 135, 38, 0.10);
+            --danger: #d91414;
+            --danger-bg: #fff0f0;
+            --danger-border: #fca5a5;
+            --warning: #b86200;
+            --warning-bg: rgba(184, 98, 0, 0.12);
+            --text: #0f1410;
+            --text-dim: #546357;
+            --border: #cdd8ce;
+            --border-highlight: #b0c2b2;
+            --watermark-opacity: 0.04;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* ==========================================================================
+           KOPFLEISTE
+           ========================================================================== */
+        header {
+            background: var(--surface);
+            border-bottom: 2px solid var(--border);
+            padding: 6px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+            z-index: 30;
+        }
+        .header-group { display: flex; align-items: center; gap: 6px; }
+
+        .btn-tool {
+            background: var(--surface-elevated);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        .btn-tool:active { transform: scale(0.97); }
+        .btn-tool.active-mode {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            font-weight: 900;
+        }
+
+        /* ==========================================================================
+           WORKSPACE & SIDEBAR DRAWER
+           ========================================================================== */
+        #workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #sidebar {
+            width: 340px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 25;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.4);
+        }
+        #sidebar.hidden { display: none; }
+
+        .sidebar-controls {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: var(--surface-card);
+        }
+        input, select {
+            width: 100%;
+            padding: 8px 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        input:focus, select:focus {
+            outline: 2px solid var(--primary);
+            border-color: var(--primary);
+        }
+
+        #song-list { flex: 1; overflow-y: auto; list-style: none; }
+        .song-item {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+        .song-item:hover, .song-item.active {
+            background: var(--primary-glow);
+            border-left: 4px solid var(--primary);
+        }
+        .song-title-text {
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text);
+        }
+        .song-sub-text { color: var(--text-dim); font-size: 0.8rem; }
+        .badge-pos {
+            background: var(--primary);
+            color: #000;
+            font-weight: 900;
+            font-size: 0.75rem;
+            padding: 1px 5px;
+            border-radius: 4px;
+            min-width: 20px;
+            text-align: center;
+        }
+        .badge-tuning {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+        .dot-status { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+        .dot-Grün { background: #00d643; }
+        .dot-Gelb { background: #ffb700; }
+        .dot-Rot { background: #ff2a2a; }
+
+        /* ==========================================================================
+           MAIN COCKPIT
+           ========================================================================== */
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            min-width: 0;
+        }
+
+        .lkb-watermark {
+            position: absolute;
+            right: -40px;
+            bottom: 20px;
+            width: 320px;
+            height: 320px;
+            opacity: var(--watermark-opacity);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 1. GIG-NAVIGATION */
+        #cockpit-nav {
+            background: var(--surface);
+            border-bottom: 2px solid var(--primary);
+            padding: 5px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            z-index: 10;
+        }
+        .btn-nav {
+            background: var(--surface-card);
+            color: var(--text);
+            border: 2px solid var(--border-highlight);
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            flex: 1;
+            max-width: 190px;
+            text-align: center;
+            user-select: none;
+        }
+        body.practice-mode .btn-nav {
+            padding: 6px 12px;
+            font-size: 0.88rem;
+            border-width: 1px;
+        }
+        .btn-nav:active:not(:disabled) {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+        }
+        .btn-nav:disabled { opacity: 0.25; cursor: not-allowed; }
+        .nav-center-box { text-align: center; }
+        .nav-counter { font-size: 1.15rem; font-weight: 900; color: var(--primary); line-height: 1; }
+        .nav-block-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-top: 2px;
+        }
+
+        /* 2. CONTENT BEREICH */
+        #song-content {
+            flex: 1;
+            padding: 8px 12px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 2;
+        }
+
+        .header-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 4px;
+            flex-wrap: wrap;
+        }
+        .song-title-heading {
+            font-family: Georgia, "Times New Roman", serif;
+            font-size: 1.65rem;
+            font-weight: 900;
+            line-height: 1.1;
+            color: var(--text);
+        }
+        .song-artist-heading {
+            color: var(--primary);
+            font-size: 0.88rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        /* ==========================================================================
+           3. ÜBE-MODUS TOOLBAR (ERGONOMISCHER VOLLBREITEN-SLIDER)
+           ========================================================================== */
+        #practice-dashboard {
+            background: var(--surface);
+            border: 1.5px solid var(--primary);
+            border-radius: 8px;
+            padding: 8px 10px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        body.practice-mode #practice-dashboard { display: flex; }
+
+        .metro-top-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+        }
+        .btn-metro-pill {
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 0.92rem;
+            font-weight: 900;
+            cursor: pointer;
+            white-space: nowrap;
+            min-width: 115px;
+            text-align: center;
+            transition: all 0.08s ease;
+        }
+        .btn-metro-pill.playing {
+            background: #111713;
+            color: #00ff4c;
+        }
+        body.practice-mode .btn-metro-pill.playing {
+            background: #0f1410;
+            color: #00ff4c;
+        }
+        .btn-metro-pill.pulse {
+            background: #ffaa00 !important;
+            color: #000000 !important;
+            transform: scale(1.04);
+        }
+
+        .metro-step-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .btn-tempo-step {
+            background: var(--surface-elevated);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 7px 9px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 800;
+            cursor: pointer;
+            line-height: 1;
+        }
+        .btn-tempo-step:active {
+            background: var(--primary);
+            color: #fff;
+        }
+        .btn-tempo-reset {
+            background: var(--surface-card);
+            color: var(--text-dim);
+            border: 1px solid var(--border);
+            padding: 7px 8px;
+            border-radius: 5px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        /* Vollbreiten-Slider für präzise Daumensteuerung */
+        .metro-slider-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--surface-card);
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+        }
+        .slider-bound-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: var(--text-dim);
+        }
+        .slider-tempo-full {
+            flex: 1;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            accent-color: var(--primary);
+            cursor: pointer;
+            -webkit-appearance: none;
+            appearance: none;
+            background: var(--surface-elevated);
+        }
+        .slider-tempo-full::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid #ffffff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+        .slider-tempo-full::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 2px solid #ffffff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+            cursor: pointer;
+        }
+
+        /* Zeile 3: Tonart, Status & Referenz-Links */
+        .practice-tools-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .select-tool-pill {
+            background: var(--surface-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            padding: 5px 8px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            cursor: pointer;
+            width: auto;
+        }
+        .audio-links-compact {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .btn-audio-pill {
+            border: 1px solid var(--border);
+            padding: 5px 9px;
+            border-radius: 5px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            white-space: nowrap;
+        }
+
+        /* ==========================================================================
+           4. PRE-SONG TELEMETRIE (GIG HUD - 100% OHNE WISCHEN LESBAR)
+           Logische Reihenfolge vor dem Songstart:
+           Zeile 1: [1. Gitarre / Tuning] + [Kapo]
+           Zeile 2: [2. Sound / Rig & Bank (IMMER volle Breite, automatischer Umbruch)]
+           Zeile 3: [3. Ende / Übergang (kompakte einzeilige Leiste)]
+           ========================================================================== */
+        .stage-hud {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) 72px;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .hud-card {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            padding: 6px 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-width: 0; /* Verhindert horizontales Ausbrechen im Grid */
+        }
+
+        .hud-label {
+            font-size: 0.62rem;
+            font-weight: 900;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 0.7px;
+            margin-bottom: 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .hud-value-select {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: var(--primary);
+            font-size: 1.08rem;
+            font-weight: 900;
+            cursor: pointer;
+            padding: 0;
+            text-overflow: ellipsis;
+        }
+
+        /* Kapo-Badge */
+        .hud-card.kapo-hud {
+            text-align: center;
+            align-items: center;
+            padding: 6px 4px;
+            border-width: 2px;
+        }
+        .hud-card.kapo-hud.has-kapo {
+            border-color: var(--warning);
+            background: var(--warning-bg);
+            box-shadow: 0 0 10px rgba(255, 183, 0, 0.25);
+        }
+        .kapo-value-select {
+            text-align: center;
+            text-align-last: center;
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: var(--text-dim);
+        }
+        .hud-card.kapo-hud.has-kapo .kapo-value-select {
+            color: var(--warning);
+        }
+
+        /* RIG & BANK: Garantiert eigene Zeile, mehrzeilig umbrechend, niemals abgeschnitten */
+        .hud-card.rig-hud {
+            grid-column: 1 / -1;
+            padding: 8px 12px;
+            background: var(--surface-card);
+            border-left: 4px solid var(--primary);
+            cursor: pointer;
+        }
+        .rig-value-display {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--text);
+            white-space: normal;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+            line-height: 1.35;
+        }
+
+        /* ÜBERGANG: Kompakte einzeilige Leiste (spart vertikalen Platz für die Chords) */
+        .hud-card.transition-hud {
+            grid-column: 1 / -1;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 10px;
+            gap: 10px;
+        }
+        .hud-card.transition-hud .hud-label {
+            margin-bottom: 0;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .transition-select {
+            color: var(--text);
+            font-size: 0.92rem;
+            font-weight: 700;
+            text-align: right;
+            text-align-last: right;
+        }
+
+        /* ==========================================================================
+           5. DIE ROTEN CUES (NUR IM GIGMODUS)
+           ========================================================================== */
+        .cue-banner {
+            background: var(--danger-bg);
+            border-left: 5px solid var(--danger);
+            border-top: 1px solid var(--danger-border);
+            border-right: 1px solid var(--danger-border);
+            border-bottom: 1px solid var(--danger-border);
+            border-radius: 7px;
+            padding: 8px 12px;
+        }
+        .cue-banner-title {
+            color: var(--danger);
+            font-size: 0.68rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 2px;
+        }
+        .cue-banner-text {
+            color: #ffe6e6;
+            font-size: 1.05rem;
+            font-weight: 800;
+            line-height: 1.35;
+            overflow-wrap: anywhere;
+        }
+        body.practice-mode .cue-banner { display: none; }
+
+        /* ==========================================================================
+           6. AKKORDE & STRUKTUR
+           ========================================================================== */
+        .chords-container {
+            flex: 1;
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--primary);
+            border-radius: 7px;
+            padding: 12px 14px;
+            min-width: 0;
+        }
+        .chords-header {
+            color: var(--primary);
+            font-size: 0.7rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+        pre.chords-content {
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 1.12rem;
+            font-weight: 700;
+            line-height: 1.55;
+            color: var(--text);
+        }
+
+        /* ==========================================================================
+           7. NÄCHSTER SONG WARNER (GIG-MODUS UNTEN)
+           ========================================================================== */
+        #next-song-banner {
+            background: var(--surface);
+            border-top: 2px solid var(--border);
+            padding: 8px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 800;
+            flex-wrap: wrap;
+            z-index: 10;
+        }
+        body.practice-mode #next-song-banner { display: none; }
+
+        #next-song-banner.warning-alert {
+            background: var(--danger);
+            color: #ffffff;
+            border-top-color: #ffffff;
+            animation: alertPulse 1.8s infinite;
+        }
+        @keyframes alertPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.86; }
+        }
+
+        .footer-microbar {
+            background: var(--bg);
+            padding: 2px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.6rem;
+            color: var(--text-dim);
+            border-top: 1px solid var(--border);
+            z-index: 5;
+        }
+
+        /* MODAL */
+        #sync-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 100;
+        }
+        .modal-card {
+            background: var(--surface);
+            color: var(--text);
+            border: 2px solid var(--primary);
+            border-radius: 10px;
+            max-width: 520px;
+            width: 100%;
+            padding: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        @media (max-width: 768px) {
+            #sidebar { position: absolute; inset: 0; width: 100%; }
+            .song-title-heading { font-size: 1.45rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-group">
+            <button class="btn-tool" onclick="toggleSidebar()">🔍 Suche</button>
+            <button class="btn-tool" onclick="toggleFullScreen()">⛶ Vollbild</button>
+        </div>
+        <div class="header-group">
+            <button class="btn-tool" id="btn-mode-toggle" onclick="togglePracticeMode()">🏋️ Übe-Modus</button>
+            <button class="btn-tool" onclick="openSyncModal()">🔄 Sync</button>
+        </div>
+    </header>
+
+    <div id="workspace">
+        <!-- SIDEBAR DRAWER -->
+        <div id="sidebar" class="hidden">
+            <div class="sidebar-controls">
+                <input type="text" id="search" placeholder="Song oder Artist suchen..." autocomplete="off">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <select id="view-filter">
+                        <option value="SETLIST">📋 Nur Setlist</option>
+                        <option value="ALL">📚 Alle Songs</option>
+                    </select>
+                    <select id="status-filter">
+                        <option value="ALL">🚦 Alle Status</option>
+                        <option value="Grün">🟢 Grün (Sitzt)</option>
+                        <option value="Gelb">🟡 Gelb (Wackelt)</option>
+                        <option value="Rot">🔴 Rot (Lernen)</option>
+                    </select>
+                </div>
+                <select id="tuning-filter">
+                    <option value="ALL">🎸 Alle Gitarren / Tunings</option>
+                </select>
+            </div>
+            <ul id="song-list"></ul>
+        </div>
+
+        <!-- MAIN COCKPIT -->
+        <div id="main">
+            <svg class="lkb-watermark" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="100" r="92" fill="none" stroke="currentColor" stroke-width="4"/>
+                <circle cx="100" cy="100" r="85" fill="none" stroke="currentColor" stroke-width="1.5"/>
+                <line x1="55" y1="55" x2="145" y2="145" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                <line x1="145" y1="55" x2="55" y2="145" stroke="currentColor" stroke-width="6" stroke-linecap="round"/>
+                <circle cx="100" cy="78" r="10" fill="currentColor"/>
+                <rect x="96" y="90" width="8" height="32" rx="3" fill="currentColor"/>
+                <text x="100" y="42" text-anchor="middle" font-family="Georgia, serif" font-size="24" font-weight="bold" fill="currentColor">K</text>
+                <text x="38" y="108" text-anchor="middle" font-family="Georgia, serif" font-size="24" font-weight="bold" fill="currentColor">L</text>
+                <text x="162" y="108" text-anchor="middle" font-family="Georgia, serif" font-size="24" font-weight="bold" fill="currentColor">B</text>
+                <text x="100" y="165" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="bold" letter-spacing="1.5" fill="currentColor">SINCE 2013</text>
+            </svg>
+
+            <!-- 1. NAVIGATION -->
+            <div id="cockpit-nav">
+                <button class="btn-nav" id="btn-prev" onclick="stepSong(-1)">◀ ZURÜCK</button>
+                <div class="nav-center-box">
+                    <div class="nav-counter" id="nav-counter">1 / 3</div>
+                    <div class="nav-block-label" id="nav-block">SET 1</div>
+                </div>
+                <button class="btn-nav" id="btn-next" onclick="stepSong(1)">WEITER ▶</button>
+            </div>
+
+            <!-- 2. HAUPT-INHALT -->
+            <div id="song-content"></div>
+
+            <!-- 3. NÄCHSTER SONG WARNER -->
+            <div id="next-song-banner">
+                <span id="next-info-title">Nächster Song: -</span>
+                <span id="next-info-guitar"></span>
+            </div>
+
+            <div class="footer-microbar">
+                <span>LA KAWA BANDA · MODERN COVERROCK</span>
+                <span>WakeLock: <strong id="wake-status" style="color: var(--primary);">aktiv</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SYNC MODAL -->
+    <div id="sync-modal">
+        <div class="modal-card">
+            <h3 style="color: var(--primary);">Google Sheets Synchronisation</h3>
+            <ol style="padding-left: 20px; font-size: 0.85rem; line-height: 1.6; color: var(--text-dim);">
+                <li>Öffne <b>Band_Cockpit_Datenbank</b> in deiner Google-Sheets-App.</li>
+                <li>Unter <b>⋮ → Teilen und exportieren → Zugriff verwalten</b> muss <b>„Jeder, der über den Link verfügt“</b> aktiv sein.</li>
+                <li>Mit <b>App-Stand als CSV</b> kannst du spontane Proben-Änderungen sichern.</li>
+            </ol>
+            <input type="url" id="csv-url-input" value="https://docs.google.com/spreadsheets/d/1aQWoR7msLCf3VWyLoSCtjKReqkB4mH81ZX97sY12BpA/edit">
+            <div id="sync-feedback" style="font-size: 0.85rem; font-weight: 700; color: var(--primary);"></div>
+            <div style="display: flex; gap: 8px; justify-content: space-between; flex-wrap: wrap; margin-top: 6px;">
+                <button class="btn-tool" onclick="exportLocalToCSV()">💾 App-Stand als CSV</button>
+                <div style="display: flex; gap: 6px;">
+                    <button class="btn-tool" onclick="closeSyncModal()">Schließen</button>
+                    <button class="btn-tool active-mode" onclick="syncFromGoogleSheets()">🔄 Aus Sheet laden</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // 1. INITIAL-DATENBANK
+    const defaultSongs = [
+        {
+            Setlist_Pos: "1",
+            Set_Block: "Set 1",
+            Titel: "Use Somebody",
+            Artist: "Kings of Leon",
+            Gitarre_Tuning: "Strat (E-Standard)",
+            Kapo: "-",
+            Rig_Start: "Bank 4 - Patch 2 | Bridge PU | Vol 10",
+            Uebergang: "Normaler Stop",
+            Cues_Warnung: "Achtung: Drummer zählt 2 Takte vor! Nach dem 2. Chorus direkt in die Bridge ohne Pause.",
+            Struktur_Chords: "Intro:  C - E/G# - Am - F (2x)\nVerse:  C - E/G# - Am - F\nChorus: Volles Brett, offene Akkorde\nBridge: Oktav-Riff auf A-Saite (3. -> 7. -> 8. Bund)",
+            Tonart: "C Major",
+            BPM: "137",
+            Status: "Grün",
+            Link: "https://open.spotify.com/",
+            Tabs: "e|-------\nB|--5-8--\nG|------- (Oktav-Riff Bridge: A-Saite 3-7-8)"
+        },
+        {
+            Setlist_Pos: "2",
+            Set_Block: "Set 1",
+            Titel: "Everlong",
+            Artist: "Foo Fighters",
+            Gitarre_Tuning: "Paula (Drop D)",
+            Kapo: "-",
+            Rig_Start: "Bank 2 - Patch 1 | Bridge PU | Vol 8",
+            Uebergang: "Direkt weiter in nächsten Song!",
+            Cues_Warnung: "Intro fängt Gitarre alleine an. Dynamik im Mittelteil extrem runterfahren!",
+            Struktur_Chords: "Intro/Verse: Dmaj7 - Bm7 (Palm Mute)\nPre-Chorus:  Oktaven auf A-Saite (B - C# - D)\nChorus:      Powerchords B - G - D - A",
+            Tonart: "D Major",
+            BPM: "158",
+            Status: "Gelb",
+            Link: "https://open.spotify.com/",
+            Tabs: "D-Saite und A-Saite im 9. und 11. Bund für den Pre-Chorus Slide."
+        },
+        {
+            Setlist_Pos: "3",
+            Set_Block: "Set 1",
+            Titel: "Mr. Brightside",
+            Artist: "The Killers",
+            Gitarre_Tuning: "Strat (Eb-Standard)",
+            Kapo: "-",
+            Rig_Start: "Bank 1 - Patch 4 | Both PU (Mid) | Vol 10",
+            Uebergang: "Ausklang stehen lassen",
+            Cues_Warnung: "Schweres Picking im Intro – Hand vorher lockern. Ende wird 4x wiederholt, harter Cut auf die 1.",
+            Struktur_Chords: "Verse:      Arpeggio im 14./16. Bund\nPre-Chorus: Offene Chords\nChorus:     C - F - Am - G (Relativ zu Eb)",
+            Tonart: "Db Major",
+            BPM: "148",
+            Status: "Rot",
+            Link: "https://open.spotify.com/",
+            Tabs: "e|----16-------16----\nB|-------14-------14-\nG|-13-------13-------"
+        },
+        {
+            Setlist_Pos: "",
+            Set_Block: "Archiv",
+            Titel: "Wonderwall",
+            Artist: "Oasis",
+            Gitarre_Tuning: "Strat (E-Standard)",
+            Kapo: "K2",
+            Rig_Start: "Bank 1 - Clean | Neck PU",
+            Uebergang: "Normaler Stop",
+            Cues_Warnung: "Strumming-Rhythmus im Verse ruhig halten, erst im Pre-Chorus öffnen.",
+            Struktur_Chords: "Verse:      Em7 - G - Dsus4 - A7sus4\nPre-Chorus: Cadd9 - Dsus4 - Em7\nChorus:     Cadd9 - Em7 - G - Em7",
+            Tonart: "F# Minor",
+            BPM: "87",
+            Status: "Grün",
+            Link: "https://open.spotify.com/",
+            Tabs: "Standard-Voicings mit kleinem Finger und Ringfinger fest auf B- und e-Saite im 3. Bund."
+        }
+    ];
+
+    const BASE_GUITARS = ["Strat (E-Standard)", "Strat (Eb-Standard)", "Paula (E-Standard)", "Paula (Drop D)", "Paula (Eb-Standard)", "Tele (E-Standard)", "Akustik (E-Standard)"];
+    const BASE_KAPOS = ["-", "K1", "K2", "K3", "K4", "K5", "K6", "K7"];
+    const BASE_TRANSITIONS = ["Normaler Stop", "Direkt weiter in nächsten Song!", "Ausklang stehen lassen", "Drummer zählt direkt an", "Fermate / Blickkontakt"];
+    const BASE_KEYS = ["C Major", "C Minor", "Db Major", "D Major", "D Minor", "Eb Major", "E Major", "E Minor", "F Major", "F Minor", "Gb Major", "G Major", "G Minor", "Ab Major", "A Major", "A Minor", "Bb Major", "B Major", "B Minor", "F# Minor", "C# Minor"];
+
+    let allSongs = [];
+    let activeList = [];
+    let currentIndex = 0;
+    let isPracticeMode = false;
+
+    function editRigDirectly() {
+        const song = activeList[currentIndex];
+        if (!song) return;
+        const current = song.Rig_Start || '';
+        const newVal = prompt('Rig / Bank / Sound-Start anpassen:', current);
+        if (newVal !== null) {
+            song.Rig_Start = newVal.trim();
+            localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
+            renderCurrentSong();
+        }
+    }
+
+    function normalizeKapo(val) {
+        if (!val) return '-';
+        const clean = String(val).trim();
+        if (clean === '' || clean === '-' || clean.toLowerCase() === 'kein' || clean === '0') return '-';
+        const match = clean.match(/^(\d+)\.?\s*bund$/i);
+        if (match) return 'K' + match[1];
+        return clean;
+    }
+
+    // 2. PRÄZISIONS-METRONOM
+    let audioCtx = null;
+    let isPlayingMetro = false;
+    let currentBpm = 120;
+    let originalBpm = 120;
+    let nextNoteTime = 0.0;
+    let timerID = null;
+    const lookahead = 25.0;
+    const scheduleAheadTime = 0.1;
+
+    function playClickSound(time) {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        osc.frequency.value = 1000;
+        gain.gain.setValueAtTime(1, time);
+        gain.gain.exponentialRampToValueAtTime(0.001, time + 0.04);
+
+        osc.start(time);
+        osc.stop(time + 0.04);
+
+        const delayMs = Math.max(0, (time - audioCtx.currentTime) * 1000);
+        setTimeout(() => {
+            const btn = document.getElementById('btn-metro-compact');
+            if (btn && isPlayingMetro) {
+                btn.classList.add('pulse');
+                setTimeout(() => btn.classList.remove('pulse'), 85);
+            }
+        }, delayMs);
+    }
+
+    function scheduler() {
+        while (nextNoteTime < audioCtx.currentTime + scheduleAheadTime) {
+            playClickSound(nextNoteTime);
+            const secondsPerBeat = 60.0 / currentBpm;
+            nextNoteTime += secondsPerBeat;
+        }
+        timerID = setTimeout(scheduler, lookahead);
+    }
+
+    function toggleMetronome() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+
+        isPlayingMetro = !isPlayingMetro;
+        const btn = document.getElementById('btn-metro-compact');
+        if (isPlayingMetro) {
+            nextNoteTime = audioCtx.currentTime + 0.05;
+            scheduler();
+            if (btn) {
+                btn.classList.add('playing');
+                btn.innerText = `⏹ ${currentBpm} BPM`;
+            }
+        } else {
+            clearTimeout(timerID);
+            if (btn) {
+                btn.classList.remove('playing', 'pulse');
+                btn.innerText = `▶ ${currentBpm} BPM`;
+            }
+        }
+    }
+
+    function stopMetronomeIfRunning() {
+        if (isPlayingMetro) toggleMetronome();
+    }
+
+    function adjustBpm(delta, exactVal = null) {
+        if (exactVal !== null) {
+            currentBpm = parseInt(exactVal, 10) || 120;
+        } else {
+            currentBpm = Math.min(260, Math.max(40, currentBpm + delta));
+        }
+        const btn = document.getElementById('btn-metro-compact');
+        const slider = document.getElementById('bpm-slider-compact');
+        if (slider) slider.value = currentBpm;
+        if (btn) {
+            btn.innerText = isPlayingMetro ? `⏹ ${currentBpm} BPM` : `▶ ${currentBpm} BPM`;
+        }
+    }
+
+    // 3. SCREEN WAKE LOCK & FULLSCREEN
+    let wakeLock = null;
+    async function requestWakeLock() {
+        try {
+            if ('wakeLock' in navigator) {
+                wakeLock = await navigator.wakeLock.request('screen');
+                const el = document.getElementById('wake-status');
+                if (el) el.innerText = 'aktiv (🟢)';
+            }
+        } catch (err) {
+            const el = document.getElementById('wake-status');
+            if (el) el.innerText = 'Standby';
+        }
+    }
+    document.addEventListener('visibilitychange', () => {
+        if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock();
+    });
+
+    function toggleFullScreen() {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(() => {});
+        } else if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+    }
+
+    // 4. DATEN LADEN & RENDERN
+    function getSpotifyLinkHtml(song) {
+        const query = encodeURIComponent((song.Artist || '') + ' ' + (song.Titel || ''));
+        const spotifyWebUrl = (song.Link && song.Link.startsWith('http') && !song.Link.endsWith('spotify.com/')) ? song.Link : 'https://open.spotify.com/search/' + query;
+        const ytUrl = 'https://www.youtube.com/results?search_query=' + query;
+
+        return `
+            <div class="audio-links-compact">
+                <a href="${spotifyWebUrl}" target="_blank" rel="noopener noreferrer" class="btn-audio-pill" style="background: #1db954; color: #000; border-color: #169c46;">🟢 Spotify</a>
+                <a href="${ytUrl}" target="_blank" rel="noopener noreferrer" class="btn-audio-pill" style="background: #e62117; color: #fff; border-color: #b81911;">▶️ YT</a>
+            </div>
+        `;
+    }
+
+    function loadSavedData() {
+        const saved = localStorage.getItem('band_cockpit_songs_v1');
+        allSongs = saved ? JSON.parse(saved) : defaultSongs;
+        allSongs.forEach(s => { s.Kapo = normalizeKapo(s.Kapo); });
+        const savedUrl = localStorage.getItem('band_cockpit_csv_url');
+        document.getElementById('csv-url-input').value = savedUrl || 'https://docs.google.com/spreadsheets/d/1aQWoR7msLCf3VWyLoSCtjKReqkB4mH81ZX97sY12BpA/edit';
+        populateTuningFilter();
+        rebuildActiveList();
+    }
+
+    function getMergedOptions(fieldName, baseOptions) {
+        const fromData = allSongs.map(s => {
+            const raw = (s[fieldName] || '').trim();
+            return fieldName === 'Kapo' ? normalizeKapo(raw) : raw;
+        }).filter(Boolean);
+        return [...new Set([...baseOptions, ...fromData])];
+    }
+
+    function buildSelectOptionsHtml(optionsList, selectedValue) {
+        const cleanSelected = (selectedValue || '').trim();
+        let html = optionsList.map(opt => {
+            const isSel = opt === cleanSelected ? 'selected' : '';
+            return `<option value="${opt.replace(/"/g, '&quot;')}" ${isSel}>${opt}</option>`;
+        }).join('');
+        html += `<option value="__CUSTOM__">➕ Neu...</option>`;
+        return html;
+    }
+
+    function updateSongVariable(field, selectElement) {
+        const song = activeList[currentIndex];
+        if (!song) return;
+
+        let newVal = selectElement.value;
+        if (newVal === '__CUSTOM__') {
+            const customInput = prompt(`Neuen Wert für ${field} eingeben (z. B. K3):`, song[field] || '');
+            if (customInput === null || customInput.trim() === '') {
+                renderCurrentSong();
+                return;
+            }
+            newVal = field === 'Kapo' ? normalizeKapo(customInput) : customInput.trim();
+        }
+
+        song[field] = newVal;
+        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
+        populateTuningFilter();
+        renderSidebarList();
+        renderCurrentSong();
+    }
+
+    function populateTuningFilter() {
+        const select = document.getElementById('tuning-filter');
+        const currentVal = select.value;
+        const tunings = getMergedOptions('Gitarre_Tuning', BASE_GUITARS);
+        select.innerHTML = '<option value="ALL">🎸 Alle Gitarren / Tunings</option>';
+        tunings.forEach(t => {
+            const opt = document.createElement('option');
+            opt.value = t;
+            opt.innerText = t;
+            select.appendChild(opt);
+        });
+        select.value = tunings.includes(currentVal) ? currentVal : 'ALL';
+    }
+
+    function rebuildActiveList() {
+        const query = document.getElementById('search').value.toLowerCase();
+        const viewMode = document.getElementById('view-filter').value;
+        const tuning = document.getElementById('tuning-filter').value;
+        const statusFilter = document.getElementById('status-filter').value;
+
+        let filtered = allSongs.filter(s => {
+            const matchesQuery = (s.Titel || '').toLowerCase().includes(query) || (s.Artist || '').toLowerCase().includes(query);
+            const matchesTuning = tuning === 'ALL' || s.Gitarre_Tuning === tuning;
+            const matchesStatus = statusFilter === 'ALL' || (s.Status || 'Grün') === statusFilter;
+            const hasSetlistPos = s.Setlist_Pos && s.Setlist_Pos.trim() !== '' && !isNaN(Number(s.Setlist_Pos));
+            const matchesView = (viewMode === 'ALL' || query.length > 0 || statusFilter !== 'ALL') ? true : hasSetlistPos;
+            return matchesQuery && matchesTuning && matchesStatus && matchesView;
+        });
+
+        filtered.sort((a, b) => {
+            const posA = parseInt(a.Setlist_Pos, 10);
+            const posB = parseInt(b.Setlist_Pos, 10);
+            if (!isNaN(posA) && !isNaN(posB)) return posA - posB;
+            if (!isNaN(posA)) return -1;
+            if (!isNaN(posB)) return 1;
+            return (a.Titel || '').localeCompare(b.Titel || '');
+        });
+
+        activeList = filtered;
+        currentIndex = 0;
+        renderSidebarList();
+        renderCurrentSong();
+    }
+
+    function renderSidebarList() {
+        const listEl = document.getElementById('song-list');
+        listEl.innerHTML = '';
+        activeList.forEach((song, idx) => {
+            const li = document.createElement('li');
+            li.className = 'song-item' + (idx === currentIndex ? ' active' : '');
+            const posHtml = song.Setlist_Pos ? `<span class="badge-pos">${song.Setlist_Pos}</span>` : '';
+            const statusClass = `dot-${song.Status || 'Grün'}`;
+            const kapoBadge = (song.Kapo && song.Kapo !== '-') ? ` · ${normalizeKapo(song.Kapo)}` : '';
+            li.innerHTML = `
+                <div>
+                    <div class="song-title-text">
+                        ${posHtml}
+                        <span>${song.Titel || 'Unbenannt'}</span>
+                        <span class="dot-status ${statusClass}" title="Status: ${song.Status || 'Grün'}"></span>
+                    </div>
+                    <div class="song-sub-text">${song.Artist || ''}</div>
+                </div>
+                <span class="badge-tuning">${song.Gitarre_Tuning || '-'}${kapoBadge}</span>
+            `;
+            li.onclick = () => {
+                currentIndex = idx;
+                renderSidebarList();
+                renderCurrentSong();
+                if (window.innerWidth <= 768) toggleSidebar(false);
+            };
+            listEl.appendChild(li);
+        });
+    }
+
+    function renderCurrentSong() {
+        stopMetronomeIfRunning();
+        const contentEl = document.getElementById('song-content');
+        const prevBtn = document.getElementById('btn-prev');
+        const nextBtn = document.getElementById('btn-next');
+
+        if (activeList.length === 0) {
+            contentEl.innerHTML = `<h2 style="color: var(--text-dim); text-align: center; margin-top: 40px;">Keine Songs gefunden.</h2>`;
+            prevBtn.disabled = true;
+            nextBtn.disabled = true;
+            return;
+        }
+
+        const song = activeList[currentIndex];
+        song.Kapo = normalizeKapo(song.Kapo);
+        originalBpm = parseInt(song.BPM, 10) || 120;
+        currentBpm = originalBpm;
+
+        document.getElementById('nav-block').innerText = song.Set_Block || (isPracticeMode ? 'ÜBE-ARCHIV' : 'SETLIST');
+        document.getElementById('nav-counter').innerText = `${currentIndex + 1} / ${activeList.length}`;
+        prevBtn.disabled = currentIndex === 0;
+        nextBtn.disabled = currentIndex === activeList.length - 1;
+
+        const guitarOptionsHtml = buildSelectOptionsHtml(getMergedOptions('Gitarre_Tuning', BASE_GUITARS), song.Gitarre_Tuning || 'Strat (E-Standard)');
+        const kapoOptionsHtml = buildSelectOptionsHtml(getMergedOptions('Kapo', BASE_KAPOS), song.Kapo || '-');
+        const transitionOptionsHtml = buildSelectOptionsHtml(getMergedOptions('Uebergang', BASE_TRANSITIONS), song.Uebergang || 'Normaler Stop');
+
+        const currentStatus = song.Status || 'Grün';
+        const hasKapo = song.Kapo && song.Kapo !== '-';
+
+        // Übe-Dashboard mit ergonomischem Vollbreiten-BPM-Slider
+        const practiceDashboardHtml = `
+            <div id="practice-dashboard">
+                <!-- Ebene 1: Start/Stop + Fein-Buttons + Reset -->
+                <div class="metro-top-row">
+                    <button id="btn-metro-compact" class="btn-metro-pill" onclick="toggleMetronome()">▶ ${currentBpm} BPM</button>
+                    <div class="metro-step-group">
+                        <button class="btn-tempo-step" onclick="adjustBpm(-5)">-5</button>
+                        <button class="btn-tempo-step" onclick="adjustBpm(-1)">-1</button>
+                        <button class="btn-tempo-step" onclick="adjustBpm(1)">+1</button>
+                        <button class="btn-tempo-step" onclick="adjustBpm(5)">+5</button>
+                    </div>
+                    <button class="btn-tempo-reset" onclick="adjustBpm(0, ${originalBpm})" title="Originaltempo">↺ ${originalBpm}</button>
+                </div>
+
+                <!-- Ebene 2: 100% breiter, griffiger BPM-Schieberegler -->
+                <div class="metro-slider-row">
+                    <span class="slider-bound-label">40</span>
+                    <input type="range" id="bpm-slider-compact" class="slider-tempo-full" min="40" max="240" value="${currentBpm}" oninput="adjustBpm(0, this.value)">
+                    <span class="slider-bound-label">240</span>
+                </div>
+
+                <!-- Ebene 3: Tonart, Status & Referenz-Tracks -->
+                <div class="practice-tools-row">
+                    <div style="display: flex; gap: 5px; align-items: center;">
+                        <select class="select-tool-pill" style="color: var(--primary);" onchange="updateSongVariable('Tonart', this)">
+                            ${buildSelectOptionsHtml(getMergedOptions('Tonart', BASE_KEYS), song.Tonart || 'C Major')}
+                        </select>
+                        <select class="select-tool-pill" onchange="updateSongVariable('Status', this)">
+                            <option value="Grün" ${currentStatus === 'Grün' ? 'selected' : ''}>🟢 Sitzt</option>
+                            <option value="Gelb" ${currentStatus === 'Gelb' ? 'selected' : ''}>🟡 Wackelt</option>
+                            <option value="Rot" ${currentStatus === 'Rot' ? 'selected' : ''}>🔴 Lernen</option>
+                        </select>
+                    </div>
+                    ${getSpotifyLinkHtml(song)}
+                </div>
+
+                ${song.Tabs ? `
+                <details style="margin-top: 2px; border-top: 1px solid var(--border); padding-top: 4px;">
+                    <summary style="cursor: pointer; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.6px; color: var(--primary);">🎸 Tabs & Notizen einblenden</summary>
+                    <pre style="margin-top: 6px; font-size: 0.95rem; background: var(--surface-card); padding: 8px 10px; border-radius: 5px; border: 1px solid var(--border); white-space: pre-wrap; overflow-wrap: anywhere;">${song.Tabs}</pre>
+                </details>` : ''}
+            </div>
+        `;
+
+        contentEl.innerHTML = `
+            <div class="header-title-row">
+                <div class="song-title-heading">${song.Setlist_Pos && !isPracticeMode ? song.Setlist_Pos + '. ' : ''}${song.Titel}</div>
+                <div class="song-artist-heading">${song.Artist}</div>
+            </div>
+
+            ${practiceDashboardHtml}
+
+            <!-- PRE-SONG TELEMETRIE (GIG HUD) -->
+            <div class="stage-hud">
+                <!-- Zeile 1 Links: Gitarre -->
+                <div class="hud-card interactive">
+                    <div class="hud-label"><span>1. Gitarre / Tuning</span> <span>▾</span></div>
+                    <select class="hud-value-select" onchange="updateSongVariable('Gitarre_Tuning', this)">
+                        ${guitarOptionsHtml}
+                    </select>
+                </div>
+
+                <!-- Zeile 1 Rechts: Kompaktes Kapo-Feld -->
+                <div class="hud-card kapo-hud interactive ${hasKapo ? 'has-kapo' : ''}">
+                    <div class="hud-label" style="justify-content: center;"><span>Kapo</span></div>
+                    <select class="hud-value-select kapo-value-select" onchange="updateSongVariable('Kapo', this)">
+                        ${kapoOptionsHtml}
+                    </select>
+                </div>
+
+                <!-- Zeile 2 (Volle Breite, mehrzeilig lesbar ohne Wischen): Rig / Sound-Start -->
+                <div class="hud-card rig-hud" onclick="editRigDirectly()" title="Tippen zum Bearbeiten">
+                    <div class="hud-label"><span>2. Sound / Rig & Bank (Start)</span> <span style="font-size: 0.65rem; opacity: 0.7;">✎ Tippen</span></div>
+                    <div class="rig-value-display">${song.Rig_Start || '-'}</div>
+                </div>
+
+                <!-- Zeile 3 (Kompakte einzeilige Leiste): Ende / Übergang -->
+                <div class="hud-card transition-hud interactive">
+                    <div class="hud-label"><span>3. Ende / Übergang</span></div>
+                    <select class="hud-value-select transition-select" onchange="updateSongVariable('Uebergang', this)">
+                        ${transitionOptionsHtml}
+                    </select>
+                </div>
+            </div>
+
+            <!-- LIVE-CUES (NUR IM GIG-MODUS) -->
+            ${song.Cues_Warnung ? `
+            <div class="cue-banner">
+                <div class="cue-banner-title">⚠️ Live-Cue / Stolperfalle</div>
+                <div class="cue-banner-text">${song.Cues_Warnung}</div>
+            </div>` : ''}
+
+            <!-- CHORDS & STRUKTUR -->
+            <div class="chords-container">
+                <div class="chords-header">🎵 Chords & Ablauf</div>
+                <pre class="chords-content">${song.Struktur_Chords || ''}</pre>
+            </div>
+        `;
+
+        updateNextSongBanner(song);
+    }
+
+    function updateNextSongBanner(currentSong) {
+        const bar = document.getElementById('next-song-banner');
+        if (isPracticeMode) {
+            bar.style.display = 'none';
+            return;
+        } else {
+            bar.style.display = 'flex';
+        }
+
+        const titleEl = document.getElementById('next-info-title');
+        const guitarEl = document.getElementById('next-info-guitar');
+
+        if (currentIndex + 1 < activeList.length) {
+            const nextSong = activeList[currentIndex + 1];
+            const nextKapo = normalizeKapo(nextSong.Kapo);
+            const currKapo = normalizeKapo(currentSong.Kapo);
+            titleEl.innerText = `Nächster: ${nextSong.Titel} (${currentSong.Uebergang || 'Stop'})`;
+
+            const guitarChanged = (currentSong.Gitarre_Tuning || '').trim() !== (nextSong.Gitarre_Tuning || '').trim();
+            const kapoChanged = currKapo !== nextKapo;
+
+            if (guitarChanged) {
+                bar.className = 'warning-alert';
+                guitarEl.innerText = `⚠️ WECHSEL: ${nextSong.Gitarre_Tuning} ${nextKapo !== '-' ? '[' + nextKapo + ']' : ''}`;
+            } else if (kapoChanged) {
+                bar.className = 'warning-alert';
+                guitarEl.innerText = `⚠️ KAPO: ${nextKapo}`;
+            } else {
+                bar.className = '';
+                guitarEl.innerText = `✅ Bleibt: ${nextSong.Gitarre_Tuning} ${nextKapo !== '-' ? '[' + nextKapo + ']' : ''}`;
+            }
+        } else {
+            bar.className = '';
+            titleEl.innerText = '🏁 Letzter Song der Setlist';
+            guitarEl.innerText = '';
+        }
+    }
+
+    function stepSong(direction) {
+        const nextIdx = currentIndex + direction;
+        if (nextIdx >= 0 && nextIdx < activeList.length) {
+            currentIndex = nextIdx;
+            renderSidebarList();
+            renderCurrentSong();
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
+        if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+            e.preventDefault();
+            stepSong(1);
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+            e.preventDefault();
+            stepSong(-1);
+        } else if (e.key === ' ') {
+            if (isPracticeMode) {
+                e.preventDefault();
+                toggleMetronome();
+            }
+        }
+    });
+
+    function toggleSidebar(forceState) {
+        const sb = document.getElementById('sidebar');
+        const shouldShow = typeof forceState === 'boolean' ? forceState : sb.classList.contains('hidden');
+        if (shouldShow) {
+            sb.classList.remove('hidden');
+            document.getElementById('search').focus();
+        } else {
+            sb.classList.add('hidden');
+        }
+    }
+
+    function togglePracticeMode() {
+        isPracticeMode = !isPracticeMode;
+        const btn = document.getElementById('btn-mode-toggle');
+        if (isPracticeMode) {
+            document.body.classList.add('practice-mode');
+            btn.classList.add('active-mode');
+            btn.innerText = '☀️ Übe-Modus: AN';
+            document.getElementById('view-filter').value = 'ALL';
+        } else {
+            document.body.classList.remove('practice-mode');
+            btn.classList.remove('active-mode');
+            btn.innerText = '🏋️ Übe-Modus';
+            document.getElementById('view-filter').value = 'SETLIST';
+            document.getElementById('status-filter').value = 'ALL';
+        }
+        rebuildActiveList();
+    }
+
+    // 5. GOOGLE SHEETS SYNC & EXPORT
+    function openSyncModal() { document.getElementById('sync-modal').style.display = 'flex'; }
+    function closeSyncModal() { document.getElementById('sync-modal').style.display = 'none'; }
+
+    const DEFAULT_SHEET_URL = 'https://docs.google.com/spreadsheets/d/1aQWoR7msLCf3VWyLoSCtjKReqkB4mH81ZX97sY12BpA/edit';
+
+    function extractSheetId(url) {
+        const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+        return match ? match[1] : null;
+    }
+
+    function syncFromGoogleSheets() {
+        const inputEl = document.getElementById('csv-url-input');
+        const rawUrl = (inputEl.value.trim() || DEFAULT_SHEET_URL);
+        const feedback = document.getElementById('sync-feedback');
+        const sheetId = extractSheetId(rawUrl);
+
+        if (!sheetId) {
+            feedback.innerText = '⚠️ Keine gültige Google-Sheets-ID im Link gefunden.';
+            return;
+        }
+
+        feedback.innerText = '⏳ Lade Daten direkt aus Google Sheets...';
+
+        const callbackName = 'gvizCallback_' + Date.now();
+        const script = document.createElement('script');
+
+        const timeoutId = setTimeout(() => {
+            if (window[callbackName]) {
+                delete window[callbackName];
+                if (script.parentNode) script.parentNode.removeChild(script);
+                feedback.innerText = '❌ Zeitüberschreitung: Prüfe in der Sheets-App unter "Zugriff verwalten", ob "Jeder mit dem Link" aktiv ist.';
+            }
+        }, 8000);
+
+        window[callbackName] = function(json) {
+            clearTimeout(timeoutId);
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+
+            try {
+                if (!json || json.status === 'error' || !json.table) {
+                    throw new Error('Tabelle nicht öffentlich freigegeben');
+                }
+
+                const cols = json.table.cols.map(c => (c.label || '').trim());
+                const rows = json.table.rows || [];
+
+                let headers = cols;
+                let startRowIdx = 0;
+                if (headers.every(h => h === '') && rows.length > 0) {
+                    headers = rows[0].c.map(cell => (cell && cell.v !== null && cell.v !== undefined) ? String(cell.v).trim() : '');
+                    startRowIdx = 1;
+                }
+
+                const parsed = [];
+                for (let r = startRowIdx; r < rows.length; r++) {
+                    const rowCells = rows[r].c || [];
+                    const obj = {};
+                    let hasContent = false;
+                    headers.forEach((h, idx) => {
+                        if (!h) return;
+                        const cell = rowCells[idx];
+                        let val = '';
+                        if (cell && cell.v !== null && cell.v !== undefined) {
+                            val = String(cell.v).trim();
+                        }
+                        if (val !== '') hasContent = true;
+                        obj[h] = h === 'Kapo' ? normalizeKapo(val) : val;
+                    });
+                    if (hasContent && obj.Titel) {
+                        parsed.push(obj);
+                    }
+                }
+
+                if (parsed.length === 0) throw new Error('Keine gültigen Song-Zeilen gefunden');
+
+                localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(parsed));
+                localStorage.setItem('band_cockpit_csv_url', rawUrl);
+                allSongs = parsed;
+                populateTuningFilter();
+                rebuildActiveList();
+                feedback.innerText = `✅ Erfolgreich! ${parsed.length} Songs geladen.`;
+                setTimeout(closeSyncModal, 1200);
+            } catch (err) {
+                feedback.innerText = '❌ Fehler beim Lesen: Prüfe in der Sheets-App, ob "Jeder mit dem Link" aktiv ist.';
+            }
+        };
+
+        script.onerror = function() {
+            clearTimeout(timeoutId);
+            delete window[callbackName];
+            if (script.parentNode) script.parentNode.removeChild(script);
+            feedback.innerText = '❌ Zugriff verweigert! Bitte in der Google-Sheets-App unter "Zugriff verwalten" auf "Jeder, der über den Link verfügt" umstellen.';
+        };
+
+        script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json;responseHandler:${callbackName}`;
+        document.body.appendChild(script);
+    }
+
+    function exportLocalToCSV() {
+        const headers = ["Setlist_Pos","Set_Block","Titel","Artist","Gitarre_Tuning","Kapo","Rig_Start","Uebergang","Cues_Warnung","Struktur_Chords","Tonart","BPM","Status","Link","Tabs"];
+        const csvRows = [headers.join(',')];
+
+        allSongs.forEach(s => {
+            const row = headers.map(h => {
+                const val = String(s[h] !== undefined ? s[h] : '').replace(/"/g, '""');
+                return `"${val}"`;
+            });
+            csvRows.push(row.join(','));
+        });
+
+        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'Band_Cockpit_Backup.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    document.getElementById('search').addEventListener('input', rebuildActiveList);
+    document.getElementById('view-filter').addEventListener('change', rebuildActiveList);
+    document.getElementById('tuning-filter').addEventListener('change', rebuildActiveList);
+    document.getElementById('status-filter').addEventListener('change', rebuildActiveList);
+
+    requestWakeLock();
+    loadSavedData();
+
+    // Wischgesten (Touch Navigation - Ignoriert Berührungen auf dem BPM-Slider!)
+    let touchstartX = 0;
+    let touchendX = 0;
+    let isDraggingSlider = false;
+
+    const mainArea = document.getElementById('main');
+    mainArea.addEventListener('touchstart', e => {
+        if (e.target && e.target.type === 'range') {
+            isDraggingSlider = true;
+            return;
+        }
+        isDraggingSlider = false;
+        touchstartX = e.changedTouches[0].screenX;
+    }, {passive: true});
+
+    mainArea.addEventListener('touchend', e => {
+        if (isDraggingSlider) {
+            isDraggingSlider = false;
+            return;
+        }
+        touchendX = e.changedTouches[0].screenX;
+        handleSwipe();
+    }, {passive: true});
+
+    function handleSwipe() {
+        const threshold = 65;
+        if (touchendX < touchstartX - threshold) stepSong(1);
+        if (touchendX > touchstartX + threshold) stepSong(-1);
+    }
+</script>
+</body>
+</html>
