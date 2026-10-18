@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#050705">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>LKB Live Cockpit</title>
     <style>
         /* ==========================================================================
@@ -722,7 +725,6 @@
         }
         body.practice-mode #next-song-banner { display: none; }
 
-        /* Wenn Wechsel ansteht: Grüne Hervorhebung statt Rot */
         #next-song-banner.warning-alert {
             background: var(--primary);
             color: #000000;
@@ -882,7 +884,7 @@
             <!-- 2. HAUPT-INHALT -->
             <div id="song-content"></div>
 
-            <!-- 3. NÄCHSTER SONG WARNER (JETZT IN GRÜN & OHNE ÜBERGANGS-TEXT) -->
+            <!-- 3. NÄCHSTER SONG WARNER (IN GRÜN & OHNE ÜBERGANGS-TEXT) -->
             <div id="next-song-banner">
                 <span id="next-info-title">Nächster Song: -</span>
                 <span id="next-info-guitar"></span>
@@ -1447,7 +1449,6 @@
         updateNextSongBanner(song);
     }
 
-    // NÄCHSTER SONG WARNER (OHNE ÜBERGANGS-TEXT, GRÜNES HIGHLIGHT BEI WECHSEL)
     function updateNextSongBanner(currentSong) {
         const bar = document.getElementById('next-song-banner');
         if (isPracticeMode) { bar.style.display = 'none'; return; }
@@ -1458,7 +1459,6 @@
 
         if (currentIndex + 1 < activeList.length) {
             const nextSong = activeList[currentIndex + 1];
-            // Übergang entfernt – nur noch reiner Songtitel
             titleEl.innerText = `Nächster: ${nextSong.Titel}`;
             
             const guitarChanged = (currentSong.Gitarre_Tuning || '').trim() !== (nextSong.Gitarre_Tuning || '').trim();
@@ -1638,6 +1638,11 @@
         if (touchendX < touchstartX - 65) stepSong(1);
         if (touchendX > touchstartX + 65) stepSong(-1);
     }, {passive: true});
+
+    // OFFLINE-SCHUTZ FÜR MISCHPULT-WLAN (SERVICE WORKER)
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+    }
 </script>
 </body>
 </html>
