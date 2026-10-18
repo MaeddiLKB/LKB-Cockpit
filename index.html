@@ -70,7 +70,7 @@
         }
 
         /* ==========================================================================
-           SPLASH SCREEN (3 SEKUNDEN START-LOGO MIT SOFORT-BYPASS)
+           SPLASH SCREEN
            ========================================================================== */
         #lkb-splash {
             position: fixed;
@@ -96,13 +96,8 @@
             justify-content: center;
             align-items: center;
             filter: drop-shadow(0 0 28px rgba(0, 214, 67, 0.28));
-            animation: splashPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        .splash-logo-wrap svg {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
+        .splash-logo-wrap svg { width: 100%; height: 100%; object-fit: contain; }
         .splash-hint {
             margin-top: 22px;
             font-size: 0.72rem;
@@ -112,13 +107,9 @@
             color: var(--text-dim);
             opacity: 0.7;
         }
-        @keyframes splashPop {
-            0% { transform: scale(0.86); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
 
         /* ==========================================================================
-           AUTO-HIDE TOP SECTION (HEADER + NAV BIS ZUR GRÜNEN LINIE)
+           AUTO-HIDE TOP SECTION (MIT SICHERHEITSABSTAND ZUR KAMERA)
            ========================================================================== */
         #top-collapsible {
             display: flex;
@@ -144,7 +135,8 @@
         header {
             background: var(--surface);
             border-bottom: 2px solid var(--border);
-            padding: 6px 10px;
+            padding: 8px 12px;
+            padding-top: max(8px, env(safe-area-inset-top)); /* Schutz vor Notch/Kamera */
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -187,20 +179,15 @@
             background: var(--surface-card);
             color: var(--text);
             border: 2px solid var(--border-highlight);
-            padding: 9px 16px;
+            padding: 8px 14px;
             border-radius: 8px;
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: 900;
             cursor: pointer;
             flex: 1;
-            max-width: 190px;
+            max-width: 170px;
             text-align: center;
             user-select: none;
-        }
-        body.practice-mode .btn-nav {
-            padding: 6px 12px;
-            font-size: 0.88rem;
-            border-width: 1px;
         }
         .btn-nav:active:not(:disabled) {
             background: var(--primary);
@@ -209,9 +196,9 @@
         }
         .btn-nav:disabled { opacity: 0.25; cursor: not-allowed; }
         .nav-center-box { text-align: center; }
-        .nav-counter { font-size: 1.15rem; font-weight: 900; color: var(--primary); line-height: 1; }
+        .nav-counter { font-size: 1.1rem; font-weight: 900; color: var(--primary); line-height: 1; }
         .nav-block-label {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             font-weight: 800;
             color: var(--text-dim);
             text-transform: uppercase;
@@ -352,20 +339,21 @@
             gap: 8px;
             border-bottom: 1px solid var(--border);
             padding-bottom: 4px;
+            padding-top: 2px; /* Sicherheitsabstand zur Kamera oben */
             flex-wrap: wrap;
             cursor: pointer;
             user-select: none;
         }
         .song-title-heading {
             font-family: Georgia, "Times New Roman", serif;
-            font-size: 1.65rem;
+            font-size: 1.45rem;
             font-weight: 900;
             line-height: 1.1;
             color: var(--text);
         }
         .song-artist-heading {
             color: var(--primary);
-            font-size: 0.88rem;
+            font-size: 0.82rem;
             font-weight: 800;
             text-transform: uppercase;
             letter-spacing: 0.8px;
@@ -396,46 +384,36 @@
             background: var(--primary);
             color: #ffffff;
             border: none;
-            padding: 7px 12px;
+            padding: 6px 10px;
             border-radius: 6px;
-            font-size: 0.92rem;
+            font-size: 0.88rem;
             font-weight: 900;
             cursor: pointer;
             white-space: nowrap;
-            min-width: 115px;
+            min-width: 105px;
             text-align: center;
-            transition: all 0.08s ease;
         }
-        .btn-metro-pill.playing {
-            background: #111713;
-            color: #00ff4c;
-        }
-        .btn-metro-pill.pulse {
-            background: #ffaa00 !important;
-            color: #000000 !important;
-            transform: scale(1.04);
-        }
+        .btn-metro-pill.playing { background: #111713; color: #00ff4c; }
+        .btn-metro-pill.pulse { background: #ffaa00 !important; color: #000000 !important; transform: scale(1.04); }
 
         .metro-step-group { display: flex; align-items: center; gap: 4px; }
         .btn-tempo-step {
             background: var(--surface-elevated);
             color: var(--text);
             border: 1px solid var(--border);
-            padding: 7px 9px;
+            padding: 6px 8px;
             border-radius: 5px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 800;
             cursor: pointer;
-            line-height: 1;
         }
-        .btn-tempo-step:active { background: var(--primary); color: #fff; }
         .btn-tempo-reset {
             background: var(--surface-card);
             color: var(--text-dim);
             border: 1px solid var(--border);
-            padding: 7px 8px;
+            padding: 6px 8px;
             border-radius: 5px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 800;
             cursor: pointer;
             white-space: nowrap;
@@ -454,24 +432,11 @@
         .slider-tempo-full {
             flex: 1;
             width: 100%;
-            height: 8px;
-            border-radius: 4px;
+            height: 6px;
+            border-radius: 3px;
             accent-color: var(--primary);
             cursor: pointer;
-            -webkit-appearance: none;
-            appearance: none;
             background: var(--surface-elevated);
-        }
-        .slider-tempo-full::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--primary);
-            border: 2px solid #ffffff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-            cursor: pointer;
         }
 
         .practice-tools-row {
@@ -487,17 +452,16 @@
             border: 1px solid var(--border);
             border-radius: 5px;
             padding: 5px 8px;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 800;
             cursor: pointer;
-            width: auto;
         }
         .audio-links-compact { display: flex; align-items: center; gap: 5px; }
         .btn-audio-pill {
             border: 1px solid var(--border);
-            padding: 5px 9px;
+            padding: 5px 8px;
             border-radius: 5px;
-            font-size: 0.78rem;
+            font-size: 0.75rem;
             font-weight: 800;
             text-decoration: none;
             display: inline-flex;
@@ -506,28 +470,27 @@
             white-space: nowrap;
         }
 
-        /* STIMMGERÄT (IN ÜBE-MODUS) */
+        /* STIMMGERÄT */
         #tuner-container {
             background: var(--surface-card);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 8px 10px;
-            margin-top: 4px;
+            padding: 6px 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 4px;
+            gap: 3px;
         }
         .tuner-display {
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 800;
         }
         .tuner-note {
-            font-size: 1.6rem;
+            font-size: 1.4rem;
             font-weight: 900;
             color: var(--primary);
             text-align: center;
@@ -536,17 +499,16 @@
         .tuner-meter {
             position: relative;
             width: 100%;
-            height: 10px;
+            height: 8px;
             background: var(--surface-elevated);
-            border-radius: 5px;
+            border-radius: 4px;
             overflow: hidden;
             border: 1px solid var(--border);
         }
         .tuner-needle {
             position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 4px;
+            top: 0; bottom: 0;
+            width: 3px;
             background: var(--danger);
             left: 50%;
             transform: translateX(-50%);
@@ -555,7 +517,7 @@
         .tuner-needle.in-tune { background: var(--primary); }
 
         /* ==========================================================================
-           PRE-SONG TELEMETRIE (GIG HUD)
+           STAGE HUD
            ========================================================================== */
         .stage-hud {
             display: grid;
@@ -576,7 +538,7 @@
         }
 
         .hud-label {
-            font-size: 0.62rem;
+            font-size: 0.6rem;
             font-weight: 900;
             color: var(--text-dim);
             text-transform: uppercase;
@@ -593,7 +555,7 @@
             border: none;
             outline: none;
             color: var(--primary);
-            font-size: 1.08rem;
+            font-size: 1rem;
             font-weight: 900;
             cursor: pointer;
             padding: 0;
@@ -609,12 +571,11 @@
         .hud-card.kapo-hud.has-kapo {
             border-color: var(--warning);
             background: var(--warning-bg);
-            box-shadow: 0 0 10px rgba(255, 183, 0, 0.25);
         }
         .kapo-value-select {
             text-align: center;
             text-align-last: center;
-            font-size: 1.25rem;
+            font-size: 1.15rem;
             font-weight: 900;
             color: var(--text-dim);
         }
@@ -628,13 +589,11 @@
             cursor: pointer;
         }
         .rig-value-display {
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 800;
             color: var(--text);
-            white-space: normal;
             overflow-wrap: anywhere;
-            word-break: break-word;
-            line-height: 1.35;
+            line-height: 1.3;
         }
 
         .hud-card.transition-hud {
@@ -646,59 +605,54 @@
             gap: 10px;
         }
         .hud-card.transition-hud .hud-label { margin-bottom: 0; white-space: nowrap; flex-shrink: 0; }
-        .transition-select { color: var(--text); font-size: 0.92rem; font-weight: 700; text-align: right; text-align-last: right; }
+        .transition-select { color: var(--text); font-size: 0.88rem; font-weight: 700; text-align: right; text-align-last: right; }
 
         /* ==========================================================================
-           TONART-FELD (GIG-MODUS) & AKKORDE (ÜBE-MODUS) & CUES (GANZ UNTEN)
+           KOMPAKTES TONART-FELD (GIG-MODUS) & AKKORDE (ÜBE-MODUS) & CUES
            ========================================================================== */
         .gig-key-card {
-            flex: 1;
             background: var(--surface-card);
-            border: 2px solid var(--primary);
-            border-radius: 10px;
-            padding: 16px;
+            border: 1.5px solid var(--primary);
+            border-radius: 8px;
+            padding: 10px 14px;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            min-height: 120px;
-            box-shadow: inset 0 0 24px var(--primary-glow);
+            justify-content: space-between;
+            gap: 10px;
         }
         body.practice-mode .gig-key-card { display: none; }
 
         .gig-key-label {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             font-weight: 900;
             color: var(--text-dim);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 6px;
+            letter-spacing: 1px;
         }
         .gig-key-select {
             background: transparent;
             border: none;
             outline: none;
             color: var(--primary);
-            font-size: 3.1rem;
+            font-size: 1.5rem;
             font-weight: 900;
-            text-align: center;
-            text-align-last: center;
+            text-align: right;
+            text-align-last: right;
             cursor: pointer;
-            width: 100%;
-            line-height: 1.1;
+            width: auto;
             padding: 0;
         }
 
-        /* Chords nur noch im Übe-Modus sichtbar */
         .chords-container {
             flex: 1;
             background: var(--surface-card);
             border: 1px solid var(--border);
             border-left: 4px solid var(--primary);
             border-radius: 7px;
-            padding: 12px 14px;
+            padding: 10px 12px;
             min-width: 0;
             display: none;
+            overflow-y: auto;
         }
         body.practice-mode .chords-container { display: block; }
 
@@ -708,19 +662,18 @@
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
         pre.chords-content {
             white-space: pre-wrap;
             overflow-wrap: anywhere;
             font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
-            font-size: 1.12rem;
+            font-size: 1.05rem;
             font-weight: 700;
-            line-height: 1.55;
+            line-height: 1.5;
             color: var(--text);
         }
 
-        /* Cues ganz unten als letzte musikalische Info vor dem Footer */
         .cue-banner {
             background: var(--danger-bg);
             border-left: 5px solid var(--danger);
@@ -733,7 +686,7 @@
         }
         .cue-banner-title {
             color: var(--danger);
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             font-weight: 900;
             text-transform: uppercase;
             letter-spacing: 0.8px;
@@ -741,15 +694,15 @@
         }
         .cue-banner-text {
             color: #ffe6e6;
-            font-size: 1.05rem;
+            font-size: 0.95rem;
             font-weight: 800;
-            line-height: 1.35;
+            line-height: 1.3;
             overflow-wrap: anywhere;
         }
         body.practice-mode .cue-banner { display: none; }
 
         /* ==========================================================================
-           NÄCHSTER SONG WARNER (GRÜN BEI JEGLICHEM SETUP-WECHSEL)
+           NÄCHSTER SONG WARNER
            ========================================================================== */
         #next-song-banner {
             background: var(--surface);
@@ -759,11 +712,10 @@
             justify-content: space-between;
             align-items: center;
             gap: 8px;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 800;
             flex-wrap: wrap;
             z-index: 10;
-            transition: background 0.2s ease, color 0.2s ease;
         }
         body.practice-mode #next-song-banner { display: none; }
 
@@ -773,10 +725,7 @@
             border-top: 2px solid #ffffff;
             box-shadow: 0 -2px 12px rgba(0, 214, 67, 0.35);
         }
-        #next-song-banner.warning-alert span {
-            color: #000000 !important;
-            font-weight: 900;
-        }
+        #next-song-banner.warning-alert span { color: #000000 !important; font-weight: 900; }
 
         .footer-microbar {
             background: var(--bg);
@@ -814,10 +763,18 @@
             gap: 14px;
         }
 
+        /* LANDSCAPE (QUERFORMAT) OPTIMIERUNG */
+        @media (orientation: landscape) and (max-height: 600px) {
+            .stage-hud { grid-template-columns: repeat(3, minmax(0, 1fr)) 80px; }
+            .hud-card.rig-hud { grid-column: span 2; }
+            .hud-card.transition-hud { grid-column: span 2; }
+            #song-content { gap: 6px; padding: 4px 10px; }
+            .gig-key-card { padding: 6px 12px; }
+            .gig-key-select { font-size: 1.25rem; }
+        }
+
         @media (max-width: 768px) {
             #sidebar { position: absolute; inset: 0; width: 100%; }
-            .song-title-heading { font-size: 1.45rem; }
-            .gig-key-select { font-size: 2.6rem; }
         }
     </style>
 </head>
@@ -864,7 +821,7 @@
         <div class="splash-hint">Tippen zum Überspringen</div>
     </div>
 
-    <!-- DER BEREICH BIS ZUR GRÜNEN LINIE (BLENDET NACH 3 SEKUNDEN WEICH AUS) -->
+    <!-- DER BEREICH BIS ZUR GRÜNEN LINIE -->
     <div id="top-collapsible">
         <header>
             <div class="header-group">
@@ -927,7 +884,7 @@
             <!-- 2. HAUPT-INHALT -->
             <div id="song-content"></div>
 
-            <!-- 3. NÄCHSTER SONG WARNER (DETAILLIERTE WECHSEL-ANALYSE FÜR GITARRE, TUNING & KAPO) -->
+            <!-- 3. NÄCHSTER SONG WARNER -->
             <div id="next-song-banner">
                 <span id="next-info-title">Nächster Song: -</span>
                 <span id="next-info-guitar"></span>
@@ -962,20 +919,14 @@
     </div>
 
 <script>
-    // AUTO-HIDE STEUERUNG (KOPF BIS ZUR GRÜNEN LINIE)
     let autoHideTimer = null;
 
     function resetTopAutoHide() {
-        if (isPracticeMode) {
-            showTopBar();
-            return;
-        }
+        if (isPracticeMode) { showTopBar(); return; }
         showTopBar();
         clearTimeout(autoHideTimer);
         autoHideTimer = setTimeout(() => {
-            if (!isPracticeMode) {
-                hideTopBar();
-            }
+            if (!isPracticeMode) hideTopBar();
         }, 3000);
     }
 
@@ -991,14 +942,10 @@
 
     function toggleTopBar() {
         const topEl = document.getElementById('top-collapsible');
-        if (topEl && topEl.classList.contains('hidden-top')) {
-            resetTopAutoHide();
-        } else {
-            hideTopBar();
-        }
+        if (topEl && topEl.classList.contains('hidden-top')) resetTopAutoHide();
+        else hideTopBar();
     }
 
-    // SPLASH-SCREEN LOGIK (3 Sekunden + Sofort-Bypass)
     function dismissSplash() {
         const splash = document.getElementById('lkb-splash');
         if (splash && !splash.classList.contains('splash-hidden')) {
@@ -1060,21 +1007,15 @@
         return clean;
     }
 
-    // HILFSFUNKTION: ZERLEGT "Paula (Drop D)" IN INSTRUMENT ("Paula") UND TUNING ("Drop D")
     function parseGuitarAndTuning(rawStr) {
         const str = (rawStr || '').trim();
         const match = str.match(/^([^(]+)\(([^)]+)\)/);
         if (match) {
-            return {
-                guitar: match[1].trim(),
-                tuning: match[2].trim(),
-                full: str
-            };
+            return { guitar: match[1].trim(), tuning: match[2].trim(), full: str };
         }
         return { guitar: str, tuning: '', full: str };
     }
 
-    // METRONOM
     let audioCtx = null;
     let isPlayingMetro = false;
     let currentBpm = 120;
@@ -1143,7 +1084,6 @@
         if (btn) btn.innerText = isPlayingMetro ? `⏹ ${currentBpm} BPM` : `▶ ${currentBpm} BPM`;
     }
 
-    // STIMMGERÄT (MIC & PITCH DETECTION)
     let audioContextTuner = null;
     let analyserTuner = null;
     let micStream = null;
@@ -1236,7 +1176,6 @@
         tunerAnimationFrame = requestAnimationFrame(updatePitch);
     }
 
-    // WAKE LOCK
     let wakeLock = null;
     async function requestWakeLock() {
         try {
@@ -1257,7 +1196,6 @@
         else if (document.exitFullscreen) document.exitFullscreen();
     }
 
-    // DATEN & RENDERING
     function getSpotifyLinkHtml(song) {
         const query = encodeURIComponent((song.Artist || '') + ' ' + (song.Titel || ''));
         const spotifyWebUrl = (song.Link && song.Link.startsWith('http') && !song.Link.endsWith('spotify.com/')) ? song.Link : 'https://open.spotify.com/search/' + query;
@@ -1492,7 +1430,7 @@
                 </div>
             </div>
 
-            <!-- GIG-MODUS: RIESIGE TONART ANSTATT AKKORDE -->
+            <!-- GIG-MODUS: KOMPAKTES TONART-FELD -->
             <div class="gig-key-card">
                 <div class="gig-key-label">🎵 Tonart / Key</div>
                 <select class="gig-key-select" onchange="updateSongVariable('Tonart', this)">
@@ -1500,13 +1438,13 @@
                 </select>
             </div>
 
-            <!-- ÜBE-MODUS: CHORDS & ABLAUF BLEIBEN ZUM TRAINIEREN ERHALTEN -->
+            <!-- ÜBE-MODUS: CHORDS & ABLAUF -->
             <div class="chords-container">
                 <div class="chords-header">🎵 Chords & Ablauf</div>
                 <pre class="chords-content">${song.Struktur_Chords || ''}</pre>
             </div>
 
-            <!-- CUES GANZ UNTEN ALS LETZTE MUSIKALISCHE INFO -->
+            <!-- CUES GANZ UNTEN -->
             ${song.Cues_Warnung ? `
             <div class="cue-banner">
                 <div class="cue-banner-title">⚠️ Live-Cue / Stolperfalle</div>
@@ -1517,7 +1455,6 @@
         updateNextSongBanner(song);
     }
 
-    // PRÄZISE SETUP-DIFFERENZ-ANALYSE FÜR DEN NÄCHSTEN SONG
     function updateNextSongBanner(currentSong) {
         const bar = document.getElementById('next-song-banner');
         if (isPracticeMode) { bar.style.display = 'none'; return; }
@@ -1545,31 +1482,20 @@
             } else {
                 bar.className = 'warning-alert';
                 let actions = [];
-
-                // 1. Physischer Gitarrenwechsel vs. nur Umstimmen derselben Gitarre
                 if (!sameGuitar) {
                     actions.push(`GITARRE: ${nextSong.Gitarre_Tuning}`);
                 } else if (!sameTuning) {
                     const curIsDrop = curGT.tuning.toLowerCase().includes('drop');
                     const nextIsDrop = nextGT.tuning.toLowerCase().includes('drop');
-                    if (!curIsDrop && nextIsDrop) {
-                        actions.push(`RUNTERSTIMMEN: auf ${nextGT.tuning}`);
-                    } else if (curIsDrop && !nextIsDrop) {
-                        actions.push(`HOCHSTIMMEN: auf ${nextGT.tuning}`);
-                    } else {
-                        actions.push(`UMSTIMMEN: auf ${nextGT.tuning}`);
-                    }
+                    if (!curIsDrop && nextIsDrop) actions.push(`RUNTERSTIMMEN: auf ${nextGT.tuning}`);
+                    else if (curIsDrop && !nextIsDrop) actions.push(`HOCHSTIMMEN: auf ${nextGT.tuning}`);
+                    else actions.push(`UMSTIMMEN: auf ${nextGT.tuning}`);
                 }
 
-                // 2. Kapo-Prüfung (Drauf, Runter oder Verschieben)
                 if (!sameKapo) {
-                    if (curKapo === '-' && nextKapo !== '-') {
-                        actions.push(`KAPO DRAUF: ${nextKapo}`);
-                    } else if (curKapo !== '-' && nextKapo === '-') {
-                        actions.push(`KAPO RUNTER!`);
-                    } else {
-                        actions.push(`KAPO AUF ${nextKapo}`);
-                    }
+                    if (curKapo === '-' && nextKapo !== '-') actions.push(`KAPO DRAUF: ${nextKapo}`);
+                    else if (curKapo !== '-' && nextKapo === '-') actions.push(`KAPO RUNTER!`);
+                    else actions.push(`KAPO AUF ${nextKapo}`);
                 } else if (!sameGuitar && nextKapo !== '-') {
                     actions.push(`KAPO: ${nextKapo}`);
                 }
@@ -1728,7 +1654,6 @@
     requestWakeLock();
     loadSavedData();
 
-    // Wischgesten (Blättern)
     let touchstartX = 0, touchendX = 0, isDraggingSlider = false;
     const mainArea = document.getElementById('main');
     mainArea.addEventListener('touchstart', e => {
@@ -1744,7 +1669,6 @@
         if (touchendX > touchstartX + 65) stepSong(-1);
     }, {passive: true});
 
-    // OFFLINE-SCHUTZ FÜR MISCHPULT-WLAN (SERVICE WORKER)
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
