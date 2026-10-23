@@ -8,9 +8,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>LKB Live Cockpit</title>
     <style>
-        /* ==========================================================================
-           DESIGN SYSTEM (LKB IDENTITY - HKS 64 K BAND GREEN)
-           ========================================================================== */
         :root {
             --bg: #050705;
             --surface: #0e120f;
@@ -69,9 +66,6 @@
             transition: background-color 0.2s ease, color 0.2s ease;
         }
 
-        /* ==========================================================================
-           SPLASH SCREEN
-           ========================================================================== */
         #lkb-splash {
             position: fixed;
             inset: 0;
@@ -84,11 +78,7 @@
             cursor: pointer;
             transition: opacity 0.45s ease, visibility 0.45s ease;
         }
-        #lkb-splash.splash-hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
+        #lkb-splash.splash-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .splash-logo-wrap {
             width: min(74vw, 310px);
             height: min(74vw, 310px);
@@ -108,9 +98,6 @@
             opacity: 0.7;
         }
 
-        /* ==========================================================================
-           AUTO-HIDE TOP SECTION (MIT SICHERHEITSABSTAND ZUR KAMERA)
-           ========================================================================== */
         #top-collapsible {
             display: flex;
             flex-direction: column;
@@ -136,7 +123,7 @@
             background: var(--surface);
             border-bottom: 2px solid var(--border);
             padding: 8px 12px;
-            padding-top: max(8px, env(safe-area-inset-top)); /* Schutz vor Notch/Kamera */
+            padding-top: max(8px, env(safe-area-inset-top));
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -206,9 +193,6 @@
             margin-top: 2px;
         }
 
-        /* ==========================================================================
-           WORKSPACE & SIDEBAR DRAWER
-           ========================================================================== */
         #workspace {
             display: flex;
             flex: 1;
@@ -298,9 +282,6 @@
         .dot-Gelb { background: #ffb700; }
         .dot-Rot { background: #ff2a2a; }
 
-        /* ==========================================================================
-           MAIN COCKPIT
-           ========================================================================== */
         #main {
             flex: 1;
             display: flex;
@@ -339,7 +320,7 @@
             gap: 8px;
             border-bottom: 1px solid var(--border);
             padding-bottom: 4px;
-            padding-top: 2px; /* Sicherheitsabstand zur Kamera oben */
+            padding-top: 2px;
             flex-wrap: wrap;
             cursor: pointer;
             user-select: none;
@@ -359,9 +340,6 @@
             letter-spacing: 0.8px;
         }
 
-        /* ==========================================================================
-           ÜBE-MODUS TOOLBAR & STIMMGERÄT
-           ========================================================================== */
         #practice-dashboard {
             background: var(--surface);
             border: 1.5px solid var(--primary);
@@ -470,7 +448,6 @@
             white-space: nowrap;
         }
 
-        /* STIMMGERÄT */
         #tuner-container {
             background: var(--surface-card);
             border: 1px solid var(--border);
@@ -516,9 +493,6 @@
         }
         .tuner-needle.in-tune { background: var(--primary); }
 
-        /* ==========================================================================
-           STAGE HUD
-           ========================================================================== */
         .stage-hud {
             display: grid;
             grid-template-columns: minmax(0, 1fr) 72px;
@@ -589,11 +563,14 @@
             cursor: pointer;
         }
         .rig-value-display {
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--text);
-            overflow-wrap: anywhere;
-            line-height: 1.3;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
         }
 
         .hud-card.transition-hud {
@@ -607,9 +584,6 @@
         .hud-card.transition-hud .hud-label { margin-bottom: 0; white-space: nowrap; flex-shrink: 0; }
         .transition-select { color: var(--text); font-size: 0.88rem; font-weight: 700; text-align: right; text-align-last: right; }
 
-        /* ==========================================================================
-           KOMPAKTES TONART-FELD (GIG-MODUS) & AKKORDE (ÜBE-MODUS) & CUES
-           ========================================================================== */
         .gig-key-card {
             background: var(--surface-card);
             border: 1.5px solid var(--primary);
@@ -701,9 +675,6 @@
         }
         body.practice-mode .cue-banner { display: none; }
 
-        /* ==========================================================================
-           NÄCHSTER SONG WARNER
-           ========================================================================== */
         #next-song-banner {
             background: var(--surface);
             border-top: 2px solid var(--border);
@@ -739,7 +710,6 @@
             z-index: 5;
         }
 
-        /* MODAL */
         #sync-modal {
             position: fixed;
             inset: 0;
@@ -763,7 +733,6 @@
             gap: 14px;
         }
 
-        /* LANDSCAPE (QUERFORMAT) OPTIMIERUNG */
         @media (orientation: landscape) and (max-height: 600px) {
             .stage-hud { grid-template-columns: repeat(3, minmax(0, 1fr)) 80px; }
             .hud-card.rig-hud { grid-column: span 2; }
@@ -780,7 +749,6 @@
 </head>
 <body>
 
-    <!-- START-SPLASH-SCREEN -->
     <div id="lkb-splash" onclick="dismissSplash()" title="Tippen zum Überspringen">
         <div class="splash-logo-wrap">
             <svg viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
@@ -821,7 +789,6 @@
         <div class="splash-hint">Tippen zum Überspringen</div>
     </div>
 
-    <!-- DER BEREICH BIS ZUR GRÜNEN LINIE -->
     <div id="top-collapsible">
         <header>
             <div class="header-group">
@@ -881,10 +848,8 @@
                 <text x="100" y="165" text-anchor="middle" font-family="Georgia, serif" font-size="11" font-weight="bold" letter-spacing="1.5" fill="currentColor">SINCE 2013</text>
             </svg>
 
-            <!-- 2. HAUPT-INHALT -->
             <div id="song-content"></div>
 
-            <!-- 3. NÄCHSTER SONG WARNER -->
             <div id="next-song-banner">
                 <span id="next-info-title">Nächster Song: -</span>
                 <span id="next-info-guitar"></span>
@@ -897,7 +862,6 @@
         </div>
     </div>
 
-    <!-- SYNC MODAL -->
     <div id="sync-modal">
         <div class="modal-card">
             <h3 style="color: var(--primary);">Google Sheets Synchronisation</h3>
@@ -962,9 +926,9 @@
             Set_Block: "Set 1",
             Titel: "Use Somebody",
             Artist: "Kings of Leon",
-            Gitarre_Tuning: "Strat (E-Standard)",
+            Gitarre_Tuning: "Düse (E-Standard)",
             Kapo: "-",
-            Rig_Start: "Bank 4 - Patch 2 | Bridge PU | Vol 10",
+            Rig_Start: "1-31-43-31-3",
             Uebergang: "Normaler Stop",
             Cues_Warnung: "Achtung: Drummer zählt 2 Takte vor! Nach dem 2. Chorus direkt in die Bridge ohne Pause.",
             Struktur_Chords: "Intro:  C - E/G# - Am - F (2x)\nVerse:  C - E/G# - Am - F\nChorus: Volles Brett, offene Akkorde\nBridge: Oktav-Riff auf A-Saite (3. -> 7. -> 8. Bund)",
@@ -976,7 +940,7 @@
         }
     ];
 
-    const BASE_GUITARS = ["Strat (E-Standard)", "Strat (Eb-Standard)", "Paula (E-Standard)", "Paula (Drop D)", "Paula (Eb-Standard)", "Tele (E-Standard)", "Akustik (E-Standard)"];
+    const BASE_GUITARS = ["Düse (E-Standard)", "Düse (Eb-Standard)", "Tele (E-Standard)", "Tele (Drop D)", "Paula (E-Standard)", "Paula (Drop D)", "Akustik (E-Standard)"];
     const BASE_KAPOS = ["-", "K1", "K2", "K3", "K4", "K5", "K6", "K7"];
     const BASE_TRANSITIONS = ["Normaler Stop", "Direkt weiter in nächsten Song!", "Ausklang stehen lassen", "Drummer zählt direkt an", "Fermate / Blickkontakt"];
     const BASE_KEYS = ["C Major", "C Minor", "Db Major", "D Major", "D Minor", "Eb Major", "E Major", "E Minor", "F Major", "F Minor", "Gb Major", "G Major", "G Minor", "Ab Major", "A Major", "A Minor", "Bb Major", "B Major", "B Minor", "F# Minor", "C# Minor"];
@@ -990,7 +954,7 @@
         const song = activeList[currentIndex];
         if (!song) return;
         const current = song.Rig_Start || '';
-        const newVal = prompt('Rig / Bank / Sound-Start anpassen:', current);
+        const newVal = prompt('Rig / Code anpassen:', current);
         if (newVal !== null) {
             song.Rig_Start = newVal.trim();
             localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
@@ -1151,527 +1115,3 @@
     }
 
     function updatePitch() {
-        if (!isTunerActive) return;
-        let buf = new Float32Array(2048);
-        analyserTuner.getFloatTimeDomainData(buf);
-        let ac = autoCorrelate(buf, audioContextTuner.sampleRate);
-
-        if (ac !== -1) {
-            let pitch = ac;
-            let noteNum = 12 * (Math.log(pitch / 440) / Math.log(2));
-            let note = Math.round(noteNum) + 69;
-            let noteName = noteStrings[note % 12];
-            let detune = 1200 * (Math.log(pitch / (440 * Math.pow(2, (note - 69) / 12))) / Math.log(2));
-
-            document.getElementById('tuner-note').innerText = noteName;
-            document.getElementById('tuner-hz').innerText = pitch.toFixed(1) + ' Hz';
-
-            let needlePos = 50 + (detune / 50) * 45;
-            needlePos = Math.max(5, Math.min(95, needlePos));
-            const needle = document.getElementById('tuner-needle');
-            needle.style.left = needlePos + '%';
-            if (Math.abs(detune) < 4) needle.classList.add('in-tune');
-            else needle.classList.remove('in-tune');
-        }
-        tunerAnimationFrame = requestAnimationFrame(updatePitch);
-    }
-
-    let wakeLock = null;
-    async function requestWakeLock() {
-        try {
-            if ('wakeLock' in navigator) {
-                wakeLock = await navigator.wakeLock.request('screen');
-                document.getElementById('wake-status').innerText = 'aktiv (🟢)';
-            }
-        } catch (err) {
-            document.getElementById('wake-status').innerText = 'Standby';
-        }
-    }
-    document.addEventListener('visibilitychange', () => {
-        if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock();
-    });
-
-    function toggleFullScreen() {
-        if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
-        else if (document.exitFullscreen) document.exitFullscreen();
-    }
-
-    function getSpotifyLinkHtml(song) {
-        const query = encodeURIComponent((song.Artist || '') + ' ' + (song.Titel || ''));
-        const spotifyWebUrl = (song.Link && song.Link.startsWith('http') && !song.Link.endsWith('spotify.com/')) ? song.Link : 'https://open.spotify.com/search/' + query;
-        const ytUrl = 'https://www.youtube.com/results?search_query=' + query;
-        return `
-            <div class="audio-links-compact">
-                <a href="${spotifyWebUrl}" target="_blank" rel="noopener noreferrer" class="btn-audio-pill" style="background: #1db954; color: #000; border-color: #169c46;">🟢 Spotify</a>
-                <a href="${ytUrl}" target="_blank" rel="noopener noreferrer" class="btn-audio-pill" style="background: #e62117; color: #fff; border-color: #b81911;">▶️ YT</a>
-            </div>
-        `;
-    }
-
-    function loadSavedData() {
-        const saved = localStorage.getItem('band_cockpit_songs_v1');
-        allSongs = saved ? JSON.parse(saved) : defaultSongs;
-        allSongs.forEach(s => { s.Kapo = normalizeKapo(s.Kapo); });
-        document.getElementById('csv-url-input').value = localStorage.getItem('band_cockpit_csv_url') || 'https://docs.google.com/spreadsheets/d/1aQWoR7msLCf3VWyLoSCtjKReqkB4mH81ZX97sY12BpA/edit';
-        populateTuningFilter();
-        rebuildActiveList();
-    }
-
-    function getMergedOptions(fieldName, baseOptions) {
-        const fromData = allSongs.map(s => {
-            const raw = (s[fieldName] || '').trim();
-            return fieldName === 'Kapo' ? normalizeKapo(raw) : raw;
-        }).filter(Boolean);
-        return [...new Set([...baseOptions, ...fromData])];
-    }
-
-    function buildSelectOptionsHtml(optionsList, selectedValue) {
-        const cleanSelected = (selectedValue || '').trim();
-        let html = optionsList.map(opt => `<option value="${opt.replace(/"/g, '&quot;')}" ${opt === cleanSelected ? 'selected' : ''}>${opt}</option>`).join('');
-        html += `<option value="__CUSTOM__">➕ Neu...</option>`;
-        return html;
-    }
-
-    function updateSongVariable(field, selectElement) {
-        const song = activeList[currentIndex];
-        if (!song) return;
-        let newVal = selectElement.value;
-        if (newVal === '__CUSTOM__') {
-            const customInput = prompt(`Neuen Wert für ${field} eingeben:`, song[field] || '');
-            if (customInput === null || customInput.trim() === '') { renderCurrentSong(); return; }
-            newVal = field === 'Kapo' ? normalizeKapo(customInput) : customInput.trim();
-        }
-        song[field] = newVal;
-        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
-        populateTuningFilter();
-        renderSidebarList();
-        renderCurrentSong();
-    }
-
-    function populateTuningFilter() {
-        const select = document.getElementById('tuning-filter');
-        const currentVal = select.value;
-        const tunings = getMergedOptions('Gitarre_Tuning', BASE_GUITARS);
-        select.innerHTML = '<option value="ALL">🎸 Alle Gitarren / Tunings</option>';
-        tunings.forEach(t => {
-            const opt = document.createElement('option');
-            opt.value = t; opt.innerText = t;
-            select.appendChild(opt);
-        });
-        select.value = tunings.includes(currentVal) ? currentVal : 'ALL';
-    }
-
-    function rebuildActiveList() {
-        const query = document.getElementById('search').value.toLowerCase();
-        const viewMode = document.getElementById('view-filter').value;
-        const tuning = document.getElementById('tuning-filter').value;
-        const statusFilter = document.getElementById('status-filter').value;
-
-        let filtered = allSongs.filter(s => {
-            const matchesQuery = (s.Titel || '').toLowerCase().includes(query) || (s.Artist || '').toLowerCase().includes(query);
-            const matchesTuning = tuning === 'ALL' || s.Gitarre_Tuning === tuning;
-            const matchesStatus = statusFilter === 'ALL' || (s.Status || 'Grün') === statusFilter;
-            const hasSetlistPos = s.Setlist_Pos && s.Setlist_Pos.trim() !== '' && !isNaN(Number(s.Setlist_Pos));
-            const matchesView = (viewMode === 'ALL' || query.length > 0 || statusFilter !== 'ALL') ? true : hasSetlistPos;
-            return matchesQuery && matchesTuning && matchesStatus && matchesView;
-        });
-
-        filtered.sort((a, b) => {
-            const posA = parseInt(a.Setlist_Pos, 10);
-            const posB = parseInt(b.Setlist_Pos, 10);
-            if (!isNaN(posA) && !isNaN(posB)) return posA - posB;
-            if (!isNaN(posA)) return -1;
-            if (!isNaN(posB)) return 1;
-            return (a.Titel || '').localeCompare(b.Titel || '');
-        });
-
-        activeList = filtered;
-        currentIndex = 0;
-        renderSidebarList();
-        renderCurrentSong();
-    }
-
-    function renderSidebarList() {
-        const listEl = document.getElementById('song-list');
-        listEl.innerHTML = '';
-        activeList.forEach((song, idx) => {
-            const li = document.createElement('li');
-            li.className = 'song-item' + (idx === currentIndex ? ' active' : '');
-            const posHtml = song.Setlist_Pos ? `<span class="badge-pos">${song.Setlist_Pos}</span>` : '';
-            const kapoBadge = (song.Kapo && song.Kapo !== '-') ? ` · ${normalizeKapo(song.Kapo)}` : '';
-            li.innerHTML = `
-                <div>
-                    <div class="song-title-text">${posHtml}<span>${song.Titel || 'Unbenannt'}</span><span class="dot-status dot-${song.Status || 'Grün'}"></span></div>
-                    <div class="song-sub-text">${song.Artist || ''}</div>
-                </div>
-                <span class="badge-tuning">${song.Gitarre_Tuning || '-'}${kapoBadge}</span>
-            `;
-            li.onclick = () => {
-                currentIndex = idx;
-                renderSidebarList();
-                renderCurrentSong();
-                if (window.innerWidth <= 768) toggleSidebar(false);
-            };
-            listEl.appendChild(li);
-        });
-    }
-
-    function renderCurrentSong() {
-        stopMetronomeIfRunning();
-        resetTopAutoHide();
-
-        const contentEl = document.getElementById('song-content');
-        const prevBtn = document.getElementById('btn-prev');
-        const nextBtn = document.getElementById('btn-next');
-
-        if (activeList.length === 0) {
-            contentEl.innerHTML = `<h2 style="color: var(--text-dim); text-align: center; margin-top: 40px;">Keine Songs gefunden.</h2>`;
-            prevBtn.disabled = true; nextBtn.disabled = true;
-            return;
-        }
-
-        const song = activeList[currentIndex];
-        song.Kapo = normalizeKapo(song.Kapo);
-        originalBpm = parseInt(song.BPM, 10) || 120;
-        currentBpm = originalBpm;
-
-        document.getElementById('nav-block').innerText = song.Set_Block || (isPracticeMode ? 'ÜBE-ARCHIV' : 'SETLIST');
-        document.getElementById('nav-counter').innerText = `${currentIndex + 1} / ${activeList.length}`;
-        prevBtn.disabled = currentIndex === 0;
-        nextBtn.disabled = currentIndex === activeList.length - 1;
-
-        const currentStatus = song.Status || 'Grün';
-        const hasKapo = song.Kapo && song.Kapo !== '-';
-        const keyOptionsHtml = buildSelectOptionsHtml(getMergedOptions('Tonart', BASE_KEYS), song.Tonart || 'C Major');
-
-        contentEl.innerHTML = `
-            <div class="header-title-row" onclick="toggleTopBar()" title="Tippen zum Ein-/Ausblenden der Menüleisten">
-                <div class="song-title-heading">${song.Setlist_Pos && !isPracticeMode ? song.Setlist_Pos + '. ' : ''}${song.Titel}</div>
-                <div class="song-artist-heading">${song.Artist}</div>
-            </div>
-
-            <div id="practice-dashboard">
-                <div class="metro-top-row">
-                    <button id="btn-metro-compact" class="btn-metro-pill" onclick="toggleMetronome()">▶ ${currentBpm} BPM</button>
-                    <div class="metro-step-group">
-                        <button class="btn-tempo-step" onclick="adjustBpm(-5)">-5</button>
-                        <button class="btn-tempo-step" onclick="adjustBpm(-1)">-1</button>
-                        <button class="btn-tempo-step" onclick="adjustBpm(1)">+1</button>
-                        <button class="btn-tempo-step" onclick="adjustBpm(5)">+5</button>
-                    </div>
-                    <button class="btn-tempo-reset" onclick="adjustBpm(0, ${originalBpm})">↺ ${originalBpm}</button>
-                </div>
-
-                <div class="metro-slider-row">
-                    <span class="slider-bound-label">40</span>
-                    <input type="range" id="bpm-slider-compact" class="slider-tempo-full" min="40" max="240" value="${currentBpm}" oninput="adjustBpm(0, this.value)">
-                    <span class="slider-bound-label">240</span>
-                </div>
-
-                <div class="practice-tools-row">
-                    <div style="display: flex; gap: 5px; align-items: center;">
-                        <select class="select-tool-pill" style="color: var(--primary);" onchange="updateSongVariable('Tonart', this)">
-                            ${keyOptionsHtml}
-                        </select>
-                        <select class="select-tool-pill" onchange="updateSongVariable('Status', this)">
-                            <option value="Grün" ${currentStatus === 'Grün' ? 'selected' : ''}>🟢 Sitzt</option>
-                            <option value="Gelb" ${currentStatus === 'Gelb' ? 'selected' : ''}>🟡 Wackelt</option>
-                            <option value="Rot" ${currentStatus === 'Rot' ? 'selected' : ''}>🔴 Lernen</option>
-                        </select>
-                    </div>
-                    ${getSpotifyLinkHtml(song)}
-                </div>
-
-                <!-- STIMMGERÄT -->
-                <div id="tuner-container">
-                    <div class="tuner-display">
-                        <span style="color: var(--text-dim);">🎤 STIMMGERÄT</span>
-                        <span id="tuner-hz" style="color: var(--text);">0.0 Hz</span>
-                    </div>
-                    <div id="tuner-note" class="tuner-note">-</div>
-                    <div class="tuner-meter">
-                        <div id="tuner-needle" class="tuner-needle"></div>
-                    </div>
-                    <button class="btn-tool" id="btn-tuner-toggle" onclick="toggleTuner()" style="width: 100%; justify-content: center; margin-top: 2px;">🎙️ Mikrofon für Stimmgerät aktivieren</button>
-                </div>
-
-                ${song.Tabs ? `
-                <details style="margin-top: 2px; border-top: 1px solid var(--border); padding-top: 4px;">
-                    <summary style="cursor: pointer; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: var(--primary);">🎸 Tabs & Notizen einblenden</summary>
-                    <pre style="margin-top: 6px; font-size: 0.95rem; background: var(--surface-card); padding: 8px 10px; border-radius: 5px; border: 1px solid var(--border); white-space: pre-wrap; overflow-wrap: anywhere;">${song.Tabs}</pre>
-                </details>` : ''}
-            </div>
-
-            <div class="stage-hud">
-                <div class="hud-card interactive">
-                    <div class="hud-label"><span>1. Gitarre / Tuning</span> <span>▾</span></div>
-                    <select class="hud-value-select" onchange="updateSongVariable('Gitarre_Tuning', this)">
-                        ${buildSelectOptionsHtml(getMergedOptions('Gitarre_Tuning', BASE_GUITARS), song.Gitarre_Tuning || 'Strat (E-Standard)')}
-                    </select>
-                </div>
-
-                <div class="hud-card kapo-hud interactive ${hasKapo ? 'has-kapo' : ''}">
-                    <div class="hud-label" style="justify-content: center;"><span>Kapo</span></div>
-                    <select class="hud-value-select kapo-value-select" onchange="updateSongVariable('Kapo', this)">
-                        ${buildSelectOptionsHtml(getMergedOptions('Kapo', BASE_KAPOS), song.Kapo || '-')}
-                    </select>
-                </div>
-
-                <div class="hud-card rig-hud" onclick="editRigDirectly()" title="Tippen zum Bearbeiten">
-                    <div class="hud-label"><span>2. Sound / Rig & Bank (Start)</span> <span style="font-size: 0.65rem; opacity: 0.7;">✎ Tippen</span></div>
-                    <div class="rig-value-display">${song.Rig_Start || '-'}</div>
-                </div>
-
-                <div class="hud-card transition-hud interactive">
-                    <div class="hud-label"><span>3. Ende / Übergang</span></div>
-                    <select class="hud-value-select transition-select" onchange="updateSongVariable('Uebergang', this)">
-                        ${buildSelectOptionsHtml(getMergedOptions('Uebergang', BASE_TRANSITIONS), song.Uebergang || 'Normaler Stop')}
-                    </select>
-                </div>
-            </div>
-
-            <!-- GIG-MODUS: KOMPAKTES TONART-FELD -->
-            <div class="gig-key-card">
-                <div class="gig-key-label">🎵 Tonart / Key</div>
-                <select class="gig-key-select" onchange="updateSongVariable('Tonart', this)">
-                    ${keyOptionsHtml}
-                </select>
-            </div>
-
-            <!-- ÜBE-MODUS: CHORDS & ABLAUF -->
-            <div class="chords-container">
-                <div class="chords-header">🎵 Chords & Ablauf</div>
-                <pre class="chords-content">${song.Struktur_Chords || ''}</pre>
-            </div>
-
-            <!-- CUES GANZ UNTEN -->
-            ${song.Cues_Warnung ? `
-            <div class="cue-banner">
-                <div class="cue-banner-title">⚠️ Live-Cue / Stolperfalle</div>
-                <div class="cue-banner-text">${song.Cues_Warnung}</div>
-            </div>` : ''}
-        `;
-
-        updateNextSongBanner(song);
-    }
-
-    function updateNextSongBanner(currentSong) {
-        const bar = document.getElementById('next-song-banner');
-        if (isPracticeMode) { bar.style.display = 'none'; return; }
-        else { bar.style.display = 'flex'; }
-
-        const titleEl = document.getElementById('next-info-title');
-        const guitarEl = document.getElementById('next-info-guitar');
-
-        if (currentIndex + 1 < activeList.length) {
-            const nextSong = activeList[currentIndex + 1];
-            titleEl.innerText = `Nächster: ${nextSong.Titel}`;
-
-            const curGT = parseGuitarAndTuning(currentSong.Gitarre_Tuning);
-            const nextGT = parseGuitarAndTuning(nextSong.Gitarre_Tuning);
-            const curKapo = normalizeKapo(currentSong.Kapo);
-            const nextKapo = normalizeKapo(nextSong.Kapo);
-
-            const sameGuitar = curGT.guitar.toLowerCase() === nextGT.guitar.toLowerCase();
-            const sameTuning = curGT.tuning.toLowerCase() === nextGT.tuning.toLowerCase();
-            const sameKapo = curKapo === nextKapo;
-
-            if (sameGuitar && sameTuning && sameKapo) {
-                bar.className = '';
-                guitarEl.innerText = `✅ Bleibt: ${nextSong.Gitarre_Tuning}${nextKapo !== '-' ? ' [' + nextKapo + ']' : ''}`;
-            } else {
-                bar.className = 'warning-alert';
-                let actions = [];
-                if (!sameGuitar) {
-                    actions.push(`GITARRE: ${nextSong.Gitarre_Tuning}`);
-                } else if (!sameTuning) {
-                    const curIsDrop = curGT.tuning.toLowerCase().includes('drop');
-                    const nextIsDrop = nextGT.tuning.toLowerCase().includes('drop');
-                    if (!curIsDrop && nextIsDrop) actions.push(`RUNTERSTIMMEN: auf ${nextGT.tuning}`);
-                    else if (curIsDrop && !nextIsDrop) actions.push(`HOCHSTIMMEN: auf ${nextGT.tuning}`);
-                    else actions.push(`UMSTIMMEN: auf ${nextGT.tuning}`);
-                }
-
-                if (!sameKapo) {
-                    if (curKapo === '-' && nextKapo !== '-') actions.push(`KAPO DRAUF: ${nextKapo}`);
-                    else if (curKapo !== '-' && nextKapo === '-') actions.push(`KAPO RUNTER!`);
-                    else actions.push(`KAPO AUF ${nextKapo}`);
-                } else if (!sameGuitar && nextKapo !== '-') {
-                    actions.push(`KAPO: ${nextKapo}`);
-                }
-
-                guitarEl.innerText = `⚡ ${actions.join(' · ')}`;
-            }
-        } else {
-            bar.className = '';
-            titleEl.innerText = '🏁 Letzter Song der Setlist';
-            guitarEl.innerText = '';
-        }
-    }
-
-    function stepSong(direction) {
-        const nextIdx = currentIndex + direction;
-        if (nextIdx >= 0 && nextIdx < activeList.length) {
-            currentIndex = nextIdx;
-            renderSidebarList();
-            renderCurrentSong();
-        }
-    }
-
-    document.addEventListener('keydown', (e) => {
-        if (['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) return;
-        if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); stepSong(1); }
-        else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); stepSong(-1); }
-        else if (e.key === ' ' && isPracticeMode) { e.preventDefault(); toggleMetronome(); }
-    });
-
-    function toggleSidebar(forceState) {
-        const sb = document.getElementById('sidebar');
-        const shouldShow = typeof forceState === 'boolean' ? forceState : sb.classList.contains('hidden');
-        if (shouldShow) { sb.classList.remove('hidden'); document.getElementById('search').focus(); }
-        else { sb.classList.add('hidden'); }
-    }
-
-    function togglePracticeMode() {
-        if (isTunerActive) toggleTuner();
-        isPracticeMode = !isPracticeMode;
-        const btn = document.getElementById('btn-mode-toggle');
-        if (isPracticeMode) {
-            document.body.classList.add('practice-mode');
-            btn.classList.add('active-mode');
-            btn.innerText = '☀️ Übe-Modus: AN';
-            document.getElementById('view-filter').value = 'ALL';
-            clearTimeout(autoHideTimer);
-            showTopBar();
-        } else {
-            document.body.classList.remove('practice-mode');
-            btn.classList.remove('active-mode');
-            btn.innerText = '🏋️ Übe-Modus';
-            document.getElementById('view-filter').value = 'SETLIST';
-            document.getElementById('status-filter').value = 'ALL';
-            resetTopAutoHide();
-        }
-        rebuildActiveList();
-    }
-
-    function openSyncModal() { document.getElementById('sync-modal').style.display = 'flex'; }
-    function closeSyncModal() { document.getElementById('sync-modal').style.display = 'none'; }
-
-    function extractSheetId(url) {
-        const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
-        return match ? match[1] : null;
-    }
-
-    function syncFromGoogleSheets() {
-        const rawUrl = (document.getElementById('csv-url-input').value.trim() || 'https://docs.google.com/spreadsheets/d/1aQWoR7msLCf3VWyLoSCtjKReqkB4mH81ZX97sY12BpA/edit');
-        const feedback = document.getElementById('sync-feedback');
-        const sheetId = extractSheetId(rawUrl);
-
-        if (!sheetId) { feedback.innerText = '⚠️ Keine gültige Google-Sheets-ID im Link gefunden.'; return; }
-        feedback.innerText = '⏳ Lade Daten direkt aus Google Sheets...';
-
-        const callbackName = 'gvizCallback_' + Date.now();
-        const script = document.createElement('script');
-        const timeoutId = setTimeout(() => {
-            if (window[callbackName]) {
-                delete window[callbackName];
-                if (script.parentNode) script.parentNode.removeChild(script);
-                feedback.innerText = '❌ Zeitüberschreitung: Prüfe die Freigabe ("Jeder mit dem Link").';
-            }
-        }, 8000);
-
-        window[callbackName] = function(json) {
-            clearTimeout(timeoutId);
-            delete window[callbackName];
-            if (script.parentNode) script.parentNode.removeChild(script);
-
-            try {
-                if (!json || json.status === 'error' || !json.table) throw new Error('Fehler');
-                const cols = json.table.cols.map(c => (c.label || '').trim());
-                const rows = json.table.rows || [];
-                let headers = cols, startRowIdx = 0;
-                if (headers.every(h => h === '') && rows.length > 0) {
-                    headers = rows[0].c.map(cell => (cell && cell.v !== null) ? String(cell.v).trim() : '');
-                    startRowIdx = 1;
-                }
-
-                const parsed = [];
-                for (let r = startRowIdx; r < rows.length; r++) {
-                    const rowCells = rows[r].c || [];
-                    const obj = {}; let hasContent = false;
-                    headers.forEach((h, idx) => {
-                        if (!h) return;
-                        const val = (rowCells[idx] && rowCells[idx].v !== null) ? String(rowCells[idx].v).trim() : '';
-                        if (val !== '') hasContent = true;
-                        obj[h] = h === 'Kapo' ? normalizeKapo(val) : val;
-                    });
-                    if (hasContent && obj.Titel) parsed.push(obj);
-                }
-
-                if (parsed.length === 0) throw new Error('Leer');
-                localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(parsed));
-                localStorage.setItem('band_cockpit_csv_url', rawUrl);
-                allSongs = parsed;
-                populateTuningFilter();
-                rebuildActiveList();
-                feedback.innerText = `✅ Erfolgreich! ${parsed.length} Songs geladen.`;
-                setTimeout(closeSyncModal, 1200);
-            } catch (err) {
-                feedback.innerText = '❌ Fehler beim Lesen der Tabelle.';
-            }
-        };
-
-        script.onerror = function() {
-            clearTimeout(timeoutId);
-            delete window[callbackName];
-            if (script.parentNode) script.parentNode.removeChild(script);
-            feedback.innerText = '❌ Zugriff verweigert! Freigabe prüfen.';
-        };
-
-        script.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json;responseHandler:${callbackName}`;
-        document.body.appendChild(script);
-    }
-
-    function exportLocalToCSV() {
-        const headers = ["Setlist_Pos","Set_Block","Titel","Artist","Gitarre_Tuning","Kapo","Rig_Start","Uebergang","Cues_Warnung","Struktur_Chords","Tonart","BPM","Status","Link","Tabs"];
-        const csvRows = [headers.join(',')];
-        allSongs.forEach(s => {
-            const row = headers.map(h => `"${String(s[h] !== undefined ? s[h] : '').replace(/"/g, '""')}"`);
-            csvRows.push(row.join(','));
-        });
-        const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = 'Band_Cockpit_Backup.csv'; a.click();
-        URL.revokeObjectURL(url);
-    }
-
-    document.getElementById('search').addEventListener('input', rebuildActiveList);
-    document.getElementById('view-filter').addEventListener('change', rebuildActiveList);
-    document.getElementById('tuning-filter').addEventListener('change', rebuildActiveList);
-    document.getElementById('status-filter').addEventListener('change', rebuildActiveList);
-
-    requestWakeLock();
-    loadSavedData();
-
-    let touchstartX = 0, touchendX = 0, isDraggingSlider = false;
-    const mainArea = document.getElementById('main');
-    mainArea.addEventListener('touchstart', e => {
-        if (e.target && e.target.type === 'range') { isDraggingSlider = true; return; }
-        isDraggingSlider = false;
-        touchstartX = e.changedTouches[0].screenX;
-    }, {passive: true});
-
-    mainArea.addEventListener('touchend', e => {
-        if (isDraggingSlider) { isDraggingSlider = false; return; }
-        touchendX = e.changedTouches[0].screenX;
-        if (touchendX < touchstartX - 65) stepSong(1);
-        if (touchendX > touchstartX + 65) stepSong(-1);
-    }, {passive: true});
-
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-    }
-</script>
-</body>
-</html>
