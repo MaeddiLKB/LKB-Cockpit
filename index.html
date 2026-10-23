@@ -744,7 +744,8 @@
         }
     ];
 
-    const BASE_GUITARS = ["Düse (E-Standard)", "Düse (Eb-Standard)", "Tele (E-Standard)", "Tele (Drop D)", "Paula (E-Standard)", "Paula (Drop D)", "Akustik (E-Standard)"];
+    // Komplett leer gelassen: Die App holt sich Gitarren dynamisch direkt aus deiner Datenbank!
+    const BASE_GUITARS = [];
     const BASE_KAPOS = ["-", "K1", "K2", "K3", "K4", "K5", "K6", "K7"];
     const BASE_TRANSITIONS = ["Normaler Stop", "Direkt weiter in nächsten Song!", "Ausklang stehen lassen", "Drummer zählt direkt an", "Fermate / Blickkontakt"];
     const BASE_KEYS = ["C Major", "C Minor", "Db Major", "D Major", "D Minor", "Eb Major", "E Major", "E Minor", "F Major", "F Minor", "Gb Major", "G Major", "G Minor", "Ab Major", "A Major", "A Minor", "Bb Major", "B Major", "B Minor", "F# Minor", "C# Minor"];
@@ -1163,7 +1164,7 @@
                 <div class="hud-card interactive">
                     <div class="hud-label"><span>1. Gitarre / Tuning</span> <span>▾</span></div>
                     <select class="hud-value-select" onchange="updateSongVariable('Gitarre_Tuning', this)">
-                        ${buildSelectOptionsHtml(getMergedOptions('Gitarre_Tuning', BASE_GUITARS), song.Gitarre_Tuning || 'Düse (E-Standard)')}
+                        ${buildSelectOptionsHtml(getMergedOptions('Gitarre_Tuning', BASE_GUITARS), song.Gitarre_Tuning || '')}
                     </select>
                 </div>
 
