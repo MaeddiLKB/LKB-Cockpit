@@ -448,20 +448,9 @@
 
         .hud-card.rig-hud {
             grid-column: 1 / -1;
-            padding: 8px 12px;
+            padding: 6px 10px;
             background: var(--surface-card);
             border-left: 4px solid var(--primary);
-            cursor: pointer;
-        }
-        .rig-value-display {
-            font-size: 1.15rem;
-            font-weight: 900;
-            color: var(--primary);
-            letter-spacing: 1px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            line-height: 1.2;
         }
 
         .hud-card.transition-hud { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; padding: 5px 10px; gap: 10px; }
@@ -744,8 +733,8 @@
         }
     ];
 
-    // Komplett leer gelassen: Die App holt sich Gitarren dynamisch direkt aus deiner Datenbank!
     const BASE_GUITARS = [];
+    const BASE_RIGS = [];
     const BASE_KAPOS = ["-", "K1", "K2", "K3", "K4", "K5", "K6", "K7"];
     const BASE_TRANSITIONS = ["Normaler Stop", "Direkt weiter in nächsten Song!", "Ausklang stehen lassen", "Drummer zählt direkt an", "Fermate / Blickkontakt"];
     const BASE_KEYS = ["C Major", "C Minor", "Db Major", "D Major", "D Minor", "Eb Major", "E Major", "E Minor", "F Major", "F Minor", "Gb Major", "G Major", "G Minor", "Ab Major", "A Major", "A Minor", "Bb Major", "B Major", "B Minor", "F# Minor", "C# Minor"];
@@ -754,18 +743,6 @@
     let activeList = [];
     let currentIndex = 0;
     let isPracticeMode = false;
-
-    function editRigDirectly() {
-        const song = activeList[currentIndex];
-        if (!song) return;
-        const current = song.Rig_Start || '';
-        const newVal = prompt('Rig / Preset-Code anpassen:', current);
-        if (newVal !== null) {
-            song.Rig_Start = newVal.trim();
-            localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
-            renderCurrentSong();
-        }
-    }
 
     function normalizeKapo(val) {
         if (!val) return '-';
@@ -1175,9 +1152,11 @@
                     </select>
                 </div>
 
-                <div class="hud-card rig-hud" onclick="editRigDirectly()" title="Tippen zum Bearbeiten">
-                    <div class="hud-label"><span>2. Rig / Preset-Code</span> <span style="font-size: 0.65rem; opacity: 0.7;">✎ Tippen</span></div>
-                    <div class="rig-value-display">${song.Rig_Start || '-'}</div>
+                <div class="hud-card rig-hud interactive">
+                    <div class="hud-label"><span>2. Rig / Preset-Code</span> <span>▾</span></div>
+                    <select class="hud-value-select" onchange="updateSongVariable('Rig_Start', this)">
+                        ${buildSelectOptionsHtml(getMergedOptions('Rig_Start', BASE_RIGS), song.Rig_Start || '')}
+                    </select>
                 </div>
 
                 <div class="hud-card transition-hud interactive">
