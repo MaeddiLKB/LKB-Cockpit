@@ -4,7 +4,6 @@ const ASSETS = [
   './index.html'
 ];
 
-// Beim ersten Start: App fest im Handy speichern
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
@@ -12,7 +11,6 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Auf der Bühne (im Mischpult-WLAN): Erst versuchen online zu laden, bei Fehler sofort aus dem Handyspeicher bedienen!
 self.addEventListener('fetch', event => {
   event.respondWith(
     fetch(event.request)
