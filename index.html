@@ -89,11 +89,7 @@
             filter: drop-shadow(0 0 28px rgba(0, 214, 67, 0.28));
             animation: splashPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-        .splash-logo-wrap svg {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
+        .splash-logo-wrap svg { width: 100%; height: 100%; object-fit: contain; }
         .splash-hint {
             margin-top: 22px;
             font-size: 0.72rem;
@@ -185,16 +181,8 @@
             text-align: center;
             user-select: none;
         }
-        body.practice-mode .btn-nav {
-            padding: 6px 12px;
-            font-size: 0.88rem;
-            border-width: 1px;
-        }
-        .btn-nav:active:not(:disabled) {
-            background: var(--primary);
-            color: #000;
-            border-color: var(--primary);
-        }
+        body.practice-mode .btn-nav { padding: 6px 12px; font-size: 0.88rem; border-width: 1px; }
+        .btn-nav:active:not(:disabled) { background: var(--primary); color: #000; border-color: var(--primary); }
         .btn-nav:disabled { opacity: 0.25; cursor: not-allowed; }
         .nav-center-box { text-align: center; }
         .nav-counter { font-size: 1.15rem; font-weight: 900; color: var(--primary); line-height: 1; }
@@ -207,12 +195,7 @@
             margin-top: 2px;
         }
 
-        #workspace {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-        }
+        #workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
 
         #sidebar {
             width: 340px;
@@ -243,10 +226,7 @@
             font-size: 0.9rem;
             font-weight: 600;
         }
-        input:focus, select:focus {
-            outline: 2px solid var(--primary);
-            border-color: var(--primary);
-        }
+        input:focus, select:focus { outline: 2px solid var(--primary); border-color: var(--primary); }
 
         #song-list { flex: 1; overflow-y: auto; list-style: none; }
         .song-item {
@@ -258,52 +238,17 @@
             align-items: center;
             gap: 6px;
         }
-        .song-item:hover, .song-item.active {
-            background: var(--primary-glow);
-            border-left: 4px solid var(--primary);
-        }
-        .song-title-text {
-            font-weight: 700;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--text);
-        }
+        .song-item:hover, .song-item.active { background: var(--primary-glow); border-left: 4px solid var(--primary); }
+        .song-title-text { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; color: var(--text); }
         .song-sub-text { color: var(--text-dim); font-size: 0.8rem; }
-        .badge-pos {
-            background: var(--primary);
-            color: #000;
-            font-weight: 900;
-            font-size: 0.75rem;
-            padding: 1px 5px;
-            border-radius: 4px;
-            min-width: 20px;
-            text-align: center;
-        }
-        .badge-tuning {
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--primary);
-            white-space: nowrap;
-        }
+        .badge-pos { background: var(--primary); color: #000; font-weight: 900; font-size: 0.75rem; padding: 1px 5px; border-radius: 4px; min-width: 20px; text-align: center; }
+        .badge-tuning { background: var(--surface-elevated); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; color: var(--primary); white-space: nowrap; }
         .dot-status { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
         .dot-Grün { background: #00d643; }
         .dot-Gelb { background: #ffb700; }
         .dot-Rot { background: #ff2a2a; }
 
-        #main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-            min-width: 0;
-        }
+        #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; min-width: 0; }
 
         .lkb-watermark {
             position: absolute;
@@ -338,20 +283,8 @@
             cursor: pointer;
             user-select: none;
         }
-        .song-title-heading {
-            font-family: Georgia, "Times New Roman", serif;
-            font-size: 1.65rem;
-            font-weight: 900;
-            line-height: 1.1;
-            color: var(--text);
-        }
-        .song-artist-heading {
-            color: var(--primary);
-            font-size: 0.88rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-        }
+        .song-title-heading { font-family: Georgia, serif; font-size: 1.65rem; font-weight: 900; line-height: 1.1; color: var(--text); }
+        .song-artist-heading { color: var(--primary); font-size: 0.88rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; }
 
         #practice-dashboard {
             background: var(--surface);
@@ -365,12 +298,7 @@
         }
         body.practice-mode #practice-dashboard { display: flex; }
 
-        .metro-top-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-        }
+        .metro-top-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
         .btn-metro-pill {
             background: var(--primary);
             color: #ffffff;
@@ -383,17 +311,9 @@
             white-space: nowrap;
             min-width: 115px;
             text-align: center;
-            transition: all 0.08s ease;
         }
-        .btn-metro-pill.playing {
-            background: #111713;
-            color: #00ff4c;
-        }
-        .btn-metro-pill.pulse {
-            background: #ffaa00 !important;
-            color: #000000 !important;
-            transform: scale(1.04);
-        }
+        .btn-metro-pill.playing { background: #111713; color: #00ff4c; }
+        .btn-metro-pill.pulse { background: #ffaa00 !important; color: #000000 !important; transform: scale(1.04); }
 
         .metro-step-group { display: flex; align-items: center; gap: 4px; }
         .btn-tempo-step {
@@ -437,29 +357,10 @@
             border-radius: 4px;
             accent-color: var(--primary);
             cursor: pointer;
-            -webkit-appearance: none;
-            appearance: none;
             background: var(--surface-elevated);
         }
-        .slider-tempo-full::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            background: var(--primary);
-            border: 2px solid #ffffff;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.3);
-            cursor: pointer;
-        }
 
-        .practice-tools-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
+        .practice-tools-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; }
         .select-tool-pill {
             background: var(--surface-card);
             color: var(--text);
@@ -496,48 +397,13 @@
             align-items: center;
             gap: 4px;
         }
-        .tuner-display {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            width: 100%;
-            font-size: 0.75rem;
-            font-weight: 800;
-        }
-        .tuner-note {
-            font-size: 1.6rem;
-            font-weight: 900;
-            color: var(--primary);
-            text-align: center;
-            line-height: 1;
-        }
-        .tuner-meter {
-            position: relative;
-            width: 100%;
-            height: 10px;
-            background: var(--surface-elevated);
-            border-radius: 5px;
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-        .tuner-needle {
-            position: absolute;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-            background: var(--danger);
-            left: 50%;
-            transform: translateX(-50%);
-            transition: left 0.05s linear;
-        }
+        .tuner-display { display: flex; justify-content: space-between; align-items: center; width: 100%; font-size: 0.75rem; font-weight: 800; }
+        .tuner-note { font-size: 1.6rem; font-weight: 900; color: var(--primary); text-align: center; line-height: 1; }
+        .tuner-meter { position: relative; width: 100%; height: 10px; background: var(--surface-elevated); border-radius: 5px; overflow: hidden; border: 1px solid var(--border); }
+        .tuner-needle { position: absolute; top: 0; bottom: 0; width: 4px; background: var(--danger); left: 50%; transform: translateX(-50%); transition: left 0.05s linear; }
         .tuner-needle.in-tune { background: var(--primary); }
 
-        .stage-hud {
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 72px;
-            gap: 6px;
-            width: 100%;
-        }
+        .stage-hud { display: grid; grid-template-columns: minmax(0, 1fr) 72px; gap: 6px; width: 100%; }
 
         .hud-card {
             background: var(--surface-card);
@@ -575,24 +441,9 @@
             text-overflow: ellipsis;
         }
 
-        .hud-card.kapo-hud {
-            text-align: center;
-            align-items: center;
-            padding: 6px 4px;
-            border-width: 2px;
-        }
-        .hud-card.kapo-hud.has-kapo {
-            border-color: var(--warning);
-            background: var(--warning-bg);
-            box-shadow: 0 0 10px rgba(255, 183, 0, 0.25);
-        }
-        .kapo-value-select {
-            text-align: center;
-            text-align-last: center;
-            font-size: 1.25rem;
-            font-weight: 900;
-            color: var(--text-dim);
-        }
+        .hud-card.kapo-hud { text-align: center; align-items: center; padding: 6px 4px; border-width: 2px; }
+        .hud-card.kapo-hud.has-kapo { border-color: var(--warning); background: var(--warning-bg); box-shadow: 0 0 10px rgba(255, 183, 0, 0.25); }
+        .kapo-value-select { text-align: center; text-align-last: center; font-size: 1.25rem; font-weight: 900; color: var(--text-dim); }
         .hud-card.kapo-hud.has-kapo .kapo-value-select { color: var(--warning); }
 
         .hud-card.rig-hud {
@@ -602,24 +453,19 @@
             border-left: 4px solid var(--primary);
             cursor: pointer;
         }
+        /* Hier optimiert für den kompakten Zifferncode wie 1-31-43-31-3 */
         .rig-value-display {
-            font-size: 1.05rem;
-            font-weight: 800;
-            color: var(--text);
-            white-space: normal;
-            overflow-wrap: anywhere;
-            word-break: break-word;
-            line-height: 1.35;
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: 1px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
         }
 
-        .hud-card.transition-hud {
-            grid-column: 1 / -1;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            padding: 5px 10px;
-            gap: 10px;
-        }
+        .hud-card.transition-hud { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; padding: 5px 10px; gap: 10px; }
         .hud-card.transition-hud .hud-label { margin-bottom: 0; white-space: nowrap; flex-shrink: 0; }
         .transition-select { color: var(--text); font-size: 0.92rem; font-weight: 700; text-align: right; text-align-last: right; }
 
@@ -632,21 +478,8 @@
             border-radius: 7px;
             padding: 8px 12px;
         }
-        .cue-banner-title {
-            color: var(--danger);
-            font-size: 0.68rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 2px;
-        }
-        .cue-banner-text {
-            color: #ffe6e6;
-            font-size: 1.05rem;
-            font-weight: 800;
-            line-height: 1.35;
-            overflow-wrap: anywhere;
-        }
+        .cue-banner-title { color: var(--danger); font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
+        .cue-banner-text { color: #ffe6e6; font-size: 1.05rem; font-weight: 800; line-height: 1.35; overflow-wrap: anywhere; }
         body.practice-mode .cue-banner { display: none; }
 
         .chords-container {
@@ -658,14 +491,7 @@
             padding: 12px 14px;
             min-width: 0;
         }
-        .chords-header {
-            color: var(--primary);
-            font-size: 0.7rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 6px;
-        }
+        .chords-header { color: var(--primary); font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
         pre.chords-content {
             white-space: pre-wrap;
             overflow-wrap: anywhere;
@@ -688,20 +514,11 @@
             font-weight: 800;
             flex-wrap: wrap;
             z-index: 10;
-            transition: background 0.2s ease, color 0.2s ease;
         }
         body.practice-mode #next-song-banner { display: none; }
 
-        #next-song-banner.warning-alert {
-            background: var(--primary);
-            color: #000000;
-            border-top: 2px solid #ffffff;
-            box-shadow: 0 -2px 12px rgba(0, 214, 67, 0.35);
-        }
-        #next-song-banner.warning-alert span {
-            color: #000000 !important;
-            font-weight: 900;
-        }
+        #next-song-banner.warning-alert { background: var(--primary); color: #000000; border-top: 2px solid #ffffff; box-shadow: 0 -2px 12px rgba(0, 214, 67, 0.35); }
+        #next-song-banner.warning-alert span { color: #000000 !important; font-weight: 900; }
 
         .footer-microbar {
             background: var(--bg);
@@ -715,16 +532,7 @@
             z-index: 5;
         }
 
-        #sync-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.85);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            z-index: 100;
-        }
+        #sync-modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; padding: 20px; z-index: 100; }
         .modal-card {
             background: var(--surface);
             color: var(--text);
@@ -883,16 +691,11 @@
     let autoHideTimer = null;
 
     function resetTopAutoHide() {
-        if (isPracticeMode) {
-            showTopBar();
-            return;
-        }
+        if (isPracticeMode) { showTopBar(); return; }
         showTopBar();
         clearTimeout(autoHideTimer);
         autoHideTimer = setTimeout(() => {
-            if (!isPracticeMode) {
-                hideTopBar();
-            }
+            if (!isPracticeMode) hideTopBar();
         }, 3000);
     }
 
@@ -908,11 +711,8 @@
 
     function toggleTopBar() {
         const topEl = document.getElementById('top-collapsible');
-        if (topEl && topEl.classList.contains('hidden-top')) {
-            resetTopAutoHide();
-        } else {
-            hideTopBar();
-        }
+        if (topEl && topEl.classList.contains('hidden-top')) resetTopAutoHide();
+        else hideTopBar();
     }
 
     function dismissSplash() {
@@ -933,7 +733,7 @@
             Artist: "Kings of Leon",
             Gitarre_Tuning: "Strat (E-Standard)",
             Kapo: "-",
-            Rig_Start: "Bank 4 - Patch 2 | Bridge PU | Vol 10",
+            Rig_Start: "1-31-43-31-3",
             Uebergang: "Normaler Stop",
             Cues_Warnung: "Achtung: Drummer zählt 2 Takte vor! Nach dem 2. Chorus direkt in die Bridge ohne Pause.",
             Struktur_Chords: "Intro:  C - E/G# - Am - F (2x)\nVerse:  C - E/G# - Am - F\nChorus: Volles Brett, offene Akkorde\nBridge: Oktav-Riff auf A-Saite (3. -> 7. -> 8. Bund)",
@@ -945,7 +745,7 @@
         }
     ];
 
-    const BASE_GUITARS = ["Strat (E-Standard)", "Strat (Eb-Standard)", "Paula (E-Standard)", "Paula (Drop D)", "Paula (Eb-Standard)", "Tele (E-Standard)", "Akustik (E-Standard)"];
+    const BASE_GUITARS = ["Düse (E-Standard)", "Düse (Eb-Standard)", "Tele (E-Standard)", "Tele (Drop D)", "Paula (E-Standard)", "Paula (Drop D)", "Akustik (E-Standard)"];
     const BASE_KAPOS = ["-", "K1", "K2", "K3", "K4", "K5", "K6", "K7"];
     const BASE_TRANSITIONS = ["Normaler Stop", "Direkt weiter in nächsten Song!", "Ausklang stehen lassen", "Drummer zählt direkt an", "Fermate / Blickkontakt"];
     const BASE_KEYS = ["C Major", "C Minor", "Db Major", "D Major", "D Minor", "Eb Major", "E Major", "E Minor", "F Major", "F Minor", "Gb Major", "G Major", "G Minor", "Ab Major", "A Major", "A Minor", "Bb Major", "B Major", "B Minor", "F# Minor", "C# Minor"];
@@ -959,7 +759,7 @@
         const song = activeList[currentIndex];
         if (!song) return;
         const current = song.Rig_Start || '';
-        const newVal = prompt('Rig / Bank / Sound-Start anpassen:', current);
+        const newVal = prompt('Rig / Preset-Code anpassen:', current);
         if (newVal !== null) {
             song.Rig_Start = newVal.trim();
             localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
@@ -1341,7 +1141,6 @@
                     ${getSpotifyLinkHtml(song)}
                 </div>
 
-                <!-- STIMMGERÄT -->
                 <div id="tuner-container">
                     <div class="tuner-display">
                         <span style="color: var(--text-dim);">🎤 STIMMGERÄT</span>
@@ -1365,7 +1164,7 @@
                 <div class="hud-card interactive">
                     <div class="hud-label"><span>1. Gitarre / Tuning</span> <span>▾</span></div>
                     <select class="hud-value-select" onchange="updateSongVariable('Gitarre_Tuning', this)">
-                        ${buildSelectOptionsHtml(getMergedOptions('Gitarre_Tuning', BASE_GUITARS), song.Gitarre_Tuning || 'Strat (E-Standard)')}
+                        ${buildSelectOptionsHtml(getMergedOptions('Gitarre_Tuning', BASE_GUITARS), song.Gitarre_Tuning || 'Düse (E-Standard)')}
                     </select>
                 </div>
 
@@ -1377,7 +1176,7 @@
                 </div>
 
                 <div class="hud-card rig-hud" onclick="editRigDirectly()" title="Tippen zum Bearbeiten">
-                    <div class="hud-label"><span>2. Sound / Rig & Bank (Start)</span> <span style="font-size: 0.65rem; opacity: 0.7;">✎ Tippen</span></div>
+                    <div class="hud-label"><span>2. Rig / Preset-Code</span> <span style="font-size: 0.65rem; opacity: 0.7;">✎ Tippen</span></div>
                     <div class="rig-value-display">${song.Rig_Start || '-'}</div>
                 </div>
 
@@ -1578,7 +1377,6 @@
     requestWakeLock();
     loadSavedData();
 
-    // Wischgesten (Blättern)
     let touchstartX = 0, touchendX = 0, isDraggingSlider = false;
     const mainArea = document.getElementById('main');
     mainArea.addEventListener('touchstart', e => {
@@ -1594,7 +1392,6 @@
         if (touchendX > touchstartX + 65) stepSong(-1);
     }, {passive: true});
 
-    // OFFLINE-SCHUTZ FÜR MISCHPULT-WLAN (SERVICE WORKER)
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
