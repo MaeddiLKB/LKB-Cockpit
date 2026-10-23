@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LKB Live Cockpit</title>
     <style>
+        /* ==========================================================================
+           DESIGN SYSTEM (LKB IDENTITY - HKS 64 K BAND GREEN)
+           ========================================================================== */
         :root {
             --bg: #050705;
             --surface: #0e120f;
@@ -12,250 +15,339 @@
             --surface-elevated: #1b231d;
             --primary: #00d643;
             --primary-dim: #00962c;
-            --text: #f5f8f6;
-            --text-dim: #8fa093;
-            --border: #222c24;
+            --primary-glow: rgba(0, 214, 67, 0.18);
             --danger: #ff2a2a;
             --danger-bg: #220909;
             --danger-border: #591616;
             --warning: #ffb700;
             --warning-bg: rgba(255, 183, 0, 0.14);
+            --text: #f5f8f6;
+            --text-dim: #8fa093;
+            --border: #222c24;
+            --border-highlight: #314234;
+            --watermark-opacity: 0.03;
         }
+
         body.practice-mode {
             --bg: #eef2ee;
             --surface: #ffffff;
             --surface-card: #f5f8f5;
             --surface-elevated: #e6ece7;
             --primary: #008726;
+            --primary-dim: #006b1e;
+            --primary-glow: rgba(0, 135, 38, 0.10);
+            --danger: #d91414;
+            --danger-bg: #fff0f0;
+            --danger-border: #fca5a5;
+            --warning: #b86200;
+            --warning-bg: rgba(184, 98, 0, 0.12);
             --text: #0f1410;
             --text-dim: #546357;
             --border: #cdd8ce;
+            --border-highlight: #b0c2b2;
+            --watermark-opacity: 0.04;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { background-color: var(--bg); color: var(--text); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        
-        header { background: var(--surface); border-bottom: 2px solid var(--border); padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-tool { background: var(--surface-elevated); color: var(--text); border: 1px solid var(--border); padding: 6px 10px; border-radius: 6px; font-size: 0.82rem; font-weight: 700; cursor: pointer; }
-        .btn-tool.active-mode { background: var(--primary); color: #000; border-color: var(--primary); }
 
-        #cockpit-nav { background: var(--surface); border-bottom: 2px solid var(--primary); padding: 5px 12px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-nav { background: var(--surface-card); color: var(--text); border: 1px solid var(--border); padding: 8px 14px; border-radius: 8px; font-size: 0.95rem; font-weight: 900; cursor: pointer; flex: 1; max-width: 170px; text-align: center; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* ==========================================================================
+           SPLASH SCREEN (3 SEKUNDEN START-LOGO MIT SOFORT-BYPASS)
+           ========================================================================== */
+        #lkb-splash {
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center, #0f1c12 0%, #050705 75%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            cursor: pointer;
+            transition: opacity 0.45s ease, visibility 0.45s ease;
+        }
+        #lkb-splash.splash-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .splash-logo-wrap {
+            width: min(74vw, 310px);
+            height: min(74vw, 310px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            filter: drop-shadow(0 0 28px rgba(0, 214, 67, 0.28));
+            animation: splashPop 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .splash-logo-wrap svg {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        .splash-hint {
+            margin-top: 22px;
+            font-size: 0.72rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            opacity: 0.7;
+        }
+        @keyframes splashPop {
+            0% { transform: scale(0.86); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        /* ==========================================================================
+           AUTO-HIDE TOP SECTION (HEADER + NAV BIS ZUR GRÜNEN LINIE)
+           ========================================================================== */
+        #top-collapsible {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-height: 140px;
+            opacity: 1;
+            overflow: hidden;
+            transform: translateY(0);
+            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 0.35s ease,
+                        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 30;
+        }
+
+        body:not(.practice-mode) #top-collapsible.hidden-top {
+            max-height: 0 !important;
+            opacity: 0;
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+
+        /* 1. KOPFLEISTE */
+        header {
+            background: var(--surface);
+            border-bottom: 2px solid var(--border);
+            padding: 6px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
+        }
+        .header-group { display: flex; align-items: center; gap: 6px; }
+
+        .btn-tool {
+            background: var(--surface-elevated);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
+        }
+        .btn-tool:active { transform: scale(0.97); }
+        .btn-tool.active-mode {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+            font-weight: 900;
+        }
+
+        /* 2. GIG-NAVIGATION BIS ZUR GRÜNEN LINIE */
+        #cockpit-nav {
+            background: var(--surface);
+            border-bottom: 2px solid var(--primary);
+            padding: 5px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-nav {
+            background: var(--surface-card);
+            color: var(--text);
+            border: 2px solid var(--border-highlight);
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 900;
+            cursor: pointer;
+            flex: 1;
+            max-width: 190px;
+            text-align: center;
+            user-select: none;
+        }
+        body.practice-mode .btn-nav {
+            padding: 6px 12px;
+            font-size: 0.88rem;
+            border-width: 1px;
+        }
+        .btn-nav:active:not(:disabled) {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+        }
+        .btn-nav:disabled { opacity: 0.25; cursor: not-allowed; }
         .nav-center-box { text-align: center; }
-        .nav-counter { font-size: 1.1rem; font-weight: 900; color: var(--primary); }
-        .nav-block-label { font-size: 0.6rem; font-weight: 800; color: var(--text-dim); text-transform: uppercase; }
+        .nav-counter { font-size: 1.15rem; font-weight: 900; color: var(--primary); line-height: 1; }
+        .nav-block-label {
+            font-size: 0.65rem;
+            font-weight: 800;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            margin-top: 2px;
+        }
 
-        #workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
-        #sidebar { width: 340px; background: var(--surface); border-right: 1px solid var(--border); display: flex; flex-direction: column; z-index: 40; }
+        /* ==========================================================================
+           WORKSPACE & SIDEBAR DRAWER
+           ========================================================================== */
+        #workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #sidebar {
+            width: 340px;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 40;
+            box-shadow: 4px 0 20px rgba(0,0,0,0.4);
+        }
         #sidebar.hidden { display: none; }
-        .sidebar-controls { padding: 10px; background: var(--surface-card); display: flex; flex-direction: column; gap: 6px; }
-        input, select { width: 100%; padding: 8px; background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 6px; font-size: 0.9rem; }
+
+        .sidebar-controls {
+            padding: 10px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: var(--surface-card);
+        }
+        input, select {
+            width: 100%;
+            padding: 8px 10px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text);
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        input:focus, select:focus {
+            outline: 2px solid var(--primary);
+            border-color: var(--primary);
+        }
+
         #song-list { flex: 1; overflow-y: auto; list-style: none; }
-        .song-item { padding: 10px 12px; border-bottom: 1px solid var(--border); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-        .song-item.active { background: rgba(0,214,67,0.18); border-left: 4px solid var(--primary); }
-
-        #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; padding: 8px 12px; gap: 8px; }
-        .header-title-row { display: flex; justify-content: space-between; align-items: baseline; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
-        .song-title-heading { font-family: Georgia, serif; font-size: 1.45rem; font-weight: 900; }
-        .song-artist-heading { color: var(--primary); font-size: 0.82rem; font-weight: 800; text-transform: uppercase; }
-
-        .stage-hud { display: grid; grid-template-columns: minmax(0, 1fr) 72px; gap: 6px; width: 100%; }
-        .hud-card { background: var(--surface-card); border: 1px solid var(--border); border-radius: 7px; padding: 6px 10px; display: flex; flex-direction: column; justify-content: center; }
-        .hud-label { font-size: 0.6rem; font-weight: 900; color: var(--text-dim); text-transform: uppercase; margin-bottom: 2px; }
-        .hud-value-select { width: 100%; background: transparent; border: none; outline: none; color: var(--primary); font-size: 1rem; font-weight: 900; cursor: pointer; }
-        .hud-card.rig-hud { grid-column: 1 / -1; border-left: 4px solid var(--primary); cursor: pointer; }
-        .rig-value-display { font-size: 1.15rem; font-weight: 900; color: var(--primary); }
-
-        .gig-key-card { background: var(--surface-card); border: 1.5px solid var(--primary); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; justify-content: space-between; }
-        body.practice-mode .gig-key-card { display: none; }
-        .gig-key-select { background: transparent; border: none; outline: none; color: var(--primary); font-size: 1.5rem; font-weight: 900; text-align: right; cursor: pointer; }
-
-        .chords-container { flex: 1; background: var(--surface-card); border: 1px solid var(--border); border-left: 4px solid var(--primary); border-radius: 7px; padding: 10px; display: none; overflow-y: auto; }
-        body.practice-mode .chords-container { display: block; }
-        pre.chords-content { white-space: pre-wrap; font-family: monospace; font-size: 1.05rem; font-weight: 700; }
-
-        #next-song-banner { background: var(--surface); border-top: 2px solid var(--border); padding: 8px 12px; display: flex; justify-content: space-between; font-weight: 800; }
-        body.practice-mode #next-song-banner { display: none; }
-        #next-song-banner.warning-alert { background: var(--primary); color: #000; }
-
-        #sync-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; padding: 20px; z-index: 100; }
-        .modal-card { background: var(--surface); border: 2px solid var(--primary); border-radius: 10px; max-width: 520px; width: 100%; padding: 22px; display: flex; flex-direction: column; gap: 14px; }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div style="display: flex; gap: 6px;">
-            <button class="btn-tool" onclick="toggleSidebar()">🔍 Suche</button>
-            <button class="btn-tool" onclick="toggleFullScreen()">⛶ Vollbild</button>
-        </div>
-        <div style="display: flex; gap: 6px;">
-            <button class="btn-tool" id="btn-mode-toggle" onclick="togglePracticeMode()">🏋️ Übe-Modus</button>
-            <button class="btn-tool" onclick="openSyncModal()">🔄 Sync</button>
-        </div>
-    </header>
-
-    <div id="cockpit-nav">
-        <button class="btn-nav" id="btn-prev" onclick="stepSong(-1)">◀ ZURÜCK</button>
-        <div class="nav-center-box">
-            <div class="nav-counter" id="nav-counter">1 / 1</div>
-            <div class="nav-block-label" id="nav-block">SET 1</div>
-        </div>
-        <button class="btn-nav" id="btn-next" onclick="stepSong(1)">WEITER ▶</button>
-    </div>
-
-    <div id="workspace">
-        <div id="sidebar" class="hidden">
-            <div class="sidebar-controls">
-                <input type="text" id="search" placeholder="Song suchen..." autocomplete="off">
-                <select id="view-filter"><option value="SETLIST">Nur Setlist</option><option value="ALL">Alle Songs</option></select>
-            </div>
-            <ul id="song-list"></ul>
-        </div>
-
-        <div id="main">
-            <div id="song-content"></div>
-            <div id="next-song-banner">
-                <span id="next-info-title">Nächster Song: -</span>
-                <span id="next-info-guitar"></span>
-            </div>
-        </div>
-    </div>
-
-    <div id="sync-modal">
-        <div class="modal-card">
-            <h3 style="color: var(--primary);">Google Sheets Synchronisation</h3>
-            <input type="url" id="csv-url-input" value="https://docs.google.com/spreadsheets/d/1aQWoR7msLCf3VWyLoSCtjKReqkB4mH81ZX97sY12BpA/edit">
-            <div id="sync-feedback" style="font-weight: 700; color: var(--primary);"></div>
-            <div style="display: flex; justify-content: space-between;">
-                <button class="btn-tool" onclick="closeSyncModal()">Schließen</button>
-                <button class="btn-tool active-mode" onclick="syncFromGoogleSheets()">🔄 Aus Sheet laden</button>
-            </div>
-        </div>
-    </div>
-
-<script>
-    const defaultSongs = [
-        {
-            Setlist_Pos: "1", Set_Block: "Set 1", Titel: "Use Somebody", Artist: "Kings of Leon",
-            Gitarre_Tuning: "Düse (E-Standard)", Kapo: "-", Rig_Start: "1-31-43-31-3",
-            Uebergang: "Normaler Stop", Cues_Warnung: "Drummer zählt ein!",
-            Struktur_Chords: "Intro: C - G - Am - F", Tonart: "C Major", BPM: "137", Status: "Grün", Link: "https://open.spotify.com/"
+        .song-item {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 6px;
         }
-    ];
-
-    let allSongs = [];
-    let activeList = [];
-    let currentIndex = 0;
-    let isPracticeMode = false;
-
-    function loadSavedData() {
-        const saved = localStorage.getItem('band_cockpit_songs_v1');
-        allSongs = saved ? JSON.parse(saved) : defaultSongs;
-        rebuildActiveList();
-    }
-
-    function rebuildActiveList() {
-        activeList = allSongs;
-        currentIndex = 0;
-        renderSidebarList();
-        renderCurrentSong();
-    }
-
-    function renderSidebarList() {
-        const listEl = document.getElementById('song-list');
-        listEl.innerHTML = '';
-        activeList.forEach((song, idx) => {
-            const li = document.createElement('li');
-            li.className = 'song-item' + (idx === currentIndex ? ' active' : '');
-            li.innerHTML = `<div><strong>${song.Titel}</strong><br><small>${song.Artist}</small></div>`;
-            li.onclick = () => { currentIndex = idx; renderSidebarList(); renderCurrentSong(); toggleSidebar(false); };
-            listEl.appendChild(li);
-        });
-    }
-
-    function renderCurrentSong() {
-        const contentEl = document.getElementById('song-content');
-        if (activeList.length === 0) return;
-        const song = activeList[currentIndex];
-
-        contentEl.innerHTML = `
-            <div class="header-title-row">
-                <div class="song-title-heading">${song.Titel}</div>
-                <div class="song-artist-heading">${song.Artist}</div>
-            </div>
-            <div class="stage-hud">
-                <div class="hud-card">
-                    <div class="hud-label">Gitarre / Tuning</div>
-                    <select class="hud-value-select"><option>${song.Gitarre_Tuning}</option></select>
-                </div>
-                <div class="hud-card">
-                    <div class="hud-label">Kapo</div>
-                    <select class="hud-value-select"><option>${song.Kapo}</option></select>
-                </div>
-                <div class="hud-card rig-hud">
-                    <div class="hud-label">Rig / Preset-Code</div>
-                    <div class="rig-value-display">${song.Rig_Start}</div>
-                </div>
-            </div>
-            <div class="gig-key-card">
-                <div class="gig-key-label">🎵 Tonart / Key</div>
-                <select class="gig-key-select"><option>${song.Tonart}</option></select>
-            </div>
-            <div class="chords-container">
-                <div class="chords-header">Chords & Ablauf</div>
-                <pre class="chords-content">${song.Struktur_Chords}</pre>
-            </div>
-        `;
-    }
-
-    function stepSong(direction) {
-        if (currentIndex + direction >= 0 && currentIndex + direction < activeList.length) {
-            currentIndex += direction;
-            renderSidebarList();
-            renderCurrentSong();
+        .song-item:hover, .song-item.active {
+            background: var(--primary-glow);
+            border-left: 4px solid var(--primary);
         }
-    }
+        .song-title-text {
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text);
+        }
+        .song-sub-text { color: var(--text-dim); font-size: 0.8rem; }
+        .badge-pos {
+            background: var(--primary);
+            color: #000;
+            font-weight: 900;
+            font-size: 0.75rem;
+            padding: 1px 5px;
+            border-radius: 4px;
+            min-width: 20px;
+            text-align: center;
+        }
+        .badge-tuning {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+        .dot-status { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+        .dot-Grün { background: #00d643; }
+        .dot-Gelb { background: #ffb700; }
+        .dot-Rot { background: #ff2a2a; }
 
-    function toggleSidebar(forceState) {
-        const sb = document.getElementById('sidebar');
-        sb.classList.toggle('hidden', typeof forceState === 'boolean' ? !forceState : undefined);
-    }
+        /* ==========================================================================
+           MAIN COCKPIT
+           ========================================================================== */
+        #main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            min-width: 0;
+        }
 
-    function togglePracticeMode() {
-        isPracticeMode = !isPracticeMode;
-        document.body.classList.toggle('practice-mode', isPracticeMode);
-        document.getElementById('btn-mode-toggle').classList.toggle('active-mode', isPracticeMode);
-    }
+        .lkb-watermark {
+            position: absolute;
+            right: -40px;
+            bottom: 20px;
+            width: 320px;
+            height: 320px;
+            opacity: var(--watermark-opacity);
+            pointer-events: none;
+            z-index: 0;
+        }
 
-    function openSyncModal() { document.getElementById('sync-modal').style.display = 'flex'; }
-    function closeSyncModal() { document.getElementById('sync-modal').style.display = 'none'; }
-    function toggleFullScreen() { if (!document.fullscreenElement) document.documentElement.requestFullscreen(); else document.exitFullscreen(); }
+        #song-content {
+            flex: 1;
+            padding: 8px 12px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 2;
+        }
 
-    function syncFromGoogleSheets() {
-        const rawUrl = document.getElementById('csv-url-input').value.trim();
-        const sheetId = rawUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/)?.[1];
-        if (!sheetId) return;
-        const cb = 'cb_' + Date.now();
-        const s = document.createElement('script');
-        window[cb] = json => {
-            delete window[cb]; s.remove();
-            const rows = json.table.rows.map(r => {
-                let obj = {};
-                json.table.cols.forEach((c, i) => obj[c.label] = r.c[i]?.v ?? '');
-                return obj;
-            }).filter(o => o.Titel);
-            if (rows.length) {
-                localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(rows));
-                allSongs = rows;
-                rebuildActiveList();
-                closeSyncModal();
-            }
-        };
-        s.src = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:json;responseHandler=${cb}`;
-        document.body.appendChild(s);
-    }
-
-    loadSavedData();
-</script>
-</body>
-</html>
+        .header-title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            gap: 8px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom
