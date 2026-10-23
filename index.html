@@ -453,7 +453,6 @@
             border-left: 4px solid var(--primary);
             cursor: pointer;
         }
-        /* Hier optimiert für den kompakten Zifferncode wie 1-31-43-31-3 */
         .rig-value-display {
             font-size: 1.15rem;
             font-weight: 900;
@@ -731,7 +730,7 @@
             Set_Block: "Set 1",
             Titel: "Use Somebody",
             Artist: "Kings of Leon",
-            Gitarre_Tuning: "Strat (E-Standard)",
+            Gitarre_Tuning: "Düse (E-Standard)",
             Kapo: "-",
             Rig_Start: "1-31-43-31-3",
             Uebergang: "Normaler Stop",
@@ -982,7 +981,7 @@
             const raw = (s[fieldName] || '').trim();
             return fieldName === 'Kapo' ? normalizeKapo(raw) : raw;
         }).filter(Boolean);
-        return [...new Set([...baseOptions, ...fromData])];
+        return [...new Set([...fromData, ...baseOptions])];
     }
 
     function buildSelectOptionsHtml(optionsList, selectedValue) {
