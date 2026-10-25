@@ -104,7 +104,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* SCHWEBBENDER DAUMEN-BUTTON (SICHER ÜBER DEM NEXT-SONG BANNER PLATZIERT) */
+        /* SCHWEBBENDER DAUMEN-BUTTON (MENÜ) */
         #fab-menu-btn {
             position: fixed;
             bottom: 68px;
@@ -129,12 +129,7 @@
         #fab-menu-btn:active { transform: scale(0.92); }
 
         @media (orientation: landscape) {
-            #fab-menu-btn {
-                bottom: 58px;
-                right: 12px;
-                width: 46px;
-                height: 46px;
-            }
+            #fab-menu-btn { bottom: 58px; right: 12px; width: 46px; height: 46px; }
         }
 
         /* QUERFORMAT VOLLBILD HINWEIS */
@@ -236,48 +231,31 @@
         }
         .btn-tool:active { transform: scale(0.97); }
 
-        .btn-search-prominent {
-            background: var(--primary);
-            color: #ffffff !important;
-            border: 1.5px solid var(--primary);
-            padding: 6px 12px;
-            font-size: 0.85rem;
-            font-weight: 900;
-            box-shadow: 0 2px 8px var(--primary-glow);
-        }
-        body:not(.practice-mode) .btn-search-prominent {
-            background: var(--surface-elevated);
-            color: var(--warning) !important;
-            border-color: var(--warning);
-        }
-
         .btn-setlist-prominent {
             background: var(--surface-elevated);
             color: var(--primary) !important;
             border: 1.5px solid var(--primary);
-            padding: 6px 12px;
-            font-size: 0.85rem;
+            padding: 6px 14px;
+            font-size: 0.9rem;
             font-weight: 900;
         }
 
-        /* PERMANENTE SCHNELLSUCHE-LEISTE IM ÜBE-MODUS */
+        /* PROMINENTE SCHNELLSUCHE-LEISTE (SPOTLIGHT) OBEN */
         #practice-quicksearch-bar {
-            display: none;
             background: var(--surface-card);
             border-bottom: 2px solid var(--primary);
-            padding: 7px 12px;
+            padding: 8px 12px;
             gap: 8px;
             align-items: center;
             position: relative;
         }
-        body.practice-mode #practice-quicksearch-bar { display: flex; }
         #quicksearch-input {
             flex: 1;
-            padding: 8px 12px;
-            font-size: 0.95rem;
-            font-weight: 700;
+            padding: 9px 14px;
+            font-size: 1.05rem;
+            font-weight: 800;
             border: 2px solid var(--primary);
-            border-radius: 7px;
+            border-radius: 8px;
             background: var(--surface);
             color: var(--text);
         }
@@ -289,20 +267,21 @@
             background: var(--surface);
             border: 2px solid var(--primary);
             border-radius: 0 0 8px 8px;
-            max-height: 280px;
+            max-height: 300px;
             overflow-y: auto;
             z-index: 90;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
             display: none;
         }
         .quicksearch-item {
-            padding: 10px 14px;
+            padding: 12px 14px;
             border-bottom: 1px solid var(--border);
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-weight: 700;
+            font-weight: 800;
+            font-size: 0.95rem;
         }
         .quicksearch-item:hover { background: var(--primary-glow); }
 
@@ -1023,7 +1002,7 @@
                 <button class="btn-tool" onclick="closeBottomSheet()" style="padding: 4px 8px;">✕</button>
             </div>
             <button class="sheet-option-btn" onclick="closeBottomSheet(); openSetlistOverview();">
-                <span style="font-size: 1.2rem;">📋</span> Setlist verwalten & anzeigen
+                <span style="font-size: 1.2rem;">📋</span> Setlist anzeigen & prüfen
             </button>
             <button class="sheet-option-btn" onclick="closeBottomSheet(); togglePracticeMode();">
                 <span style="font-size: 1.2rem;" id="sheet-mode-icon">🎸</span> <span id="sheet-mode-text">In den Live-Modus wechseln</span>
@@ -1040,7 +1019,6 @@
     <div id="top-collapsible">
         <header>
             <div class="header-group">
-                <button class="btn-tool btn-search-prominent" id="btn-top-search" onclick="triggerSearchOrEmergency()">🔍 Song-Suche / Liste</button>
                 <button class="btn-tool btn-setlist-prominent" onclick="openSetlistOverview()">📋 Setlist</button>
             </div>
             <div class="header-group">
@@ -1048,11 +1026,11 @@
             </div>
         </header>
 
-        <!-- PERMANENTE DIREKT-SUCHE IM ÜBE-MODUS -->
+        <!-- PROMINENTE SCHNELLSUCHE (SPOTLIGHT) -->
         <div id="practice-quicksearch-bar">
-            <span style="font-weight: 900; font-size: 0.85rem; color: var(--primary);">🔍 Direkt:</span>
+            <span id="search-icon-label" style="font-weight: 900; font-size: 0.85rem; color: var(--primary);">🔍 Song-Schnellsuche:</span>
             <input type="text" id="quicksearch-input" placeholder="Songtitel oder Artist tippen..." autocomplete="off" oninput="handleQuickSearch(this.value)" onfocus="handleQuickSearch(this.value)">
-            <button class="btn-tool" onclick="toggleSidebar()">📚 Filter</button>
+            <button class="btn-tool" id="btn-sidebar-filter" onclick="toggleSidebar()">📚 Filter</button>
             <div id="quicksearch-results"></div>
         </div>
 
@@ -1130,18 +1108,18 @@
         </div>
     </div>
 
-    <!-- ZENTRALE SETLIST-ÜBERSICHT (LIVE = NUR ANSICHT, ÜBE = VOLL BEARBEITBAR) -->
+    <!-- ZENTRALE SETLIST-ÜBERSICHT -->
     <div id="overview-modal" class="modal-overlay">
         <div class="modal-card fullscreen-card">
             <div class="modal-header-row">
                 <h3 style="color: var(--primary); font-size: 1.1rem;">📋 Setlist (<span id="overview-total-count">0</span> Songs)</h3>
                 <div style="display: flex; gap: 6px;">
                     <button class="btn-tool" id="overview-reset-btn" style="border-color: var(--danger); color: var(--danger); padding: 5px 8px;" onclick="clearEntireSetlist()">🗑️ Reset</button>
-                    <button class="btn-tool active-mode" onclick="closeOverviewModal()">✕ Fertig</button>
+                    <button class="btn-tool active-mode" onclick="closeOverviewModal()">✕ Schließen</button>
                 </div>
             </div>
 
-            <!-- SONGS HINZUFÜGEN LEISTE (NUR IM ÜBE-MODUS SICHTBAR) -->
+            <!-- SONGS HINZUFÜGEN LEISTE (NUR IM ÜBE-MODUS) -->
             <div class="overview-add-bar" id="overview-add-box">
                 <div class="overview-add-top">
                     <div class="set-selector-pills">
@@ -1535,7 +1513,7 @@
     }
 
     /* ==========================================================================
-       SCHNELLSUCHE & NOTFALL-EINSCHUB
+       SCHNELLSUCHE (SPOTLIGHT) IM ÜBE-MODUS / NOTFALL IM LIVE-MODUS
        ========================================================================== */
     function handleQuickSearch(query) {
         const resBox = document.getElementById('quicksearch-results');
@@ -1544,21 +1522,29 @@
             resBox.style.display = 'none';
             return;
         }
-        const matches = allSongs.filter(s =>
+        
+        // Im Live-Modus durchsuchen wir die gesamte Datenbank nach Notfall-Songs
+        const pool = (!isPracticeMode) ? allSongs : activeList;
+        const matches = pool.filter(s =>
             (s.Titel || '').toLowerCase().includes(q) ||
             (s.Artist || '').toLowerCase().includes(q)
         );
+
         if (matches.length === 0) {
             resBox.innerHTML = `<div class="quicksearch-item" style="color: var(--text-dim);">Kein Song gefunden</div>`;
         } else {
-            resBox.innerHTML = matches.map(s => `
-                <div class="quicksearch-item" onclick="selectFromQuickSearch('${(s.Titel || '').replace(/'/g, "\\'")}')">
-                    <span>${s.Titel} <small style="color: var(--text-dim);">(${s.Artist || ''})</small></span>
-                    <span class="badge-tuning">${s.Gitarre_Tuning || '-'}</span>
-                </div>
-            `).join('');
+            resBox.innerHTML = matches.map(s => {
+                const badge = !isPracticeMode ? `<span class="badge-tuning" style="background: var(--warning); color: #000;">🚨 Einschieben</span>` : `<span class="badge-tuning">${s.Gitarre_Tuning || '-'}</span>`;
+                const safeTitle = (s.Titel || '').replace(/'/g, "\\'");
+                return `
+                    <div class="quicksearch-item" onclick="selectQuickSearchSong('${safeTitle}')">
+                        <span>${s.Titel} <small style="color: var(--text-dim);">(${s.Artist || ''})</small></span>
+                        ${badge}
+                    </div>
+                `;
+            }).join('');
         }
-        resBox.style.display = 'block';
+        resBox.style.display = 'flex';
     }
 
     document.addEventListener('click', (e) => {
@@ -1569,70 +1555,34 @@
         }
     });
 
-    function selectFromQuickSearch(songTitle) {
+    function selectQuickSearchSong(songTitle) {
         document.getElementById('quicksearch-results').style.display = 'none';
         document.getElementById('quicksearch-input').value = '';
-        
-        const idx = activeList.findIndex(s => s.Titel === songTitle);
-        if (idx !== -1) {
-            currentIndex = idx;
-            renderSidebarList();
-            renderCurrentSong();
+
+        if (!isPracticeMode) {
+            // Im Live-Modus: Als Notfall-Song einschieben!
+            const songObj = allSongs.find(s => s.Titel === songTitle);
+            if (songObj) {
+                triggerEmergencySong(songObj);
+            }
         } else {
-            document.getElementById('view-filter').value = 'ALL';
-            document.getElementById('search').value = '';
-            rebuildActiveList();
-            const newIdx = activeList.findIndex(s => s.Titel === songTitle);
-            if (newIdx !== -1) {
-                currentIndex = newIdx;
+            // Im Übe-Modus: Zum Song springen
+            const idx = activeList.findIndex(s => s.Titel === songTitle);
+            if (idx !== -1) {
+                currentIndex = idx;
                 renderSidebarList();
                 renderCurrentSong();
+            } else {
+                document.getElementById('view-filter').value = 'ALL';
+                rebuildActiveList();
+                const newIdx = activeList.findIndex(s => s.Titel === songTitle);
+                if (newIdx !== -1) {
+                    currentIndex = newIdx;
+                    renderSidebarList();
+                    renderCurrentSong();
+                }
             }
         }
-    }
-
-    function triggerSearchOrEmergency() {
-        const sb = document.getElementById('sidebar');
-        if (!isPracticeMode) {
-            document.getElementById('sidebar-mode-label').innerText = '🚨 Notfall-Song einschieben (Alle Songs)';
-            document.getElementById('view-filter').value = 'ALL';
-            renderEmergencySidebarList();
-            sb.classList.remove('hidden');
-            document.getElementById('search').value = '';
-            document.getElementById('search').focus();
-        } else {
-            document.getElementById('sidebar-mode-label').innerText = 'Song-Archiv & Filter';
-            toggleSidebar();
-        }
-    }
-
-    function renderEmergencySidebarList() {
-        const query = document.getElementById('search').value.toLowerCase();
-        const listEl = document.getElementById('song-list');
-        listEl.innerHTML = '';
-
-        const pool = allSongs.filter(s =>
-            (s.Titel || '').toLowerCase().includes(query) ||
-            (s.Artist || '').toLowerCase().includes(query)
-        ).sort((a, b) => (a.Titel || '').localeCompare(b.Titel || ''));
-
-        pool.forEach(song => {
-            const li = document.createElement('li');
-            li.className = 'song-item';
-            const posHtml = song.Setlist_Pos ? `<span class="badge-pos">${song.Setlist_Pos}</span>` : '';
-            li.innerHTML = `
-                <div>
-                    <div class="song-title-text">${posHtml}<span>${song.Titel}</span></div>
-                    <div class="song-sub-text">${song.Artist || ''}</div>
-                </div>
-                <span class="badge-tuning">🚨 Einschieben</span>
-            `;
-            li.onclick = () => {
-                triggerEmergencySong(song);
-                toggleSidebar(false);
-            };
-            listEl.appendChild(li);
-        });
     }
 
     function triggerEmergencySong(songObj) {
@@ -1693,11 +1643,6 @@
         const viewMode = document.getElementById('view-filter').value;
         const tuning = document.getElementById('tuning-filter').value;
         const statusFilter = document.getElementById('status-filter').value;
-
-        if (!isPracticeMode && !document.getElementById('sidebar').classList.contains('hidden')) {
-            renderEmergencySidebarList();
-            return;
-        }
 
         let filtered = allSongs.filter(s => {
             const matchesQuery = (s.Titel || '').toLowerCase().includes(query) || (s.Artist || '').toLowerCase().includes(query);
@@ -1997,8 +1942,10 @@
     function togglePracticeMode() {
         if (isTunerActive) toggleTuner();
         isPracticeMode = !isPracticeMode;
-        const searchBtn = document.getElementById('btn-top-search');
         const statusBadge = document.getElementById('top-status-badge');
+        const searchInput = document.getElementById('quicksearch-input');
+        const searchLabel = document.getElementById('search-icon-label');
+        const filterBtn = document.getElementById('btn-sidebar-filter');
         
         emergencyActiveSong = null;
         savedSetlistIndexBeforeEmergency = null;
@@ -2013,7 +1960,9 @@
             document.body.classList.add('practice-mode');
             statusBadge.innerText = '☀️ Übe-Modus';
             statusBadge.style.color = 'var(--primary)';
-            searchBtn.innerText = '🔍 Song-Suche / Liste';
+            searchLabel.innerText = '🔍 Song-Schnellsuche:';
+            searchInput.placeholder = 'Songtitel oder Artist tippen...';
+            filterBtn.style.display = 'inline-flex';
             document.getElementById('view-filter').value = 'ALL';
             
             document.getElementById('sheet-mode-icon').innerText = '🎸';
@@ -2022,7 +1971,9 @@
             document.body.classList.remove('practice-mode');
             statusBadge.innerText = '🎸 Live-Modus';
             statusBadge.style.color = 'var(--warning)';
-            searchBtn.innerText = '🚨 Notfall-Song';
+            searchLabel.innerText = '🚨 Notfall-Song:';
+            searchInput.placeholder = 'Song für spontanen Einschub suchen...';
+            filterBtn.style.display = 'none';
             document.getElementById('view-filter').value = 'SETLIST';
 
             document.getElementById('sheet-mode-icon').innerText = '☀️';
@@ -2032,7 +1983,7 @@
     }
 
     /* ==========================================================================
-       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT (LIVE = NUR ANSICHT, ÜBE = EDITIERBAR)
+       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT
        ========================================================================== */
     let currentTargetSet = 'Set 1';
     let isAddPoolOpen = false;
@@ -2064,7 +2015,6 @@
         try {
             normalizeSetlistPositions();
             
-            // Im Live-Modus: Hinzufügen-Leiste und Reset-Button ausblenden (Reine Ansicht!)
             const addBox = document.getElementById('overview-add-box');
             const resetBtn = document.getElementById('overview-reset-btn');
             if (addBox) addBox.style.display = isPracticeMode ? 'flex' : 'none';
@@ -2081,14 +2031,9 @@
             renderOverviewList();
             
             const modal = document.getElementById('overview-modal');
-            if (modal) {
-                modal.style.display = 'flex';
-            } else {
-                alert('Modal #overview-modal nicht gefunden.');
-            }
+            if (modal) modal.style.display = 'flex';
         } catch (err) {
             console.error('Setlist open error:', err);
-            alert('Setlist konnte nicht geöffnet werden: ' + err.message);
         }
     }
 
@@ -2219,7 +2164,12 @@
                 const guitarText = (song.Gitarre_Tuning || '-') + (kapo !== '-' ? ` · Kapo ${kapo}` : '');
                 const safeTitle = (song.Titel || '').replace(/'/g, "\\'");
 
-                // IM LIVE-MODUS: KEINE EDITIER-ODER SCHIEBEBUTTONS (REINE ANSICHT)
+                // LIVE-MODUS: Klick schließt IMMER nur das Setlist-Fenster (Reine Ansicht!)
+                // ÜBE-MODUS: Klick springt zum Song, Steuerungskneppe für Schieben sind da.
+                const clickAction = isPracticeMode 
+                    ? `jumpToSongFromOverview('${safeTitle}')` 
+                    : `closeOverviewModal()`;
+
                 const controlsHtml = isPracticeMode ? `
                     <div class="overview-controls">
                         <button class="btn-mini-ctrl" style="color: var(--primary);" onclick="cycleOverviewSongSetBlock(${pos})" title="Set wechseln">${shortSetLabel(song.Set_Block)}</button>
@@ -2231,7 +2181,7 @@
 
                 html += `
                     <div class="overview-song-row">
-                        <div class="overview-song-info" onclick="jumpToSongFromOverview('${safeTitle}')">
+                        <div class="overview-song-info" onclick="${clickAction}" title="${isPracticeMode ? 'Zum Song springen' : 'Setlist schließen'}">
                             <span class="badge-pos">${pos}</span>
                             <div class="overview-title-stack">
                                 <div class="overview-song-title">${song.Titel}</div>
