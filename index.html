@@ -104,59 +104,93 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* ==========================================================================
-           MANUELL EIN-/AUSKLAPPBARE KOPFLEISTE
-           ========================================================================== */
-        #top-collapsible {
+        /* SCHWEBBENDER DAUMEN-BUTTON (FLOATING ACTION BUTTON) */
+        #fab-menu-btn {
+            position: fixed;
+            bottom: 24px;
+            right: 20px;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            font-size: 1.4rem;
+            font-weight: 900;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+            cursor: pointer;
+            z-index: 90;
+            transition: transform 0.15s ease, background 0.15s ease;
+        }
+        body:not(.practice-mode) #fab-menu-btn { color: #000000; }
+        #fab-menu-btn:active { transform: scale(0.92); }
+
+        /* BOTTOM-SHEET MENÜ VON UNTEN */
+        #bottom-sheet-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            display: none;
+            justify-content: flex-end;
+            flex-direction: column;
+            z-index: 100;
+            backdrop-filter: blur(2px);
+        }
+        #bottom-sheet-card {
+            background: var(--surface);
+            border-top: 2px solid var(--primary);
+            border-radius: 16px 16px 0 0;
+            padding: 20px 16px 30px 16px;
             display: flex;
             flex-direction: column;
-            width: 100%;
-            max-height: 220px;
-            opacity: 1;
-            overflow: hidden;
-            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-                        opacity 0.25s ease;
-            z-index: 30;
-            flex-shrink: 0;
+            gap: 10px;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.6);
+            animation: slideUpSheet 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
-
-        #top-collapsible.hidden-top {
-            max-height: 0 !important;
-            opacity: 0;
-            pointer-events: none;
+        @keyframes slideUpSheet {
+            0% { transform: translateY(100%); }
+            100% { transform: translateY(0); }
         }
-
-        #top-bar-handle {
-            position: absolute;
-            top: 0;
-            right: 14px;
-            z-index: 45;
-            background: var(--surface-elevated);
-            color: var(--primary);
-            border: 1.5px solid var(--primary);
-            border-top: none;
-            border-radius: 0 0 8px 8px;
-            padding: 4px 12px;
-            font-size: 0.72rem;
-            font-weight: 900;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
+        .sheet-option-btn {
+            background: var(--surface-card);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 14px 16px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
-            user-select: none;
+            text-align: left;
         }
+        .sheet-option-btn:active { background: var(--primary-glow); border-color: var(--primary); }
 
         header {
             background: var(--surface);
             border-bottom: 2px solid var(--border);
-            padding: 6px 10px;
+            padding: 8px 12px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 6px;
-            overflow-x: auto;
         }
-        .header-group { display: flex; align-items: center; gap: 5px; }
+        .header-status-badge {
+            background: var(--surface-elevated);
+            color: var(--primary);
+            border: 1px solid var(--border);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
 
         .btn-tool {
             background: var(--surface-elevated);
@@ -173,13 +207,6 @@
             white-space: nowrap;
         }
         .btn-tool:active { transform: scale(0.97); }
-        .btn-tool.active-mode {
-            background: var(--primary);
-            color: #ffffff;
-            border-color: var(--primary);
-            font-weight: 900;
-        }
-        body:not(.practice-mode) .btn-tool.active-mode { color: #000000; }
 
         .btn-search-prominent {
             background: var(--primary);
@@ -206,9 +233,7 @@
             align-items: center;
             position: relative;
         }
-        body.practice-mode #practice-quicksearch-bar {
-            display: flex;
-        }
+        body.practice-mode #practice-quicksearch-bar { display: flex; }
         #quicksearch-input {
             flex: 1;
             padding: 8px 12px;
@@ -281,7 +306,6 @@
             margin-top: 2px;
         }
 
-        /* NOTFALL-RÜCKSPRUNG-BANNER IM LIVE-MODUS */
         #emergency-return-banner {
             display: none;
             background: var(--warning);
@@ -296,9 +320,7 @@
             z-index: 35;
             flex-shrink: 0;
         }
-        #emergency-return-banner.active {
-            display: flex;
-        }
+        #emergency-return-banner.active { display: flex; }
         .btn-emergency-return {
             background: #000000;
             color: var(--warning);
@@ -378,9 +400,6 @@
             z-index: 0;
         }
 
-        /* ==========================================================================
-           SONG-CONTENT & LIVE-MODUS ZENTRIERUNG / READ-ONLY
-           ========================================================================== */
         #song-content {
             flex: 1;
             padding: 12px 14px;
@@ -415,7 +434,6 @@
             gap: 8px;
             border-bottom: 1px solid var(--border);
             padding-bottom: 6px;
-            padding-right: 75px;
             flex-wrap: wrap;
             user-select: none;
         }
@@ -858,7 +876,7 @@
             align-items: center;
             gap: 8px;
             flex: 1 1 auto;
-            min-width: 0; /* Zwingend für sauberen Text-Umbruch/Ellipsis neben Buttons */
+            min-width: 0;
             cursor: pointer;
         }
         .overview-title-stack {
@@ -955,16 +973,38 @@
         <div class="splash-hint">Tippen zum Überspringen</div>
     </div>
 
+    <!-- SCHWEBBENDER DAUMEN-BUTTON (VORSCHLAG 1) -->
+    <button id="fab-menu-btn" onclick="openBottomSheet()" title="Menü öffnen">≡</button>
+
+    <!-- BOTTOM-SHEET MENÜ (VON UNTEN) -->
+    <div id="bottom-sheet-overlay" onclick="closeBottomSheet()">
+        <div id="bottom-sheet-card" onclick="event.stopPropagation()">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                <span style="font-size: 0.75rem; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">LKB Live Cockpit Menü</span>
+                <button class="btn-tool" onclick="closeBottomSheet()" style="padding: 4px 8px;">✕</button>
+            </div>
+            <button class="sheet-option-btn" onclick="closeBottomSheet(); openSetlistOverview();">
+                <span style="font-size: 1.2rem;">📋</span> Setlist verwalten & anzeigen
+            </button>
+            <button class="sheet-option-btn" onclick="closeBottomSheet(); togglePracticeMode();">
+                <span style="font-size: 1.2rem;" id="sheet-mode-icon">🎸</span> <span id="sheet-mode-text">In den Live-Modus wechseln</span>
+            </button>
+            <button class="sheet-option-btn" onclick="closeBottomSheet(); openSyncModal();">
+                <span style="font-size: 1.2rem;">🔄</span> Google Sheets Synchronisation
+            </button>
+            <button class="sheet-option-btn" onclick="closeBottomSheet(); toggleFullScreen();">
+                <span style="font-size: 1.2rem;">⛶</span> Vollbild umschalten
+            </button>
+        </div>
+    </div>
+
     <div id="top-collapsible">
         <header>
             <div class="header-group">
                 <button class="btn-tool btn-search-prominent" id="btn-top-search" onclick="triggerSearchOrEmergency()">🔍 Song-Suche / Liste</button>
-                <button class="btn-tool" onclick="openSetlistOverview()">📋 Setlist</button>
             </div>
             <div class="header-group">
-                <button class="btn-tool active-mode" id="btn-mode-toggle" onclick="togglePracticeMode()">☀️ Übe-Modus: AN</button>
-                <button class="btn-tool" onclick="openSyncModal()">🔄 Sync</button>
-                <button class="btn-tool" onclick="toggleFullScreen()" title="Vollbild">⛶</button>
+                <div class="header-status-badge" id="top-status-badge">☀️ Übe-Modus</div>
             </div>
         </header>
 
@@ -996,8 +1036,6 @@
     </div>
 
     <div id="workspace">
-        <button id="top-bar-handle" onclick="toggleTopBar()" title="Kopfleiste ein-/ausblenden">▲ Menü</button>
-
         <div id="sidebar" class="hidden">
             <div class="sidebar-controls">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px;">
@@ -1114,29 +1152,11 @@
     let savedSetlistIndexBeforeEmergency = null;
     let emergencyActiveSong = null;
 
-    function updateTopBarHandle() {
-        const topEl = document.getElementById('top-collapsible');
-        const handle = document.getElementById('top-bar-handle');
-        if (!topEl || !handle) return;
-        handle.innerText = topEl.classList.contains('hidden-top') ? '▼ Menü' : '▲ Menü';
+    function openBottomSheet() {
+        document.getElementById('bottom-sheet-overlay').style.display = 'flex';
     }
-
-    function showTopBar() {
-        const topEl = document.getElementById('top-collapsible');
-        if (topEl) topEl.classList.remove('hidden-top');
-        updateTopBarHandle();
-    }
-
-    function hideTopBar() {
-        const topEl = document.getElementById('top-collapsible');
-        if (topEl) topEl.classList.add('hidden-top');
-        updateTopBarHandle();
-    }
-
-    function toggleTopBar() {
-        const topEl = document.getElementById('top-collapsible');
-        if (topEl && topEl.classList.contains('hidden-top')) showTopBar();
-        else hideTopBar();
+    function closeBottomSheet() {
+        document.getElementById('bottom-sheet-overlay').style.display = 'none';
     }
 
     function dismissSplash() {
@@ -1364,11 +1384,6 @@
         if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock();
     });
 
-    function toggleFullScreen() {
-        if (!document.fullscreenElement) document.documentElement.requestFullscreen().catch(() => {});
-        else if (document.exitFullscreen) document.exitFullscreen();
-    }
-
     function getSpotifyLinkHtml(song) {
         const query = encodeURIComponent((song.Artist || '') + ' ' + (song.Titel || ''));
         const spotifyWebUrl = (song.Link && song.Link.startsWith('http') && !song.Link.endsWith('spotify.com/')) ? song.Link : 'https://open.spotify.com/search/' + query;
@@ -1446,7 +1461,7 @@
     }
 
     /* ==========================================================================
-       SCHNELLSUCHE IM ÜBE-MODUS & NOTFALL-SONG-EINSCHUB IM LIVE-MODUS
+       SCHNELLSUCHE & NOTFALL-EINSCHUB
        ========================================================================== */
     function handleQuickSearch(query) {
         const resBox = document.getElementById('quicksearch-results');
@@ -1678,14 +1693,12 @@
         const song = emergencyActiveSong || activeList[currentIndex];
 
         if (!song) {
-            showTopBar();
             contentEl.innerHTML = `
                 <div class="song-stage-wrapper" style="text-align: center; align-items: center; gap: 14px;">
                     <h2 style="color: var(--text-dim);">Keine Songs in dieser Ansicht gefunden.</h2>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
-                        <button class="btn-tool active-mode" onclick="openSetlistOverview()">📋 Setlist bearbeiten</button>
+                        <button class="btn-tool active-mode" onclick="openSetlistOverview()">📋 Setlist öffnen</button>
                         <button class="btn-tool" onclick="openSyncModal()">🔄 Aus Sheet laden</button>
-                        ${!isPracticeMode ? `<button class="btn-tool" onclick="togglePracticeMode()">☀️ Zum Übe-Modus (Alle Songs)</button>` : ''}
                     </div>
                 </div>`;
             prevBtn.disabled = true; nextBtn.disabled = true;
@@ -1910,8 +1923,8 @@
     function togglePracticeMode() {
         if (isTunerActive) toggleTuner();
         isPracticeMode = !isPracticeMode;
-        const btn = document.getElementById('btn-mode-toggle');
         const searchBtn = document.getElementById('btn-top-search');
+        const statusBadge = document.getElementById('top-status-badge');
         
         emergencyActiveSong = null;
         savedSetlistIndexBeforeEmergency = null;
@@ -1924,50 +1937,33 @@
 
         if (isPracticeMode) {
             document.body.classList.add('practice-mode');
-            btn.classList.add('active-mode');
-            btn.innerText = '☀️ Übe-Modus: AN';
+            statusBadge.innerText = '☀️ Übe-Modus';
+            statusBadge.style.color = 'var(--primary)';
             searchBtn.innerText = '🔍 Song-Suche / Liste';
             document.getElementById('view-filter').value = 'ALL';
-            showTopBar();
+            
+            // Bottom-Sheet Menü Texte anpassen
+            document.getElementById('sheet-mode-icon').innerText = '🎸';
+            document.getElementById('sheet-mode-text').innerText = 'In den Live-Modus wechseln';
         } else {
             document.body.classList.remove('practice-mode');
-            btn.classList.remove('active-mode');
-            btn.innerText = '🎸 Live-Modus';
+            statusBadge.innerText = '🎸 Live-Modus';
+            statusBadge.style.color = 'var(--warning)';
             searchBtn.innerText = '🚨 Notfall-Song';
             document.getElementById('view-filter').value = 'SETLIST';
+
+            // Bottom-Sheet Menü Texte anpassen
+            document.getElementById('sheet-mode-icon').innerText = '☀️';
+            document.getElementById('sheet-mode-text').innerText = 'In den Übe-Modus wechseln';
         }
         rebuildActiveList();
     }
 
     /* ==========================================================================
-       ZENTRALE SETLIST-ÜBERSICHT (LESBAR, REDUZIERT, DIREKT SCHIEBEN & HINZUFÜGEN)
+       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT
        ========================================================================== */
     let currentTargetSet = 'Set 1';
     let isAddPoolOpen = false;
-
-    function getSortedSetlistSongs() {
-        return allSongs
-            .filter(s => s.Setlist_Pos && String(s.Setlist_Pos).trim() !== '' && !isNaN(Number(s.Setlist_Pos)))
-            .sort((a, b) => parseInt(a.Setlist_Pos, 10) - parseInt(b.Setlist_Pos, 10));
-    }
-
-    function normalizeSetlistPositions() {
-        const list = getSortedSetlistSongs();
-        list.forEach((s, idx) => {
-            s.Setlist_Pos = String(idx + 1);
-            if (!s.Set_Block || s.Set_Block.trim() === '') s.Set_Block = 'Set 1';
-        });
-        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
-    }
-
-    function shortSetLabel(block) {
-        const b = (block || 'Set 1').trim();
-        if (b === 'Set 1') return 'S1';
-        if (b === 'Set 2') return 'S2';
-        if (b === 'Set 3') return 'S3';
-        if (b.toLowerCase().startsWith('zug')) return 'Z';
-        return b;
-    }
 
     function selectTargetSet(setName) {
         currentTargetSet = setName;
@@ -2017,7 +2013,6 @@
         if (!isAddPoolOpen) openAddPool();
         const q = (document.getElementById('overview-add-input').value || '').trim().toLowerCase();
 
-        // Zeigt primär Songs, die noch NICHT in der Setlist sind (alphabetisch)
         const available = allSongs
             .map((s, idx) => ({ song: s, idx }))
             .filter(item => {
@@ -2028,7 +2023,7 @@
             .sort((a, b) => (a.song.Titel || '').localeCompare(b.song.Titel || ''));
 
         if (available.length === 0) {
-            resEl.innerHTML = `<div style="padding: 10px; color: var(--text-dim); font-size: 0.82rem; text-align: center;">Keine weiteren freien Songs gefunden.</div>`;
+            resEl.innerHTML = `<div style="padding: 10px; color: var(--text-dim); font-size: 0.82rem; text-align: center;">Keine weiteren freien Songs im Archiv.</div>`;
             return;
         }
 
@@ -2056,6 +2051,15 @@
         document.getElementById('overview-add-input').value = '';
         renderAddPoolResults();
         renderOverviewList();
+    }
+
+    function shortSetLabel(block) {
+        const b = (block || 'Set 1').trim();
+        if (b === 'Set 1') return 'S1';
+        if (b === 'Set 2') return 'S2';
+        if (b === 'Set 3') return 'S3';
+        if (b.toLowerCase().startsWith('zug')) return 'Z';
+        return b;
     }
 
     function renderOverviewList() {
@@ -2116,7 +2120,7 @@
                             <button class="btn-mini-ctrl" style="color: var(--primary);" onclick="cycleOverviewSongSetBlock(${pos})" title="Set wechseln">${shortSetLabel(song.Set_Block)}</button>
                             <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, -1)" ${pos === 1 ? 'disabled' : ''} title="Hoch">▲</button>
                             <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, 1)" ${pos === totalCount ? 'disabled' : ''} title="Runter">▼</button>
-                            <button class="btn-mini-ctrl" style="color: var(--danger);" onclick="removeSongFromOverview(${pos})" title="Aus Setlist entfernen">✕</button>
+                            <button class="btn-mini-ctrl" style="color: var(--danger);" onclick="removeSongFromOverview(${pos})" title="Entfernen">✕</button>
                         </div>
                     </div>
                 `;
@@ -2133,7 +2137,6 @@
         const targetIdx = idx + delta;
         if (idx < 0 || idx >= list.length || targetIdx < 0 || targetIdx >= list.length) return;
 
-        // Übernimmt bei Set-Grenzen automatisch das Ziel-Set
         list[idx].Set_Block = list[targetIdx].Set_Block || 'Set 1';
 
         const tempPos = list[idx].Setlist_Pos;
@@ -2167,7 +2170,7 @@
     }
 
     function clearEntireSetlist() {
-        if (!confirm('Aktuelle Setlist wirklich komplett leeren, um eine neue zu klicken?')) return;
+        if (!confirm('Setlist wirklich komplett leeren?')) return;
         allSongs.forEach(s => {
             s.Setlist_Pos = "";
             s.Set_Block = "";
