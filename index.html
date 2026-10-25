@@ -2022,7 +2022,7 @@
     }
 
     /* ==========================================================================
-       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT
+       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT (FEHLERABSICHERUNG)
        ========================================================================== */
     let currentTargetSet = 'Set 1';
     let isAddPoolOpen = false;
@@ -2036,13 +2036,28 @@
     }
 
     function openSetlistOverview() {
-        normalizeSetlistPositions();
-        document.getElementById('overview-add-input').value = '';
-        isAddPoolOpen = false;
-        document.getElementById('overview-add-results').style.display = 'none';
-        document.getElementById('btn-toggle-pool').innerText = '➕ Archiv';
-        renderOverviewList();
-        document.getElementById('overview-modal').style.display = 'flex';
+        try {
+            normalizeSetlistPositions();
+            const inputEl = document.getElementById('overview-add-input');
+            if (inputEl) inputEl.value = '';
+            isAddPoolOpen = false;
+            const resEl = document.getElementById('overview-add-results');
+            if (resEl) resEl.style.display = 'none';
+            const toggleBtn = document.getElementById('btn-toggle-pool');
+            if (toggleBtn) toggleBtn.innerText = '➕ Archiv';
+            
+            renderOverviewList();
+            
+            const modal = document.getElementById('overview-modal');
+            if (modal) {
+                modal.style.display = 'flex';
+            } else {
+                alert('Setlist-Modal konnte im DOM nicht gefunden werden.');
+            }
+        } catch (err) {
+            console.error('Fehler beim Öffnen der Setlist:', err);
+            alert('Fehler beim Öffnen der Setlist: ' + err.message);
+        }
     }
 
     function closeOverviewModal() {
@@ -2072,6 +2087,7 @@
 
     function renderAddPoolResults() {
         const resEl = document.getElementById('overview-add-results');
+        if (!resEl) return;
         if (!isAddPoolOpen) openAddPool();
         const q = (document.getElementById('overview-add-input').value || '').trim().toLowerCase();
 
@@ -2126,8 +2142,10 @@
 
     function renderOverviewList() {
         const container = document.getElementById('overview-content');
+        if (!container) return;
         const setlistSongs = getSortedSetlistSongs();
-        document.getElementById('overview-total-count').innerText = setlistSongs.length;
+        const totalCountEl = document.getElementById('overview-total-count');
+        if (totalCountEl) totalCountEl.innerText = setlistSongs.length;
 
         if (setlistSongs.length === 0) {
             container.innerHTML = `
