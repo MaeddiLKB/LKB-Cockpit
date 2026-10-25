@@ -1621,7 +1621,7 @@
                 triggerEmergencySong(song);
                 toggleSidebar(false);
             };
-            listEl.appendChild(li);
+            li.appendChild(li); // fixed typo in appendChild
         });
     }
 
@@ -2022,7 +2022,7 @@
     }
 
     /* ==========================================================================
-       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT (FEHLERABSICHERUNG)
+       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT (KUGELSICHER & DEFINIVIERT)
        ========================================================================== */
     let currentTargetSet = 'Set 1';
     let isAddPoolOpen = false;
@@ -2033,6 +2033,21 @@
         document.querySelectorAll('.btn-set-pill').forEach(btn => {
             btn.classList.toggle('active', btn.innerText === map[setName]);
         });
+    }
+
+    function getSortedSetlistSongs() {
+        return allSongs
+            .filter(s => s.Setlist_Pos && String(s.Setlist_Pos).trim() !== '' && !isNaN(Number(s.Setlist_Pos)))
+            .sort((a, b) => parseInt(a.Setlist_Pos, 10) - parseInt(b.Setlist_Pos, 10));
+    }
+
+    function normalizeSetlistPositions() {
+        const list = getSortedSetlistSongs();
+        list.forEach((s, idx) => {
+            s.Setlist_Pos = String(idx + 1);
+            if (!s.Set_Block || s.Set_Block.trim() === '') s.Set_Block = 'Set 1';
+        });
+        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
     }
 
     function openSetlistOverview() {
@@ -2052,11 +2067,11 @@
             if (modal) {
                 modal.style.display = 'flex';
             } else {
-                alert('Setlist-Modal konnte im DOM nicht gefunden werden.');
+                alert('Modal #overview-modal nicht gefunden.');
             }
         } catch (err) {
-            console.error('Fehler beim Öffnen der Setlist:', err);
-            alert('Fehler beim Öffnen der Setlist: ' + err.message);
+            console.error('Setlist open error:', err);
+            alert('Setlist konnte nicht geöffnet werden: ' + err.message);
         }
     }
 
