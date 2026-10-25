@@ -104,6 +104,9 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
+        /* ==========================================================================
+           MANUELL EIN-/AUSKLAPPBARE KOPFLEISTE (OHNE AUTO-TIMER)
+           ========================================================================== */
         #top-collapsible {
             display: flex;
             flex-direction: column;
@@ -111,18 +114,40 @@
             max-height: 140px;
             opacity: 1;
             overflow: hidden;
-            transform: translateY(0);
-            transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
-                        opacity 0.35s ease,
-                        transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                        opacity 0.25s ease;
             z-index: 30;
         }
 
-        body:not(.practice-mode) #top-collapsible.hidden-top {
+        #top-collapsible.hidden-top {
             max-height: 0 !important;
             opacity: 0;
-            transform: translateY(-100%);
             pointer-events: none;
+        }
+
+        /* FESTER BUTTON AM RAND ZUM EIN-/AUSBLENDEN DER KOPFLEISTE */
+        #top-bar-handle {
+            position: absolute;
+            top: 0;
+            right: 14px;
+            z-index: 45;
+            background: var(--surface-elevated);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            border-top: none;
+            border-radius: 0 0 8px 8px;
+            padding: 4px 12px;
+            font-size: 0.72rem;
+            font-weight: 900;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45);
+            user-select: none;
+            transition: background 0.15s ease, transform 0.1s ease;
+        }
+        #top-bar-handle:active {
+            transform: scale(0.95);
         }
 
         header {
@@ -264,9 +289,12 @@
             z-index: 0;
         }
 
+        /* ==========================================================================
+           SONG-CONTENT & VERTIKALE ZENTRIERUNG IM LIVE-MODUS
+           ========================================================================== */
         #song-content {
             flex: 1;
-            padding: 8px 12px;
+            padding: 12px 14px;
             overflow-y: auto;
             overflow-x: hidden;
             display: flex;
@@ -275,19 +303,38 @@
             z-index: 2;
         }
 
+        .song-stage-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            max-width: 960px;
+            margin: 0 auto;
+        }
+
+        /* Im Live-Modus: Vertikal zentrieren & deutlich großzügigere Bühnen-Optik! */
+        body:not(.practice-mode) .song-stage-wrapper {
+            margin: auto;
+            gap: 16px;
+            padding: 10px 0;
+        }
+
         .header-title-row {
             display: flex;
             justify-content: space-between;
             align-items: baseline;
             gap: 8px;
             border-bottom: 1px solid var(--border);
-            padding-bottom: 4px;
+            padding-bottom: 6px;
+            padding-right: 75px; /* Platz lassen für den Menü-Button oben rechts */
             flex-wrap: wrap;
-            cursor: pointer;
             user-select: none;
         }
         .song-title-heading { font-family: Georgia, serif; font-size: 1.65rem; font-weight: 900; line-height: 1.1; color: var(--text); }
         .song-artist-heading { color: var(--primary); font-size: 0.88rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; }
+
+        body:not(.practice-mode) .song-title-heading { font-size: 2.05rem; }
+        body:not(.practice-mode) .song-artist-heading { font-size: 1.05rem; }
 
         #practice-dashboard {
             background: var(--surface);
@@ -406,17 +453,21 @@
         .tuner-needle { position: absolute; top: 0; bottom: 0; width: 4px; background: var(--danger); left: 50%; transform: translateX(-50%); transition: left 0.05s linear; }
         .tuner-needle.in-tune { background: var(--primary); }
 
-        .stage-hud { display: grid; grid-template-columns: minmax(0, 1fr) 72px; gap: 6px; width: 100%; }
+        .stage-hud { display: grid; grid-template-columns: minmax(0, 1fr) 78px; gap: 8px; width: 100%; }
+        body:not(.practice-mode) .stage-hud { gap: 12px; grid-template-columns: minmax(0, 1fr) 92px; }
 
         .hud-card {
             background: var(--surface-card);
             border: 1px solid var(--border);
-            border-radius: 7px;
+            border-radius: 8px;
             padding: 6px 10px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             min-width: 0;
+        }
+        body:not(.practice-mode) .hud-card {
+            padding: 11px 14px;
         }
 
         .hud-label {
@@ -430,6 +481,7 @@
             justify-content: space-between;
             align-items: center;
         }
+        body:not(.practice-mode) .hud-label { font-size: 0.7rem; margin-bottom: 4px; }
 
         .hud-value-select {
             width: 100%;
@@ -443,22 +495,25 @@
             padding: 0;
             text-overflow: ellipsis;
         }
+        body:not(.practice-mode) .hud-value-select { font-size: 1.3rem; }
 
         .hud-card.kapo-hud { text-align: center; align-items: center; padding: 6px 4px; border-width: 2px; }
         .hud-card.kapo-hud.has-kapo { border-color: var(--warning); background: var(--warning-bg); box-shadow: 0 0 10px rgba(255, 183, 0, 0.25); }
         .kapo-value-select { text-align: center; text-align-last: center; font-size: 1.25rem; font-weight: 900; color: var(--text-dim); }
+        body:not(.practice-mode) .kapo-value-select { font-size: 1.45rem; }
         .hud-card.kapo-hud.has-kapo .kapo-value-select { color: var(--warning); }
 
         .hud-card.rig-hud {
             grid-column: 1 / -1;
-            padding: 6px 10px;
             background: var(--surface-card);
             border-left: 4px solid var(--primary);
         }
 
-        .hud-card.transition-hud { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; padding: 5px 10px; gap: 10px; }
+        .hud-card.transition-hud { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; padding: 6px 10px; gap: 10px; }
+        body:not(.practice-mode) .hud-card.transition-hud { padding: 10px 14px; }
         .hud-card.transition-hud .hud-label { margin-bottom: 0; white-space: nowrap; flex-shrink: 0; }
         .transition-select { color: var(--text); font-size: 0.92rem; font-weight: 700; text-align: right; text-align-last: right; }
+        body:not(.practice-mode) .transition-select { font-size: 1.1rem; }
 
         .cue-banner {
             background: var(--danger-bg);
@@ -466,23 +521,25 @@
             border-top: 1px solid var(--danger-border);
             border-right: 1px solid var(--danger-border);
             border-bottom: 1px solid var(--danger-border);
-            border-radius: 7px;
-            padding: 8px 12px;
+            border-radius: 8px;
+            padding: 10px 14px;
         }
-        .cue-banner-title { color: var(--danger); font-size: 0.68rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 2px; }
-        .cue-banner-text { color: #ffe6e6; font-size: 1.05rem; font-weight: 800; line-height: 1.35; overflow-wrap: anywhere; }
+        .cue-banner-title { color: var(--danger); font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 3px; }
+        .cue-banner-text { color: #ffe6e6; font-size: 1.1rem; font-weight: 800; line-height: 1.35; overflow-wrap: anywhere; }
         body.practice-mode .cue-banner { display: none; }
 
         .chords-container {
-            flex: 1;
             background: var(--surface-card);
             border: 1px solid var(--border);
             border-left: 4px solid var(--primary);
-            border-radius: 7px;
+            border-radius: 8px;
             padding: 12px 14px;
             min-width: 0;
         }
-        .chords-header { color: var(--primary); font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+        body:not(.practice-mode) .chords-container {
+            padding: 16px 18px;
+        }
+        .chords-header { color: var(--primary); font-size: 0.72rem; font-weight: 900; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
         pre.chords-content {
             white-space: pre-wrap;
             overflow-wrap: anywhere;
@@ -492,16 +549,20 @@
             line-height: 1.55;
             color: var(--text);
         }
+        body:not(.practice-mode) pre.chords-content {
+            font-size: 1.24rem;
+            line-height: 1.6;
+        }
 
         #next-song-banner {
             background: var(--surface);
             border-top: 2px solid var(--border);
-            padding: 8px 12px;
+            padding: 10px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 8px;
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 800;
             flex-wrap: wrap;
             z-index: 10;
@@ -524,7 +585,7 @@
         }
 
         /* ==========================================================================
-           MODALS & FULLSCREEN OVERLAYS (SETLIST ÜBERSICHT & SPEED-BUILDER)
+           MODALS & FULLSCREEN OVERLAYS
            ========================================================================== */
         .modal-overlay {
             position: fixed;
@@ -569,7 +630,6 @@
             padding-right: 4px;
         }
 
-        /* SETLIST ÜBERSICHT STYLES */
         .set-group-block {
             background: var(--surface-card);
             border: 1px solid var(--border);
@@ -618,7 +678,6 @@
         .meta-pill.rig { color: var(--primary); border-color: var(--primary-dim); }
         .meta-pill.kapo { color: var(--warning); border-color: var(--warning); }
 
-        /* SPEED BUILDER STYLES */
         .builder-toolbar {
             display: flex;
             gap: 6px;
@@ -699,6 +758,7 @@
         @media (max-width: 768px) {
             #sidebar { position: absolute; inset: 0; width: 100%; }
             .song-title-heading { font-size: 1.45rem; }
+            body:not(.practice-mode) .song-title-heading { font-size: 1.65rem; }
             .builder-song-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -770,6 +830,9 @@
     </div>
 
     <div id="workspace">
+        <!-- FESTER BUTTON ZUM MANUELLEN EIN-/AUSBLENDEN DER KOPFLEISTE -->
+        <button id="top-bar-handle" onclick="toggleTopBar()" title="Kopfleiste ein-/ausblenden">▲ Menü</button>
+
         <div id="sidebar" class="hidden">
             <div class="sidebar-controls">
                 <input type="text" id="search" placeholder="Song oder Artist suchen..." autocomplete="off">
@@ -884,34 +947,40 @@
     </div>
 
 <script>
-    let autoHideTimer = null;
-
     // STARTET IMMER IM ÜBE-MODUS!
     let isPracticeMode = true;
 
-    function resetTopAutoHide() {
-        if (isPracticeMode) { showTopBar(); return; }
-        showTopBar();
-        clearTimeout(autoHideTimer);
-        autoHideTimer = setTimeout(() => {
-            if (!isPracticeMode) hideTopBar();
-        }, 3000);
+    // MANUELLE KOPFLEISTEN-STEUERUNG ÜBER DEN RAND-BUTTON
+    function updateTopBarHandle() {
+        const topEl = document.getElementById('top-collapsible');
+        const handle = document.getElementById('top-bar-handle');
+        if (!topEl || !handle) return;
+        if (topEl.classList.contains('hidden-top')) {
+            handle.innerText = '▼ Menü';
+        } else {
+            handle.innerText = '▲ Menü';
+        }
     }
 
     function showTopBar() {
         const topEl = document.getElementById('top-collapsible');
         if (topEl) topEl.classList.remove('hidden-top');
+        updateTopBarHandle();
     }
 
     function hideTopBar() {
         const topEl = document.getElementById('top-collapsible');
         if (topEl) topEl.classList.add('hidden-top');
+        updateTopBarHandle();
     }
 
     function toggleTopBar() {
         const topEl = document.getElementById('top-collapsible');
-        if (topEl && topEl.classList.contains('hidden-top')) resetTopAutoHide();
-        else hideTopBar();
+        if (topEl && topEl.classList.contains('hidden-top')) {
+            showTopBar();
+        } else {
+            hideTopBar();
+        }
     }
 
     function dismissSplash() {
@@ -919,7 +988,6 @@
         if (splash && !splash.classList.contains('splash-hidden')) {
             splash.classList.add('splash-hidden');
             setTimeout(() => { if (splash.parentNode) splash.style.display = 'none'; }, 500);
-            resetTopAutoHide();
         }
     }
     setTimeout(dismissSplash, 3000);
@@ -1163,7 +1231,6 @@
         allSongs.forEach(s => { s.Kapo = normalizeKapo(s.Kapo); });
         document.getElementById('csv-url-input').value = localStorage.getItem('band_cockpit_csv_url') || 'https://docs.google.com/spreadsheets/d/1aQWoR7msLCf3VWyLoSCtjKReqkB4mH81ZX97sY12BpA/edit';
         
-        // Beim Start immer Übe-Modus + Alle Songs aktivieren
         document.getElementById('view-filter').value = 'ALL';
         populateTuningFilter();
         rebuildActiveList();
@@ -1225,7 +1292,6 @@
             const matchesStatus = statusFilter === 'ALL' || (s.Status || 'Grün') === statusFilter;
             const hasSetlistPos = s.Setlist_Pos && String(s.Setlist_Pos).trim() !== '' && !isNaN(Number(s.Setlist_Pos));
             
-            // Im Live-Modus ohne aktive Suche strikt nur Setlist-Songs zeigen
             const matchesView = (viewMode === 'ALL') ? true : hasSetlistPos;
             return matchesQuery && matchesTuning && matchesStatus && matchesView;
         });
@@ -1272,19 +1338,24 @@
 
     function renderCurrentSong() {
         stopMetronomeIfRunning();
-        resetTopAutoHide();
 
         const contentEl = document.getElementById('song-content');
         const prevBtn = document.getElementById('btn-prev');
         const nextBtn = document.getElementById('btn-next');
 
         if (activeList.length === 0) {
+            showTopBar(); // Falls leer, Kopfleiste immer sicherheitshalber einblenden!
             contentEl.innerHTML = `
-                <div style="text-align: center; margin-top: 40px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
+                <div class="song-stage-wrapper" style="text-align: center; align-items: center; gap: 14px;">
                     <h2 style="color: var(--text-dim);">Keine Songs in dieser Ansicht gefunden.</h2>
-                    <button class="btn-tool active-mode" onclick="openSetlistBuilder()">⚡ Jetzt Setlist zusammenklicken</button>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
+                        <button class="btn-tool active-mode" onclick="openSetlistBuilder()">⚡ Setlist zusammenklicken</button>
+                        <button class="btn-tool" onclick="openSyncModal()">🔄 Aus Sheet laden</button>
+                        ${!isPracticeMode ? `<button class="btn-tool" onclick="togglePracticeMode()">☀️ Zum Übe-Modus (Alle Songs)</button>` : ''}
+                    </div>
                 </div>`;
             prevBtn.disabled = true; nextBtn.disabled = true;
+            document.getElementById('nav-counter').innerText = `0 / 0`;
             return;
         }
 
@@ -1302,101 +1373,103 @@
         const hasKapo = song.Kapo && song.Kapo !== '-';
 
         contentEl.innerHTML = `
-            <div class="header-title-row" onclick="toggleTopBar()" title="Tippen zum Ein-/Ausblenden der Menüleisten">
-                <div class="song-title-heading">${song.Setlist_Pos && !isPracticeMode ? song.Setlist_Pos + '. ' : ''}${song.Titel}</div>
-                <div class="song-artist-heading">${song.Artist}</div>
-            </div>
+            <div class="song-stage-wrapper">
+                <div class="header-title-row">
+                    <div class="song-title-heading">${song.Setlist_Pos && !isPracticeMode ? song.Setlist_Pos + '. ' : ''}${song.Titel}</div>
+                    <div class="song-artist-heading">${song.Artist}</div>
+                </div>
 
-            <div id="practice-dashboard">
-                <div class="metro-top-row">
-                    <button id="btn-metro-compact" class="btn-metro-pill" onclick="toggleMetronome()">▶ ${currentBpm} BPM</button>
-                    <div class="metro-step-group">
-                        <button class="btn-tempo-step" onclick="adjustBpm(-5)">-5</button>
-                        <button class="btn-tempo-step" onclick="adjustBpm(-1)">-1</button>
-                        <button class="btn-tempo-step" onclick="adjustBpm(1)">+1</button>
-                        <button class="btn-tempo-step" onclick="adjustBpm(5)">+5</button>
+                <div id="practice-dashboard">
+                    <div class="metro-top-row">
+                        <button id="btn-metro-compact" class="btn-metro-pill" onclick="toggleMetronome()">▶ ${currentBpm} BPM</button>
+                        <div class="metro-step-group">
+                            <button class="btn-tempo-step" onclick="adjustBpm(-5)">-5</button>
+                            <button class="btn-tempo-step" onclick="adjustBpm(-1)">-1</button>
+                            <button class="btn-tempo-step" onclick="adjustBpm(1)">+1</button>
+                            <button class="btn-tempo-step" onclick="adjustBpm(5)">+5</button>
+                        </div>
+                        <button class="btn-tempo-reset" onclick="adjustBpm(0, ${originalBpm})">↺ ${originalBpm}</button>
                     </div>
-                    <button class="btn-tempo-reset" onclick="adjustBpm(0, ${originalBpm})">↺ ${originalBpm}</button>
+
+                    <div class="metro-slider-row">
+                        <span class="slider-bound-label">40</span>
+                        <input type="range" id="bpm-slider-compact" class="slider-tempo-full" min="40" max="240" value="${currentBpm}" oninput="adjustBpm(0, this.value)">
+                        <span class="slider-bound-label">240</span>
+                    </div>
+
+                    <div class="practice-tools-row">
+                        <div style="display: flex; gap: 5px; align-items: center;">
+                            <select class="select-tool-pill" style="color: var(--primary);" onchange="updateSongVariable('Tonart', this)">
+                                ${buildSelectOptionsHtml(getMergedOptions('Tonart', BASE_KEYS), song.Tonart || 'C Major')}
+                            </select>
+                            <select class="select-tool-pill" onchange="updateSongVariable('Status', this)">
+                                <option value="Grün" ${currentStatus === 'Grün' ? 'selected' : ''}>🟢 Sitzt</option>
+                                <option value="Gelb" ${currentStatus === 'Gelb' ? 'selected' : ''}>🟡 Wackelt</option>
+                                <option value="Rot" ${currentStatus === 'Rot' ? 'selected' : ''}>🔴 Lernen</option>
+                            </select>
+                        </div>
+                        ${getSpotifyLinkHtml(song)}
+                    </div>
+
+                    <div id="tuner-container">
+                        <div class="tuner-display">
+                            <span style="color: var(--text-dim);">🎤 STIMMGERÄT</span>
+                            <span id="tuner-hz" style="color: var(--text);">0.0 Hz</span>
+                        </div>
+                        <div id="tuner-note" class="tuner-note">-</div>
+                        <div class="tuner-meter">
+                            <div id="tuner-needle" class="tuner-needle"></div>
+                        </div>
+                        <button class="btn-tool" id="btn-tuner-toggle" onclick="toggleTuner()" style="width: 100%; justify-content: center; margin-top: 2px;">🎙️ Mikrofon für Stimmgerät aktivieren</button>
+                    </div>
+
+                    ${song.Tabs ? `
+                    <details style="margin-top: 2px; border-top: 1px solid var(--border); padding-top: 4px;">
+                        <summary style="cursor: pointer; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: var(--primary);">🎸 Tabs & Notizen einblenden</summary>
+                        <pre style="margin-top: 6px; font-size: 0.95rem; background: var(--surface-card); padding: 8px 10px; border-radius: 5px; border: 1px solid var(--border); white-space: pre-wrap; overflow-wrap: anywhere;">${song.Tabs}</pre>
+                    </details>` : ''}
                 </div>
 
-                <div class="metro-slider-row">
-                    <span class="slider-bound-label">40</span>
-                    <input type="range" id="bpm-slider-compact" class="slider-tempo-full" min="40" max="240" value="${currentBpm}" oninput="adjustBpm(0, this.value)">
-                    <span class="slider-bound-label">240</span>
-                </div>
-
-                <div class="practice-tools-row">
-                    <div style="display: flex; gap: 5px; align-items: center;">
-                        <select class="select-tool-pill" style="color: var(--primary);" onchange="updateSongVariable('Tonart', this)">
-                            ${buildSelectOptionsHtml(getMergedOptions('Tonart', BASE_KEYS), song.Tonart || 'C Major')}
+                <div class="stage-hud">
+                    <div class="hud-card interactive">
+                        <div class="hud-label"><span>1. Gitarre / Tuning</span> <span>▾</span></div>
+                        <select class="hud-value-select" onchange="updateSongVariable('Gitarre_Tuning', this)">
+                            ${buildSelectOptionsHtml(getMergedOptions('Gitarre_Tuning', BASE_GUITARS), song.Gitarre_Tuning || '')}
                         </select>
-                        <select class="select-tool-pill" onchange="updateSongVariable('Status', this)">
-                            <option value="Grün" ${currentStatus === 'Grün' ? 'selected' : ''}>🟢 Sitzt</option>
-                            <option value="Gelb" ${currentStatus === 'Gelb' ? 'selected' : ''}>🟡 Wackelt</option>
-                            <option value="Rot" ${currentStatus === 'Rot' ? 'selected' : ''}>🔴 Lernen</option>
+                    </div>
+
+                    <div class="hud-card kapo-hud interactive ${hasKapo ? 'has-kapo' : ''}">
+                        <div class="hud-label" style="justify-content: center;"><span>Kapo</span></div>
+                        <select class="hud-value-select kapo-value-select" onchange="updateSongVariable('Kapo', this)">
+                            ${buildSelectOptionsHtml(getMergedOptions('Kapo', BASE_KAPOS), song.Kapo || '-')}
                         </select>
                     </div>
-                    ${getSpotifyLinkHtml(song)}
-                </div>
 
-                <div id="tuner-container">
-                    <div class="tuner-display">
-                        <span style="color: var(--text-dim);">🎤 STIMMGERÄT</span>
-                        <span id="tuner-hz" style="color: var(--text);">0.0 Hz</span>
+                    <div class="hud-card rig-hud interactive">
+                        <div class="hud-label"><span>2. Rig / Preset-Code</span> <span>▾</span></div>
+                        <select class="hud-value-select" onchange="updateSongVariable('Rig_Start', this)">
+                            ${buildSelectOptionsHtml(getMergedOptions('Rig_Start', BASE_RIGS), song.Rig_Start || '')}
+                        </select>
                     </div>
-                    <div id="tuner-note" class="tuner-note">-</div>
-                    <div class="tuner-meter">
-                        <div id="tuner-needle" class="tuner-needle"></div>
+
+                    <div class="hud-card transition-hud interactive">
+                        <div class="hud-label"><span>3. Ende / Übergang</span></div>
+                        <select class="hud-value-select transition-select" onchange="updateSongVariable('Uebergang', this)">
+                            ${buildSelectOptionsHtml(getMergedOptions('Uebergang', BASE_TRANSITIONS), song.Uebergang || 'Normaler Stop')}
+                        </select>
                     </div>
-                    <button class="btn-tool" id="btn-tuner-toggle" onclick="toggleTuner()" style="width: 100%; justify-content: center; margin-top: 2px;">🎙️ Mikrofon für Stimmgerät aktivieren</button>
                 </div>
 
-                ${song.Tabs ? `
-                <details style="margin-top: 2px; border-top: 1px solid var(--border); padding-top: 4px;">
-                    <summary style="cursor: pointer; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: var(--primary);">🎸 Tabs & Notizen einblenden</summary>
-                    <pre style="margin-top: 6px; font-size: 0.95rem; background: var(--surface-card); padding: 8px 10px; border-radius: 5px; border: 1px solid var(--border); white-space: pre-wrap; overflow-wrap: anywhere;">${song.Tabs}</pre>
-                </details>` : ''}
-            </div>
+                ${song.Cues_Warnung ? `
+                <div class="cue-banner">
+                    <div class="cue-banner-title">⚠️ Live-Cue / Stolperfalle</div>
+                    <div class="cue-banner-text">${song.Cues_Warnung}</div>
+                </div>` : ''}
 
-            <div class="stage-hud">
-                <div class="hud-card interactive">
-                    <div class="hud-label"><span>1. Gitarre / Tuning</span> <span>▾</span></div>
-                    <select class="hud-value-select" onchange="updateSongVariable('Gitarre_Tuning', this)">
-                        ${buildSelectOptionsHtml(getMergedOptions('Gitarre_Tuning', BASE_GUITARS), song.Gitarre_Tuning || '')}
-                    </select>
+                <div class="chords-container">
+                    <div class="chords-header">🎵 Chords & Ablauf</div>
+                    <pre class="chords-content">${song.Struktur_Chords || ''}</pre>
                 </div>
-
-                <div class="hud-card kapo-hud interactive ${hasKapo ? 'has-kapo' : ''}">
-                    <div class="hud-label" style="justify-content: center;"><span>Kapo</span></div>
-                    <select class="hud-value-select kapo-value-select" onchange="updateSongVariable('Kapo', this)">
-                        ${buildSelectOptionsHtml(getMergedOptions('Kapo', BASE_KAPOS), song.Kapo || '-')}
-                    </select>
-                </div>
-
-                <div class="hud-card rig-hud interactive">
-                    <div class="hud-label"><span>2. Rig / Preset-Code</span> <span>▾</span></div>
-                    <select class="hud-value-select" onchange="updateSongVariable('Rig_Start', this)">
-                        ${buildSelectOptionsHtml(getMergedOptions('Rig_Start', BASE_RIGS), song.Rig_Start || '')}
-                    </select>
-                </div>
-
-                <div class="hud-card transition-hud interactive">
-                    <div class="hud-label"><span>3. Ende / Übergang</span></div>
-                    <select class="hud-value-select transition-select" onchange="updateSongVariable('Uebergang', this)">
-                        ${buildSelectOptionsHtml(getMergedOptions('Uebergang', BASE_TRANSITIONS), song.Uebergang || 'Normaler Stop')}
-                    </select>
-                </div>
-            </div>
-
-            ${song.Cues_Warnung ? `
-            <div class="cue-banner">
-                <div class="cue-banner-title">⚠️ Live-Cue / Stolperfalle</div>
-                <div class="cue-banner-text">${song.Cues_Warnung}</div>
-            </div>` : ''}
-
-            <div class="chords-container">
-                <div class="chords-header">🎵 Chords & Ablauf</div>
-                <pre class="chords-content">${song.Struktur_Chords || ''}</pre>
             </div>
         `;
 
@@ -1460,7 +1533,6 @@
         isPracticeMode = !isPracticeMode;
         const btn = document.getElementById('btn-mode-toggle');
         
-        // Beim Modus-Wechsel immer Suchfilter neutralisieren, damit nichts verschluckt wird
         document.getElementById('search').value = '';
         document.getElementById('tuning-filter').value = 'ALL';
         document.getElementById('status-filter').value = 'ALL';
@@ -1470,15 +1542,12 @@
             btn.classList.add('active-mode');
             btn.innerText = '☀️ Übe-Modus: AN';
             document.getElementById('view-filter').value = 'ALL';
-            clearTimeout(autoHideTimer);
             showTopBar();
         } else {
             document.body.classList.remove('practice-mode');
             btn.classList.remove('active-mode');
             btn.innerText = '🎸 Live-Modus';
-            // Im Live-Modus strikt auf die definierte Setlist wechseln!
             document.getElementById('view-filter').value = 'SETLIST';
-            resetTopAutoHide();
         }
         rebuildActiveList();
     }
@@ -1552,7 +1621,6 @@
 
     function jumpToSongFromOverview(songTitle) {
         closeOverviewModal();
-        // Wenn wir im Live-Modus sind, sicherstellen dass Setlist-Ansicht aktiv ist
         if (!isPracticeMode) {
             document.getElementById('view-filter').value = 'SETLIST';
         }
@@ -1599,7 +1667,6 @@
         const currentPos = parseInt(song.Setlist_Pos, 10);
 
         if (!isNaN(currentPos) && currentPos > 0) {
-            // Song war schon drin -> Rausnehmen und nachfolgende Nummern sauber nachrücken!
             song.Setlist_Pos = "";
             song.Set_Block = "";
             allSongs.forEach(s => {
@@ -1609,7 +1676,6 @@
                 }
             });
         } else {
-            // Song neu aufnehmen -> Nächste freie Nummer + aktuelles Set zuweisen!
             const nextPos = getHighestSetlistPos() + 1;
             song.Setlist_Pos = String(nextPos);
             song.Set_Block = currentBuilderSet;
@@ -1635,7 +1701,6 @@
         const listEl = document.getElementById('builder-list');
         document.getElementById('builder-next-num').innerText = getHighestSetlistPos() + 1;
 
-        // Alphabetisch sortierte Anzeige aller Songs (mit Original-Index)
         const indexedSongs = allSongs.map((s, idx) => ({ song: s, idx: idx }))
             .filter(item => (item.song.Titel || '').toLowerCase().includes(query) || (item.song.Artist || '').toLowerCase().includes(query))
             .sort((a, b) => (a.song.Titel || '').localeCompare(b.song.Titel || ''));
@@ -1659,7 +1724,6 @@
 
     function finishSetlistBuilder() {
         document.getElementById('builder-modal').style.display = 'none';
-        // Wenn man eine Setlist gebaut hat, direkt in die Setlist-Ansicht aktualisieren
         if (!isPracticeMode) {
             document.getElementById('view-filter').value = 'SETLIST';
         }
