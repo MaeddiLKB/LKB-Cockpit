@@ -357,7 +357,7 @@
         .song-item:hover, .song-item.active { background: var(--primary-glow); border-left: 4px solid var(--primary); }
         .song-title-text { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; color: var(--text); }
         .song-sub-text { color: var(--text-dim); font-size: 0.8rem; }
-        .badge-pos { background: var(--primary); color: #fff; font-weight: 900; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; min-width: 22px; text-align: center; }
+        .badge-pos { background: var(--primary); color: #fff; font-weight: 900; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; min-width: 24px; text-align: center; flex-shrink: 0; }
         body:not(.practice-mode) .badge-pos { color: #000; }
         .badge-tuning { background: var(--surface-elevated); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; color: var(--primary); white-space: nowrap; }
         .dot-status { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
@@ -714,7 +714,7 @@
         }
 
         /* ==========================================================================
-           MODALS & FULLSCREEN OVERLAYS (INKL. SCHIEBEN IN SETLIST-ÜBERSICHT)
+           ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT (SMARTPHONE OPTIMIERT)
            ========================================================================== */
         .modal-overlay {
             position: fixed;
@@ -723,7 +723,7 @@
             display: none;
             justify-content: center;
             align-items: center;
-            padding: 12px;
+            padding: 8px;
             z-index: 100;
         }
         .modal-card {
@@ -733,16 +733,17 @@
             border-radius: 10px;
             max-width: 520px;
             width: 100%;
-            padding: 20px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            max-height: 92vh;
+            max-height: 94vh;
         }
         .modal-card.fullscreen-card {
-            max-width: 960px;
-            height: 92vh;
-            padding: 14px;
+            max-width: 780px;
+            height: 94vh;
+            padding: 12px;
+            gap: 10px;
             overflow: hidden;
         }
         .modal-header-row {
@@ -750,7 +751,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid var(--border);
-            padding-bottom: 10px;
+            padding-bottom: 8px;
             flex-shrink: 0;
         }
         .modal-body-scroll {
@@ -762,90 +763,36 @@
             display: flex;
             flex-direction: column;
             gap: 12px;
-            padding-right: 4px;
         }
 
-        .set-group-block {
+        /* DIREKT-HINZUFÜGEN LEISTE OBEN IN DER SETLIST */
+        .overview-add-bar {
             background: var(--surface-card);
-            border: 1px solid var(--border);
+            border: 1.5px solid var(--border-highlight);
             border-radius: 8px;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
             flex-shrink: 0;
+            position: relative;
         }
-        .set-group-title {
-            background: var(--surface-elevated);
-            color: var(--primary);
-            padding: 8px 12px;
-            font-size: 0.9rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 1px solid var(--border);
-            border-radius: 8px 8px 0 0;
-            display: flex;
-            justify-content: space-between;
-        }
-        .overview-song-row {
-            padding: 9px 12px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 10px;
-            transition: background 0.12s ease;
-        }
-        .overview-song-row:last-child { border-bottom: none; }
-        .overview-song-row:hover { background: var(--primary-glow); }
-        .overview-song-row.dragging-item { opacity: 0.45; background: var(--primary-glow); }
-        .overview-clickable-main {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex: 1;
-            min-width: 0;
-            cursor: pointer;
-        }
-        .overview-meta {
+        .overview-add-top {
             display: flex;
             gap: 6px;
             align-items: center;
-            flex-wrap: wrap;
-            justify-content: flex-end;
-        }
-        .meta-pill {
-            background: var(--surface-elevated);
-            border: 1px solid var(--border);
-            padding: 3px 7px;
-            border-radius: 5px;
-            font-size: 0.75rem;
-            font-weight: 800;
-            color: var(--text);
-            white-space: nowrap;
-        }
-        .meta-pill.rig { color: var(--primary); border-color: var(--primary-dim); }
-        .meta-pill.kapo { color: var(--warning); border-color: var(--warning); }
-
-        /* PROBERAUM SETLIST-BUILDER */
-        .builder-toolbar {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-            align-items: center;
             justify-content: space-between;
-            background: var(--surface-card);
-            padding: 8px 10px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            flex-shrink: 0;
+            flex-wrap: wrap;
         }
-        .set-selector-pills { display: flex; gap: 5px; flex-wrap: wrap; }
+        .set-selector-pills { display: flex; gap: 4px; }
         .btn-set-pill {
             background: var(--surface-elevated);
             color: var(--text);
             border: 1px solid var(--border);
-            padding: 6px 11px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 800;
+            padding: 5px 9px;
+            border-radius: 5px;
+            font-size: 0.76rem;
+            font-weight: 900;
             cursor: pointer;
         }
         .btn-set-pill.active {
@@ -855,70 +802,89 @@
         }
         body:not(.practice-mode) .btn-set-pill.active { color: #000; }
 
-        .builder-split-layout {
-            flex: 1 1 auto;
-            min-height: 0;
-            display: grid;
-            grid-template-columns: 1.15fr 1fr;
-            gap: 12px;
-            overflow: hidden;
-        }
-        .builder-column {
-            display: flex;
+        #overview-add-results {
+            max-height: 210px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            background: var(--surface);
+            border: 2px solid var(--primary);
+            border-radius: 6px;
+            display: none;
             flex-direction: column;
-            min-height: 0;
-            background: var(--surface-card);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            overflow: hidden;
         }
-        .builder-col-header {
-            background: var(--surface-elevated);
-            padding: 8px 12px;
-            font-size: 0.8rem;
-            font-weight: 900;
-            text-transform: uppercase;
-            color: var(--primary);
+        .add-result-row {
+            padding: 9px 10px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+        .add-result-row:active { background: var(--primary-glow); }
+
+        /* KOMPAKTE SET-BLÖCKE & ZEILEN (KEIN ÜBERLAPPEN!) */
+        .set-group-block {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
             flex-shrink: 0;
         }
-        .builder-col-scroll {
-            flex: 1 1 auto;
-            min-height: 0;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 8px;
+        .set-group-title {
+            background: var(--surface-elevated);
+            color: var(--primary);
+            padding: 7px 12px;
+            font-size: 0.85rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+            border-radius: 8px 8px 0 0;
             display: flex;
-            flex-direction: column;
-            gap: 6px;
+            justify-content: space-between;
         }
-
-        .active-setlist-item {
-            background: var(--surface);
-            border: 2px solid var(--border);
-            border-radius: 7px;
-            padding: 7px 10px;
+        .overview-song-row {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-            transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+            gap: 8px;
         }
-        .active-setlist-item.replace-target {
-            border-color: var(--warning);
-            background: var(--warning-bg);
-            box-shadow: 0 0 12px rgba(255, 183, 0, 0.3);
+        .overview-song-row:last-child { border-bottom: none; }
+
+        .overview-song-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1 1 auto;
+            min-width: 0; /* Zwingend für sauberen Text-Umbruch/Ellipsis neben Buttons */
+            cursor: pointer;
         }
-        .active-setlist-item.dragging-item {
-            opacity: 0.5;
-            border-color: var(--primary);
-            transform: scale(0.98);
+        .overview-title-stack {
+            min-width: 0;
+            flex: 1;
         }
-        .item-controls {
+        .overview-song-title {
+            font-weight: 800;
+            font-size: 0.95rem;
+            color: var(--text);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.2;
+        }
+        .overview-song-guitar {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 1px;
+        }
+
+        .overview-controls {
             display: flex;
             align-items: center;
             gap: 4px;
@@ -929,55 +895,21 @@
             color: var(--text);
             border: 1px solid var(--border);
             border-radius: 5px;
-            padding: 5px 8px;
+            padding: 6px 8px;
             font-size: 0.78rem;
             font-weight: 900;
             cursor: pointer;
             line-height: 1;
+            min-width: 28px;
+            text-align: center;
         }
         .btn-mini-ctrl:active:not(:disabled) { background: var(--primary); color: #000; }
-        .btn-mini-ctrl:disabled { opacity: 0.25; cursor: not-allowed; }
-        .btn-mini-ctrl.replace-btn.active {
-            background: var(--warning);
-            color: #000;
-            border-color: var(--warning);
-        }
-        .drag-handle {
-            cursor: grab;
-            padding: 4px 6px;
-            color: var(--text-dim);
-            font-size: 1.05rem;
-            user-select: none;
-            touch-action: none;
-        }
-
-        .pool-song-card {
-            background: var(--surface);
-            border: 1.5px solid var(--border);
-            border-radius: 7px;
-            padding: 9px 11px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 8px;
-            flex-shrink: 0;
-            user-select: none;
-        }
-        .pool-song-card:hover { border-color: var(--primary); background: var(--primary-glow); }
-        .pool-song-card.in-setlist {
-            opacity: 0.48;
-            border-style: dashed;
-        }
+        .btn-mini-ctrl:disabled { opacity: 0.22; cursor: not-allowed; }
 
         @media (max-width: 768px) {
             #sidebar { position: absolute; inset: 0; width: 100%; }
             .song-title-heading { font-size: 1.45rem; }
             body:not(.practice-mode) .song-title-heading { font-size: 1.65rem; }
-            .builder-split-layout {
-                grid-template-columns: 1fr;
-                grid-template-rows: 1.1fr 1fr;
-            }
         }
     </style>
 </head>
@@ -1028,7 +960,6 @@
             <div class="header-group">
                 <button class="btn-tool btn-search-prominent" id="btn-top-search" onclick="triggerSearchOrEmergency()">🔍 Song-Suche / Liste</button>
                 <button class="btn-tool" onclick="openSetlistOverview()">📋 Setlist</button>
-                <button class="btn-tool" onclick="openSetlistBuilder()">⚡ Builder</button>
             </div>
             <div class="header-group">
                 <button class="btn-tool active-mode" id="btn-mode-toggle" onclick="togglePracticeMode()">☀️ Übe-Modus: AN</button>
@@ -1039,15 +970,15 @@
 
         <!-- PERMANENTE DIREKT-SUCHE IM ÜBE-MODUS -->
         <div id="practice-quicksearch-bar">
-            <span style="font-weight: 900; font-size: 0.85rem; color: var(--primary);">🔍 Direkt-Sprung:</span>
+            <span style="font-weight: 900; font-size: 0.85rem; color: var(--primary);">🔍 Direkt:</span>
             <input type="text" id="quicksearch-input" placeholder="Songtitel oder Artist tippen..." autocomplete="off" oninput="handleQuickSearch(this.value)" onfocus="handleQuickSearch(this.value)">
-            <button class="btn-tool" onclick="toggleSidebar()">📚 Filter-Liste</button>
+            <button class="btn-tool" onclick="toggleSidebar()">📚 Filter</button>
             <div id="quicksearch-results"></div>
         </div>
 
         <div id="cockpit-nav">
             <button class="btn-nav" id="btn-prev" onclick="stepSong(-1)">◀ ZURÜCK</button>
-            <div class="nav-center-box" onclick="openSetlistOverview()" title="Tippen für Gesamt-Setlist">
+            <div class="nav-center-box" onclick="openSetlistOverview()" title="Tippen für Setlist">
                 <div class="nav-counter" id="nav-counter">1 / 1</div>
                 <div class="nav-block-label" id="nav-block">ÜBE-ARCHIV</div>
             </div>
@@ -1121,70 +1052,41 @@
         </div>
     </div>
 
-    <!-- 1. SETLIST GESAMTÜBERSICHT MODAL (MIT DIREKTEM SCHIEBEN ▲/▼ & ☰) -->
+    <!-- ZENTRALE SETLIST-ÜBERSICHT (INKL. SONGS HINZUFÜGEN & SCHIEBEN) -->
     <div id="overview-modal" class="modal-overlay">
         <div class="modal-card fullscreen-card">
             <div class="modal-header-row">
-                <div>
-                    <h3 style="color: var(--primary); font-size: 1.15rem;">📋 Aktuelle Setlist (Nach Sets)</h3>
-                    <div style="font-size: 0.75rem; color: var(--text-dim);">Titel antippen = Zum Song springen · <strong>▲ / ▼ / ☰</strong> = Direkt verschieben</div>
-                </div>
+                <h3 style="color: var(--primary); font-size: 1.1rem;">📋 Setlist (<span id="overview-total-count">0</span> Songs)</h3>
                 <div style="display: flex; gap: 6px;">
-                    <button class="btn-tool" onclick="closeOverviewModal(); openSetlistBuilder();">⚡ Builder (+Songs)</button>
-                    <button class="btn-tool active-mode" onclick="closeOverviewModal()">✕ Schließen</button>
+                    <button class="btn-tool" style="border-color: var(--danger); color: var(--danger); padding: 5px 8px;" onclick="clearEntireSetlist()">🗑️ Reset</button>
+                    <button class="btn-tool active-mode" onclick="closeOverviewModal()">✕ Fertig</button>
                 </div>
             </div>
+
+            <!-- SONGS DIREKT HINZUFÜGEN -->
+            <div class="overview-add-bar" id="overview-add-box">
+                <div class="overview-add-top">
+                    <div class="set-selector-pills">
+                        <span style="font-size: 0.72rem; font-weight: 800; color: var(--text-dim); align-self: center; margin-right: 2px;">In Set:</span>
+                        <button class="btn-set-pill active" onclick="selectTargetSet('Set 1')">S1</button>
+                        <button class="btn-set-pill" onclick="selectTargetSet('Set 2')">S2</button>
+                        <button class="btn-set-pill" onclick="selectTargetSet('Set 3')">S3</button>
+                        <button class="btn-set-pill" onclick="selectTargetSet('Zugabe')">Z</button>
+                    </div>
+                    <div style="display: flex; gap: 5px; flex: 1; min-width: 170px;">
+                        <input type="text" id="overview-add-input" placeholder="➕ Song suchen & antippen..." autocomplete="off" oninput="renderAddPoolResults()" onfocus="openAddPool()">
+                        <button class="btn-tool" id="btn-toggle-pool" onclick="toggleAddPool()">➕ Archiv</button>
+                    </div>
+                </div>
+                <div id="overview-add-results"></div>
+            </div>
+
+            <!-- SCROLLBARE SETLIST NACH SETS -->
             <div id="overview-content" class="modal-body-scroll"></div>
         </div>
     </div>
 
-    <!-- 2. PROBERAUM SETLIST-BUILDER MODAL -->
-    <div id="builder-modal" class="modal-overlay">
-        <div class="modal-card fullscreen-card">
-            <div class="modal-header-row">
-                <div>
-                    <h3 style="color: var(--primary); font-size: 1.15rem;">⚡ Proberaum Setlist-Builder</h3>
-                    <div id="builder-mode-hint" style="font-size: 0.76rem; color: var(--text-dim);">
-                        Rechts Song antippen = ans Ende (<strong id="builder-next-num" style="color: var(--primary);">1</strong>) hängen · Links <strong>🔄</strong> klicken = gezielt Platz tauschen · <strong>☰ / ▲▼</strong> = schieben
-                    </div>
-                </div>
-                <button class="btn-tool active-mode" onclick="finishSetlistBuilder()">✅ Fertig & Speichern</button>
-            </div>
-
-            <div class="builder-toolbar">
-                <div class="set-selector-pills">
-                    <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-dim); align-self: center; margin-right: 4px;">Ziel-Set:</span>
-                    <button class="btn-set-pill active" onclick="selectBuilderSet('Set 1')">Set 1</button>
-                    <button class="btn-set-pill" onclick="selectBuilderSet('Set 2')">Set 2</button>
-                    <button class="btn-set-pill" onclick="selectBuilderSet('Set 3')">Set 3</button>
-                    <button class="btn-set-pill" onclick="selectBuilderSet('Zugabe')">Zugabe</button>
-                </div>
-                <div style="display: flex; gap: 6px; align-items: center; flex: 1; min-width: 200px;">
-                    <input type="text" id="builder-search" placeholder="Song im Archiv filtern..." oninput="renderBuilderList()">
-                    <button class="btn-tool" style="border-color: var(--danger); color: var(--danger);" onclick="clearEntireSetlist()">🗑️ Alle leeren</button>
-                </div>
-            </div>
-
-            <div class="builder-split-layout">
-                <div class="builder-column">
-                    <div class="builder-col-header">
-                        <span>1. Deine Setlist (Schieben & Tauschen)</span>
-                        <span id="builder-active-count">0 Songs</span>
-                    </div>
-                    <div id="builder-active-list" class="builder-col-scroll"></div>
-                </div>
-
-                <div class="builder-column">
-                    <div class="builder-col-header">
-                        <span id="builder-pool-title">2. Song-Archiv (Antippen zum Einfügen)</span>
-                    </div>
-                    <div id="builder-pool-list" class="builder-col-scroll"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. SYNC MODAL -->
+    <!-- SYNC MODAL -->
     <div id="sync-modal" class="modal-overlay">
         <div class="modal-card">
             <h3 style="color: var(--primary);">Google Sheets Synchronisation</h3>
@@ -1781,7 +1683,7 @@
                 <div class="song-stage-wrapper" style="text-align: center; align-items: center; gap: 14px;">
                     <h2 style="color: var(--text-dim);">Keine Songs in dieser Ansicht gefunden.</h2>
                     <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
-                        <button class="btn-tool active-mode" onclick="openSetlistBuilder()">⚡ Setlist zusammenklicken</button>
+                        <button class="btn-tool active-mode" onclick="openSetlistOverview()">📋 Setlist bearbeiten</button>
                         <button class="btn-tool" onclick="openSyncModal()">🔄 Aus Sheet laden</button>
                         ${!isPracticeMode ? `<button class="btn-tool" onclick="togglePracticeMode()">☀️ Zum Übe-Modus (Alle Songs)</button>` : ''}
                     </div>
@@ -1839,7 +1741,7 @@
             ? `<div class="chords-container">
                    <div class="chords-header">
                        <span>🎵 Chords & Ablauf (Editierbar)</span>
-                       <span style="font-size: 0.65rem; color: var(--text-dim);">💾 Speichert automatisch beim Tippen</span>
+                       <span style="font-size: 0.65rem; color: var(--text-dim);">💾 Speichert automatisch</span>
                    </div>
                    <textarea class="chords-editor" placeholder="Akkorde, Ablauf oder Notizen aus der Probe hier reinschreiben..." oninput="updateSongTextDirect('Struktur_Chords', this.value)">${song.Struktur_Chords || ''}</textarea>
                </div>`
@@ -2038,27 +1940,138 @@
     }
 
     /* ==========================================================================
-       1. SETLIST GESAMTÜBERSICHT (MIT DIREKTEM SCHIEBEN ▲/▼ & DRAG-DROP)
+       ZENTRALE SETLIST-ÜBERSICHT (LESBAR, REDUZIERT, DIREKT SCHIEBEN & HINZUFÜGEN)
        ========================================================================== */
+    let currentTargetSet = 'Set 1';
+    let isAddPoolOpen = false;
+
+    function getSortedSetlistSongs() {
+        return allSongs
+            .filter(s => s.Setlist_Pos && String(s.Setlist_Pos).trim() !== '' && !isNaN(Number(s.Setlist_Pos)))
+            .sort((a, b) => parseInt(a.Setlist_Pos, 10) - parseInt(b.Setlist_Pos, 10));
+    }
+
+    function normalizeSetlistPositions() {
+        const list = getSortedSetlistSongs();
+        list.forEach((s, idx) => {
+            s.Setlist_Pos = String(idx + 1);
+            if (!s.Set_Block || s.Set_Block.trim() === '') s.Set_Block = 'Set 1';
+        });
+        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
+    }
+
+    function shortSetLabel(block) {
+        const b = (block || 'Set 1').trim();
+        if (b === 'Set 1') return 'S1';
+        if (b === 'Set 2') return 'S2';
+        if (b === 'Set 3') return 'S3';
+        if (b.toLowerCase().startsWith('zug')) return 'Z';
+        return b;
+    }
+
+    function selectTargetSet(setName) {
+        currentTargetSet = setName;
+        const map = { 'Set 1': 'S1', 'Set 2': 'S2', 'Set 3': 'S3', 'Zugabe': 'Z' };
+        document.querySelectorAll('.btn-set-pill').forEach(btn => {
+            btn.classList.toggle('active', btn.innerText === map[setName]);
+        });
+    }
+
     function openSetlistOverview() {
         normalizeSetlistPositions();
+        document.getElementById('overview-add-input').value = '';
+        isAddPoolOpen = false;
+        document.getElementById('overview-add-results').style.display = 'none';
+        document.getElementById('btn-toggle-pool').innerText = '➕ Archiv';
         renderOverviewList();
         document.getElementById('overview-modal').style.display = 'flex';
+    }
+
+    function closeOverviewModal() {
+        document.getElementById('overview-modal').style.display = 'none';
+        if (!isPracticeMode) {
+            document.getElementById('view-filter').value = 'SETLIST';
+        }
+        rebuildActiveList(true);
+    }
+
+    function openAddPool() {
+        isAddPoolOpen = true;
+        document.getElementById('overview-add-results').style.display = 'flex';
+        document.getElementById('btn-toggle-pool').innerText = '▲ Zu';
+        renderAddPoolResults();
+    }
+
+    function toggleAddPool() {
+        if (isAddPoolOpen) {
+            isAddPoolOpen = false;
+            document.getElementById('overview-add-results').style.display = 'none';
+            document.getElementById('btn-toggle-pool').innerText = '➕ Archiv';
+        } else {
+            openAddPool();
+        }
+    }
+
+    function renderAddPoolResults() {
+        const resEl = document.getElementById('overview-add-results');
+        if (!isAddPoolOpen) openAddPool();
+        const q = (document.getElementById('overview-add-input').value || '').trim().toLowerCase();
+
+        // Zeigt primär Songs, die noch NICHT in der Setlist sind (alphabetisch)
+        const available = allSongs
+            .map((s, idx) => ({ song: s, idx }))
+            .filter(item => {
+                const inSetlist = item.song.Setlist_Pos && String(item.song.Setlist_Pos).trim() !== '' && !isNaN(Number(item.song.Setlist_Pos));
+                const matches = (item.song.Titel || '').toLowerCase().includes(q) || (item.song.Artist || '').toLowerCase().includes(q);
+                return !inSetlist && matches;
+            })
+            .sort((a, b) => (a.song.Titel || '').localeCompare(b.song.Titel || ''));
+
+        if (available.length === 0) {
+            resEl.innerHTML = `<div style="padding: 10px; color: var(--text-dim); font-size: 0.82rem; text-align: center;">Keine weiteren freien Songs gefunden.</div>`;
+            return;
+        }
+
+        resEl.innerHTML = available.map(item => {
+            const s = item.song;
+            return `
+                <div class="add-result-row" onclick="addSongToSetlistFromOverview(${item.idx})">
+                    <div style="min-width: 0; flex: 1;">
+                        <div style="font-weight: 800; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.Titel}</div>
+                        <div style="font-size: 0.72rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.Gitarre_Tuning || '-'}</div>
+                    </div>
+                    <span class="badge-pos">➕ ${shortSetLabel(currentTargetSet)}</span>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function addSongToSetlistFromOverview(songIdx) {
+        const song = allSongs[songIdx];
+        if (!song) return;
+        const currentList = getSortedSetlistSongs();
+        song.Setlist_Pos = String(currentList.length + 1);
+        song.Set_Block = currentTargetSet;
+        normalizeSetlistPositions();
+        document.getElementById('overview-add-input').value = '';
+        renderAddPoolResults();
+        renderOverviewList();
     }
 
     function renderOverviewList() {
         const container = document.getElementById('overview-content');
         const setlistSongs = getSortedSetlistSongs();
+        document.getElementById('overview-total-count').innerText = setlistSongs.length;
 
         if (setlistSongs.length === 0) {
             container.innerHTML = `
-                <div style="text-align: center; padding: 40px 20px; color: var(--text-dim);">
-                    <p style="margin-bottom: 14px; font-weight: 700;">Aktuell sind noch keine Songs einer Setlist zugewiesen.</p>
-                    <button class="btn-tool active-mode" onclick="closeOverviewModal(); openSetlistBuilder();">⚡ Jetzt Setlist bauen</button>
+                <div style="text-align: center; padding: 30px 15px; color: var(--text-dim); font-size: 0.9rem;">
+                    Die Setlist ist leer.<br>Tippe oben auf <strong>➕ Archiv</strong> oder suche einen Song, um ihn hinzuzufügen!
                 </div>`;
             return;
         }
 
+        const setOrder = ['Set 1', 'Set 2', 'Set 3', 'Zugabe'];
         const groups = {};
         setlistSongs.forEach(s => {
             const block = (s.Set_Block && s.Set_Block.trim() !== '') ? s.Set_Block.trim() : 'Set 1';
@@ -2066,10 +2079,16 @@
             groups[block].push(s);
         });
 
+        const sortedBlocks = Object.keys(groups).sort((a, b) => {
+            const iA = setOrder.indexOf(a);
+            const iB = setOrder.indexOf(b);
+            return (iA === -1 ? 99 : iA) - (iB === -1 ? 99 : iB);
+        });
+
         const totalCount = setlistSongs.length;
         let html = '';
 
-        Object.keys(groups).forEach(blockName => {
+        sortedBlocks.forEach(blockName => {
             const songsInBlock = groups[blockName];
             html += `
                 <div class="set-group-block">
@@ -2081,28 +2100,23 @@
             songsInBlock.forEach(song => {
                 const pos = parseInt(song.Setlist_Pos, 10);
                 const kapo = normalizeKapo(song.Kapo);
+                const guitarText = (song.Gitarre_Tuning || '-') + (kapo !== '-' ? ` · Kapo ${kapo}` : '');
                 const safeTitle = (song.Titel || '').replace(/'/g, "\\'");
+
                 html += `
-                    <div class="overview-song-row"
-                         draggable="true"
-                         ondragstart="onDragStartSetlist(event, ${pos})"
-                         ondragover="onDragOverSetlist(event)"
-                         ondrop="onDropOverviewSetlist(event, ${pos})">
-                        <div class="overview-clickable-main" onclick="jumpToSongFromOverview('${safeTitle}')">
-                            <span class="drag-handle" onclick="event.stopPropagation()" title="Ziehen zum Verschieben">☰</span>
+                    <div class="overview-song-row">
+                        <div class="overview-song-info" onclick="jumpToSongFromOverview('${safeTitle}')">
                             <span class="badge-pos">${pos}</span>
-                            <div style="min-width: 0;">
-                                <div style="font-weight: 800; font-size: 0.96rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${song.Titel}</div>
-                                <div style="font-size: 0.76rem; color: var(--text-dim);">${song.Artist || ''}</div>
+                            <div class="overview-title-stack">
+                                <div class="overview-song-title">${song.Titel}</div>
+                                <div class="overview-song-guitar">🎸 ${guitarText}</div>
                             </div>
                         </div>
-                        <div class="overview-meta">
-                            ${song.Gitarre_Tuning ? `<span class="meta-pill">🎸 ${song.Gitarre_Tuning}</span>` : ''}
-                            ${kapo !== '-' ? `<span class="meta-pill kapo">Kapo: ${kapo}</span>` : ''}
-                            ${song.Rig_Start ? `<span class="meta-pill rig">🎛️ ${song.Rig_Start}</span>` : ''}
-                            <button class="btn-mini-ctrl" style="color: var(--primary);" onclick="event.stopPropagation(); cycleOverviewSongSetBlock(${pos})" title="Set wechseln">${song.Set_Block || 'Set 1'}</button>
-                            <button class="btn-mini-ctrl" onclick="event.stopPropagation(); moveOverviewSong(${pos}, -1)" ${pos === 1 ? 'disabled' : ''} title="Nach oben schieben">▲</button>
-                            <button class="btn-mini-ctrl" onclick="event.stopPropagation(); moveOverviewSong(${pos}, 1)" ${pos === totalCount ? 'disabled' : ''} title="Nach unten schieben">▼</button>
+                        <div class="overview-controls">
+                            <button class="btn-mini-ctrl" style="color: var(--primary);" onclick="cycleOverviewSongSetBlock(${pos})" title="Set wechseln">${shortSetLabel(song.Set_Block)}</button>
+                            <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, -1)" ${pos === 1 ? 'disabled' : ''} title="Hoch">▲</button>
+                            <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, 1)" ${pos === totalCount ? 'disabled' : ''} title="Runter">▼</button>
+                            <button class="btn-mini-ctrl" style="color: var(--danger);" onclick="removeSongFromOverview(${pos})" title="Aus Setlist entfernen">✕</button>
                         </div>
                     </div>
                 `;
@@ -2119,9 +2133,8 @@
         const targetIdx = idx + delta;
         if (idx < 0 || idx >= list.length || targetIdx < 0 || targetIdx >= list.length) return;
 
-        // Falls der Song über eine Set-Grenze geschoben wird, übernimmt er das Ziel-Set, damit er optisch wandert
-        const targetSet = list[targetIdx].Set_Block || 'Set 1';
-        list[idx].Set_Block = targetSet;
+        // Übernimmt bei Set-Grenzen automatisch das Ziel-Set
+        list[idx].Set_Block = list[targetIdx].Set_Block || 'Set 1';
 
         const tempPos = list[idx].Setlist_Pos;
         list[idx].Setlist_Pos = list[targetIdx].Setlist_Pos;
@@ -2129,37 +2142,44 @@
 
         normalizeSetlistPositions();
         renderOverviewList();
-        rebuildActiveList(true);
     }
 
     function cycleOverviewSongSetBlock(pos) {
-        cycleSongSetBlock(pos);
+        const sets = ['Set 1', 'Set 2', 'Set 3', 'Zugabe'];
+        const list = getSortedSetlistSongs();
+        const song = list[pos - 1];
+        if (!song) return;
+        const curIdx = sets.indexOf(song.Set_Block || 'Set 1');
+        song.Set_Block = sets[(curIdx + 1) % sets.length];
+        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
         renderOverviewList();
-        rebuildActiveList(true);
     }
 
-    function onDropOverviewSetlist(e, targetPos) {
-        e.preventDefault();
-        if (draggedSetlistPos !== null && draggedSetlistPos !== targetPos) {
-            const list = getSortedSetlistSongs();
-            const targetSong = list[targetPos - 1];
-            const movedSong = list[draggedSetlistPos - 1];
-            if (movedSong && targetSong) {
-                movedSong.Set_Block = targetSong.Set_Block || 'Set 1';
-            }
-            reorderSetlistDrag(draggedSetlistPos, targetPos);
-            renderOverviewList();
-            rebuildActiveList(true);
-        }
-        draggedSetlistPos = null;
+    function removeSongFromOverview(pos) {
+        const list = getSortedSetlistSongs();
+        const song = list[pos - 1];
+        if (!song) return;
+        song.Setlist_Pos = "";
+        song.Set_Block = "";
+        normalizeSetlistPositions();
+        renderOverviewList();
+        if (isAddPoolOpen) renderAddPoolResults();
     }
 
-    function closeOverviewModal() {
-        document.getElementById('overview-modal').style.display = 'none';
+    function clearEntireSetlist() {
+        if (!confirm('Aktuelle Setlist wirklich komplett leeren, um eine neue zu klicken?')) return;
+        allSongs.forEach(s => {
+            s.Setlist_Pos = "";
+            s.Set_Block = "";
+        });
+        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
+        selectTargetSet('Set 1');
+        renderOverviewList();
+        openAddPool();
     }
 
     function jumpToSongFromOverview(songTitle) {
-        closeOverviewModal();
+        document.getElementById('overview-modal').style.display = 'none';
         emergencyActiveSong = null;
         savedSetlistIndexBeforeEmergency = null;
         updateEmergencyBannerUI();
@@ -2177,252 +2197,7 @@
     }
 
     /* ==========================================================================
-       2. PROBERAUM SETLIST-BUILDER (SCHIEBEN, EINFÜGEN & PLATZ-TAUSCH)
-       ========================================================================== */
-    let currentBuilderSet = 'Set 1';
-    let replaceTargetPos = null;
-    let draggedSetlistPos = null;
-
-    function openSetlistBuilder() {
-        document.getElementById('builder-search').value = '';
-        replaceTargetPos = null;
-        normalizeSetlistPositions();
-        renderBuilderList();
-        document.getElementById('builder-modal').style.display = 'flex';
-    }
-
-    function selectBuilderSet(setName) {
-        currentBuilderSet = setName;
-        document.querySelectorAll('.btn-set-pill').forEach(btn => {
-            btn.classList.toggle('active', btn.innerText === setName);
-        });
-    }
-
-    function getSortedSetlistSongs() {
-        return allSongs
-            .filter(s => s.Setlist_Pos && String(s.Setlist_Pos).trim() !== '' && !isNaN(Number(s.Setlist_Pos)))
-            .sort((a, b) => parseInt(a.Setlist_Pos, 10) - parseInt(b.Setlist_Pos, 10));
-    }
-
-    function normalizeSetlistPositions() {
-        const list = getSortedSetlistSongs();
-        list.forEach((s, idx) => {
-            s.Setlist_Pos = String(idx + 1);
-            if (!s.Set_Block || s.Set_Block.trim() === '') s.Set_Block = 'Set 1';
-        });
-        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
-    }
-
-    function toggleReplaceModeForPos(pos) {
-        replaceTargetPos = (replaceTargetPos === pos) ? null : pos;
-        renderBuilderList();
-    }
-
-    function moveSetlistSong(pos, delta) {
-        const list = getSortedSetlistSongs();
-        const idx = pos - 1;
-        const targetIdx = idx + delta;
-        if (idx < 0 || idx >= list.length || targetIdx < 0 || targetIdx >= list.length) return;
-
-        const tempPos = list[idx].Setlist_Pos;
-        list[idx].Setlist_Pos = list[targetIdx].Setlist_Pos;
-        list[targetIdx].Setlist_Pos = tempPos;
-
-        normalizeSetlistPositions();
-        renderBuilderList();
-    }
-
-    function reorderSetlistDrag(fromPos, toPos) {
-        if (fromPos === toPos) return;
-        const list = getSortedSetlistSongs();
-        const fromIdx = fromPos - 1;
-        const toIdx = toPos - 1;
-        if (fromIdx < 0 || fromIdx >= list.length || toIdx < 0 || toIdx >= list.length) return;
-
-        const [moved] = list.splice(fromIdx, 1);
-        list.splice(toIdx, 0, moved);
-        list.forEach((s, i) => { s.Setlist_Pos = String(i + 1); });
-
-        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
-        renderBuilderList();
-    }
-
-    function cycleSongSetBlock(pos) {
-        const sets = ['Set 1', 'Set 2', 'Set 3', 'Zugabe'];
-        const list = getSortedSetlistSongs();
-        const song = list[pos - 1];
-        if (!song) return;
-        const curIdx = sets.indexOf(song.Set_Block || 'Set 1');
-        song.Set_Block = sets[(curIdx + 1) % sets.length];
-        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
-        renderBuilderList();
-    }
-
-    function removeSongAtPos(pos) {
-        const list = getSortedSetlistSongs();
-        const song = list[pos - 1];
-        if (!song) return;
-        song.Setlist_Pos = "";
-        song.Set_Block = "";
-        if (replaceTargetPos === pos) replaceTargetPos = null;
-        normalizeSetlistPositions();
-        renderBuilderList();
-    }
-
-    function handlePoolSongClick(songIndex) {
-        const clickedSong = allSongs[songIndex];
-        if (!clickedSong) return;
-
-        const list = getSortedSetlistSongs();
-
-        if (replaceTargetPos !== null) {
-            const oldSongOnTarget = list[replaceTargetPos - 1];
-            const targetSetBlock = oldSongOnTarget ? (oldSongOnTarget.Set_Block || currentBuilderSet) : currentBuilderSet;
-
-            const existingPosOfClicked = parseInt(clickedSong.Setlist_Pos, 10);
-            if (!isNaN(existingPosOfClicked) && existingPosOfClicked > 0) {
-                if (oldSongOnTarget) {
-                    oldSongOnTarget.Setlist_Pos = String(existingPosOfClicked);
-                }
-                clickedSong.Setlist_Pos = String(replaceTargetPos);
-                clickedSong.Set_Block = targetSetBlock;
-            } else {
-                if (oldSongOnTarget) {
-                    oldSongOnTarget.Setlist_Pos = "";
-                    oldSongOnTarget.Set_Block = "";
-                }
-                clickedSong.Setlist_Pos = String(replaceTargetPos);
-                clickedSong.Set_Block = targetSetBlock;
-            }
-
-            replaceTargetPos = null;
-            normalizeSetlistPositions();
-            renderBuilderList();
-            return;
-        }
-
-        const currentPos = parseInt(clickedSong.Setlist_Pos, 10);
-        if (!isNaN(currentPos) && currentPos > 0) {
-            toggleReplaceModeForPos(currentPos);
-        } else {
-            clickedSong.Setlist_Pos = String(list.length + 1);
-            clickedSong.Set_Block = currentBuilderSet;
-            normalizeSetlistPositions();
-            renderBuilderList();
-        }
-    }
-
-    function clearEntireSetlist() {
-        if (!confirm('Aktuelle Setlist wirklich komplett leeren, um eine neue zu klicken?')) return;
-        allSongs.forEach(s => {
-            s.Setlist_Pos = "";
-            s.Set_Block = "";
-        });
-        replaceTargetPos = null;
-        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
-        selectBuilderSet('Set 1');
-        renderBuilderList();
-    }
-
-    function renderBuilderList() {
-        const query = (document.getElementById('builder-search').value || '').toLowerCase();
-        const activeContainer = document.getElementById('builder-active-list');
-        const poolContainer = document.getElementById('builder-pool-list');
-        const poolTitle = document.getElementById('builder-pool-title');
-
-        const activeSetlist = getSortedSetlistSongs();
-        document.getElementById('builder-next-num').innerText = activeSetlist.length + 1;
-        document.getElementById('builder-active-count').innerText = `${activeSetlist.length} Songs`;
-
-        if (replaceTargetPos !== null) {
-            poolTitle.innerHTML = `<span style="color: var(--warning);">🔄 Wähle rechts den neuen Song für Platz #${replaceTargetPos}!</span>`;
-        } else {
-            poolTitle.innerText = `2. Song-Archiv (Antippen zum Einfügen)`;
-        }
-
-        if (activeSetlist.length === 0) {
-            activeContainer.innerHTML = `<div style="text-align: center; padding: 30px 10px; color: var(--text-dim); font-size: 0.85rem;">Noch leer. Tippe rechts die Songs der Reihe nach an!</div>`;
-        } else {
-            activeContainer.innerHTML = activeSetlist.map((s, idx) => {
-                const pos = idx + 1;
-                const isReplace = replaceTargetPos === pos;
-                return `
-                    <div class="active-setlist-item ${isReplace ? 'replace-target' : ''}"
-                         draggable="true"
-                         data-pos="${pos}"
-                         ondragstart="onDragStartSetlist(event, ${pos})"
-                         ondragover="onDragOverSetlist(event)"
-                         ondrop="onDropSetlist(event, ${pos})">
-                        <div style="display: flex; align-items: center; gap: 7px; min-width: 0;">
-                            <span class="drag-handle" title="Ziehen zum Verschieben">☰</span>
-                            <span class="badge-pos">${pos}</span>
-                            <div style="min-width: 0;">
-                                <div style="font-weight: 800; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.Titel}</div>
-                                <div style="font-size: 0.72rem; color: var(--text-dim);">${s.Artist || ''}</div>
-                            </div>
-                        </div>
-                        <div class="item-controls">
-                            <button class="btn-mini-ctrl" onclick="cycleSongSetBlock(${pos})" title="Set wechseln" style="color: var(--primary);">${s.Set_Block || 'Set 1'}</button>
-                            <button class="btn-mini-ctrl" onclick="moveSetlistSong(${pos}, -1)" ${pos === 1 ? 'disabled' : ''} title="Nach oben">▲</button>
-                            <button class="btn-mini-ctrl" onclick="moveSetlistSong(${pos}, 1)" ${pos === activeSetlist.length ? 'disabled' : ''} title="Nach unten">▼</button>
-                            <button class="btn-mini-ctrl replace-btn ${isReplace ? 'active' : ''}" onclick="toggleReplaceModeForPos(${pos})" title="Diesen Platz durch anderen Song ersetzen">🔄</button>
-                            <button class="btn-mini-ctrl" style="color: var(--danger);" onclick="removeSongAtPos(${pos})" title="Entfernen">✕</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        const indexedSongs = allSongs.map((s, idx) => ({ song: s, idx: idx }))
-            .filter(item => (item.song.Titel || '').toLowerCase().includes(query) || (item.song.Artist || '').toLowerCase().includes(query))
-            .sort((a, b) => (a.song.Titel || '').localeCompare(b.song.Titel || ''));
-
-        poolContainer.innerHTML = indexedSongs.map(item => {
-            const s = item.song;
-            const hasPos = s.Setlist_Pos && String(s.Setlist_Pos).trim() !== '' && !isNaN(Number(s.Setlist_Pos));
-            const actionLabel = replaceTargetPos !== null
-                ? `🔄 Auf #${replaceTargetPos}`
-                : (hasPos ? `#${s.Setlist_Pos}` : '➕ Rein');
-            return `
-                <div class="pool-song-card ${hasPos && replaceTargetPos === null ? 'in-setlist' : ''}" onclick="handlePoolSongClick(${item.idx})">
-                    <div style="min-width: 0;">
-                        <div style="font-weight: 800; font-size: 0.92rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.Titel}</div>
-                        <div style="font-size: 0.75rem; color: var(--text-dim);">${s.Artist || ''} · ${s.Gitarre_Tuning || '-'}</div>
-                    </div>
-                    <span class="badge-pos" style="background: ${replaceTargetPos !== null ? 'var(--warning)' : (hasPos ? 'var(--surface-elevated)' : 'var(--primary)')}; color: ${replaceTargetPos !== null ? '#000' : 'var(--text)'};">
-                        ${actionLabel}
-                    </span>
-                </div>
-            `;
-        }).join('');
-    }
-
-    function onDragStartSetlist(e, pos) {
-        draggedSetlistPos = pos;
-        e.currentTarget.classList.add('dragging-item');
-    }
-    function onDragOverSetlist(e) {
-        e.preventDefault();
-    }
-    function onDropSetlist(e, targetPos) {
-        e.preventDefault();
-        if (draggedSetlistPos !== null && draggedSetlistPos !== targetPos) {
-            reorderSetlistDrag(draggedSetlistPos, targetPos);
-        }
-        draggedSetlistPos = null;
-    }
-
-    function finishSetlistBuilder() {
-        replaceTargetPos = null;
-        document.getElementById('builder-modal').style.display = 'none';
-        if (!isPracticeMode) {
-            document.getElementById('view-filter').value = 'SETLIST';
-        }
-        rebuildActiveList();
-    }
-
-    /* ==========================================================================
-       3. GOOGLE SHEETS SYNC & CSV BACKUP
+       GOOGLE SHEETS SYNC & CSV BACKUP
        ========================================================================== */
     function openSyncModal() { document.getElementById('sync-modal').style.display = 'flex'; }
     function closeSyncModal() { document.getElementById('sync-modal').style.display = 'none'; }
