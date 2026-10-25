@@ -132,6 +132,27 @@
             #fab-menu-btn { bottom: 58px; right: 12px; width: 46px; height: 46px; }
         }
 
+        /* SCHNELL-SCHALTER IM QUERFORMAT (RECHTS OBEN IN DER ECKE) */
+        #landscape-quick-setlist {
+            position: fixed;
+            top: 8px;
+            right: 12px;
+            z-index: 45;
+            display: none;
+            background: var(--surface-elevated);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+        @media (orientation: landscape) {
+            #landscape-quick-setlist { display: inline-flex; align-items: center; gap: 4px; }
+        }
+
         /* QUERFORMAT VOLLBILD HINWEIS */
         #landscape-fullscreen-banner {
             position: fixed;
@@ -192,6 +213,22 @@
             text-align: left;
         }
         .sheet-option-btn:active { background: var(--primary-glow); border-color: var(--primary); }
+
+        #top-collapsible {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-height: 220px;
+            opacity: 1;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
+            z-index: 30;
+            flex-shrink: 0;
+        }
+        /* IM QUERFORMAT WIRD DER OBERE BEREICH AUTOMATISCH EINGEKLAPPT, UM PLATZ ZU SCHAFFEN */
+        @media (orientation: landscape) {
+            #top-collapsible { max-height: 0 !important; opacity: 0; pointer-events: none; }
+        }
 
         header {
             background: var(--surface);
@@ -883,7 +920,6 @@
         }
         .overview-song-row:last-child { border-bottom: none; }
         
-        /* AKTUELLER SONG IN DER SETLIST HIGHLIGHT (SIGNAL-GELB / AMBER) */
         .overview-song-row.current-playing-song {
             background: var(--warning-bg);
             border-left: 6px solid var(--warning);
@@ -1006,6 +1042,9 @@
 
     <!-- SCHWEBBENDER DAUMEN-BUTTON (MENÜ) -->
     <button id="fab-menu-btn" onclick="openBottomSheet()" title="Menü öffnen">≡</button>
+
+    <!-- SCHNELL-SCHNALLE FÜR SETLIST IM QUERFORMAT (OBEN RECHTS) -->
+    <button id="landscape-quick-setlist" onclick="openSetlistOverview()">📋 Setlist</button>
 
     <!-- QUERFORMAT VOLLBILD HINWEIS -->
     <div id="landscape-fullscreen-banner">
@@ -1998,7 +2037,7 @@
     }
 
     /* ==========================================================================
-       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT (MIT AUTO-ZENTRIERUNG)
+       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT
        ========================================================================== */
     let currentTargetSet = 'Set 1';
     let isAddPoolOpen = false;
@@ -2049,7 +2088,6 @@
             if (modal) {
                 modal.style.display = 'flex';
                 
-                // AUTOMATISCHES ZENTRIEREN DES AKTUELLEN SONGS IN DER MITTE DES BILDSCHIRMS!
                 setTimeout(() => {
                     const activeRow = modal.querySelector('.current-playing-song');
                     if (activeRow) {
@@ -2191,11 +2229,10 @@
                 const guitarText = (song.Gitarre_Tuning || '-') + (kapo !== '-' ? ` · Kapo ${kapo}` : '');
                 const safeTitle = (song.Titel || '').replace(/'/g, "\\'");
 
-                // Prüfen, ob das genau der aktuell gespielte Song ist
                 const isCurrent = currentPlayingSong && currentPlayingSong.Titel === song.Titel;
 
-                // LIVE-MODUS: Klick schließt IMMER nur das Setlist-Fenster (Reine Ansicht!)
-                // ÜBE-MODUS: Klick springt zum Song.
+                // IM LIVE-MODUS: Klick auf die Zeile schließt IMMER das Setlist-Fenster (Reine Ansicht, kein Songwechsel!)
+                // IM ÜBE-MODUS: Klick springt zum Song.
                 const clickAction = isPracticeMode 
                     ? `jumpToSongFromOverview('${safeTitle}')` 
                     : `closeOverviewModal()`;
