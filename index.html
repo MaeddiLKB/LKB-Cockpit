@@ -128,7 +128,7 @@
         body:not(.practice-mode) #fab-menu-btn { color: #000000; }
         #fab-menu-btn:active { transform: scale(0.92); }
 
-        /* QUERFORMAT-VOLLBILD HINWEIS-BANNER (ERSCHEINT BEI GERÄTE-DREHUNG) */
+        /* QUERFORMAT VOLLBILD HINWEIS */
         #landscape-fullscreen-banner {
             position: fixed;
             top: 0;
@@ -147,7 +147,7 @@
         }
         #landscape-fullscreen-banner.visible { display: flex; }
 
-        /* BOTTOM-SHEET MENÜ VON UNTEN */
+        /* BOTTOM-SHEET MENÜ */
         #bottom-sheet-overlay {
             position: fixed;
             inset: 0;
@@ -240,6 +240,15 @@
             background: var(--surface-elevated);
             color: var(--warning) !important;
             border-color: var(--warning);
+        }
+
+        .btn-setlist-prominent {
+            background: var(--surface-elevated);
+            color: var(--primary) !important;
+            border: 1.5px solid var(--primary);
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 900;
         }
 
         /* PERMANENTE SCHNELLSUCHE-LEISTE IM ÜBE-MODUS */
@@ -991,7 +1000,7 @@
     <!-- SCHWEBBENDER DAUMEN-BUTTON (MENÜ) -->
     <button id="fab-menu-btn" onclick="openBottomSheet()" title="Menü öffnen">≡</button>
 
-    <!-- QUERFORMAT VOLLBILD-HINWEIS -->
+    <!-- QUERFORMAT VOLLBILD HINWEIS -->
     <div id="landscape-fullscreen-banner">
         <span>📱 Gerät im Querformat (Bühnenansicht)</span>
         <button class="btn-tool active-mode" onclick="toggleFullScreen()" style="padding: 4px 10px; font-size: 0.78rem;">⛶ Vollbild starten</button>
@@ -1023,7 +1032,7 @@
         <header>
             <div class="header-group">
                 <button class="btn-tool btn-search-prominent" id="btn-top-search" onclick="triggerSearchOrEmergency()">🔍 Song-Suche / Liste</button>
-                <button class="btn-tool" onclick="openSetlistOverview()">📋 Setlist</button>
+                <button class="btn-tool btn-setlist-prominent" onclick="openSetlistOverview()">📋 Setlist</button>
             </div>
             <div class="header-group">
                 <div class="header-status-badge" id="top-status-badge">☀️ Übe-Modus</div>
@@ -1178,7 +1187,6 @@
         document.getElementById('bottom-sheet-overlay').style.display = 'none';
     }
 
-    // AUTOMATISCHER VOLLBILD-HINWEIS BEIM DREHEN INS QUERFORMAT
     function checkOrientation() {
         const banner = document.getElementById('landscape-fullscreen-banner');
         if (!banner) return;
