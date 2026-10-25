@@ -96,7 +96,7 @@
             font-weight: 800;
             letter-spacing: 2px;
             text-transform: uppercase;
-            color: var(--text-dim);
+            color: #8fa093;
             opacity: 0.7;
         }
         @keyframes splashPop {
@@ -133,30 +133,32 @@
             justify-content: space-between;
             align-items: center;
             gap: 6px;
+            overflow-x: auto;
         }
-        .header-group { display: flex; align-items: center; gap: 6px; }
+        .header-group { display: flex; align-items: center; gap: 5px; }
 
         .btn-tool {
             background: var(--surface-elevated);
             color: var(--text);
             border: 1px solid var(--border);
-            padding: 6px 10px;
+            padding: 6px 9px;
             border-radius: 6px;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 700;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 4px;
             white-space: nowrap;
         }
         .btn-tool:active { transform: scale(0.97); }
         .btn-tool.active-mode {
             background: var(--primary);
-            color: #000;
+            color: #ffffff;
             border-color: var(--primary);
             font-weight: 900;
         }
+        body:not(.practice-mode) .btn-tool.active-mode { color: #000000; }
 
         #cockpit-nav {
             background: var(--surface);
@@ -184,7 +186,7 @@
         body.practice-mode .btn-nav { padding: 6px 12px; font-size: 0.88rem; border-width: 1px; }
         .btn-nav:active:not(:disabled) { background: var(--primary); color: #000; border-color: var(--primary); }
         .btn-nav:disabled { opacity: 0.25; cursor: not-allowed; }
-        .nav-center-box { text-align: center; }
+        .nav-center-box { text-align: center; cursor: pointer; }
         .nav-counter { font-size: 1.15rem; font-weight: 900; color: var(--primary); line-height: 1; }
         .nav-block-label {
             font-size: 0.65rem;
@@ -241,7 +243,8 @@
         .song-item:hover, .song-item.active { background: var(--primary-glow); border-left: 4px solid var(--primary); }
         .song-title-text { font-weight: 700; font-size: 0.95rem; display: flex; align-items: center; gap: 6px; color: var(--text); }
         .song-sub-text { color: var(--text-dim); font-size: 0.8rem; }
-        .badge-pos { background: var(--primary); color: #000; font-weight: 900; font-size: 0.75rem; padding: 1px 5px; border-radius: 4px; min-width: 20px; text-align: center; }
+        .badge-pos { background: var(--primary); color: #fff; font-weight: 900; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; min-width: 22px; text-align: center; }
+        body:not(.practice-mode) .badge-pos { color: #000; }
         .badge-tuning { background: var(--surface-elevated); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; color: var(--primary); white-space: nowrap; }
         .dot-status { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
         .dot-Grün { background: #00d643; }
@@ -520,7 +523,19 @@
             z-index: 5;
         }
 
-        #sync-modal { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); display: none; justify-content: center; align-items: center; padding: 20px; z-index: 100; }
+        /* ==========================================================================
+           MODALS & FULLSCREEN OVERLAYS (SETLIST ÜBERSICHT & SPEED-BUILDER)
+           ========================================================================== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 14px;
+            z-index: 100;
+        }
         .modal-card {
             background: var(--surface);
             color: var(--text);
@@ -528,19 +543,167 @@
             border-radius: 10px;
             max-width: 520px;
             width: 100%;
-            padding: 22px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             gap: 14px;
         }
+        .modal-card.fullscreen-card {
+            max-width: 900px;
+            height: 92vh;
+            padding: 16px;
+        }
+        .modal-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 10px;
+        }
+        .modal-body-scroll {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-right: 4px;
+        }
+
+        /* SETLIST ÜBERSICHT STYLES */
+        .set-group-block {
+            background: var(--surface-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .set-group-title {
+            background: var(--surface-elevated);
+            color: var(--primary);
+            padding: 8px 12px;
+            font-size: 0.9rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+        }
+        .overview-song-row {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .overview-song-row:last-child { border-bottom: none; }
+        .overview-song-row:hover { background: var(--primary-glow); }
+        .overview-meta {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+        .meta-pill {
+            background: var(--surface-elevated);
+            border: 1px solid var(--border);
+            padding: 3px 7px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .meta-pill.rig { color: var(--primary); border-color: var(--primary-dim); }
+        .meta-pill.kapo { color: var(--warning); border-color: var(--warning); }
+
+        /* SPEED BUILDER STYLES */
+        .builder-toolbar {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--surface-card);
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+        }
+        .set-selector-pills {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+        .btn-set-pill {
+            background: var(--surface-elevated);
+            color: var(--text);
+            border: 1px solid var(--border);
+            padding: 7px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            font-weight: 800;
+            cursor: pointer;
+        }
+        .btn-set-pill.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        body:not(.practice-mode) .btn-set-pill.active { color: #000; }
+
+        .builder-song-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 8px;
+        }
+        .builder-song-card {
+            background: var(--surface-card);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+            transition: transform 0.08s ease, border-color 0.1s ease;
+        }
+        .builder-song-card:active { transform: scale(0.98); }
+        .builder-song-card.selected {
+            border-color: var(--primary);
+            background: var(--primary-glow);
+        }
+        .builder-pos-circle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: var(--surface-elevated);
+            border: 2px solid var(--border);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 900;
+            font-size: 0.95rem;
+            color: var(--text-dim);
+            flex-shrink: 0;
+        }
+        .builder-song-card.selected .builder-pos-circle {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+        }
+        body:not(.practice-mode) .builder-song-card.selected .builder-pos-circle { color: #000; }
 
         @media (max-width: 768px) {
             #sidebar { position: absolute; inset: 0; width: 100%; }
             .song-title-heading { font-size: 1.45rem; }
+            .builder-song-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
-<body>
+<body class="practice-mode">
 
     <div id="lkb-splash" onclick="dismissSplash()" title="Tippen zum Überspringen">
         <div class="splash-logo-wrap">
@@ -586,19 +749,21 @@
         <header>
             <div class="header-group">
                 <button class="btn-tool" onclick="toggleSidebar()">🔍 Suche</button>
-                <button class="btn-tool" onclick="toggleFullScreen()">⛶ Vollbild</button>
+                <button class="btn-tool" onclick="openSetlistOverview()">📋 Setlist</button>
+                <button class="btn-tool" onclick="openSetlistBuilder()">⚡ Builder</button>
             </div>
             <div class="header-group">
-                <button class="btn-tool" id="btn-mode-toggle" onclick="togglePracticeMode()">🏋️ Übe-Modus</button>
+                <button class="btn-tool active-mode" id="btn-mode-toggle" onclick="togglePracticeMode()">☀️ Übe-Modus: AN</button>
                 <button class="btn-tool" onclick="openSyncModal()">🔄 Sync</button>
+                <button class="btn-tool" onclick="toggleFullScreen()" title="Vollbild">⛶</button>
             </div>
         </header>
 
         <div id="cockpit-nav">
             <button class="btn-nav" id="btn-prev" onclick="stepSong(-1)">◀ ZURÜCK</button>
-            <div class="nav-center-box">
-                <div class="nav-counter" id="nav-counter">1 / 3</div>
-                <div class="nav-block-label" id="nav-block">SET 1</div>
+            <div class="nav-center-box" onclick="openSetlistOverview()" title="Tippen für Gesamt-Setlist">
+                <div class="nav-counter" id="nav-counter">1 / 1</div>
+                <div class="nav-block-label" id="nav-block">ÜBE-ARCHIV</div>
             </div>
             <button class="btn-nav" id="btn-next" onclick="stepSong(1)">WEITER ▶</button>
         </div>
@@ -610,8 +775,8 @@
                 <input type="text" id="search" placeholder="Song oder Artist suchen..." autocomplete="off">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
                     <select id="view-filter">
-                        <option value="SETLIST">📋 Nur Setlist</option>
                         <option value="ALL">📚 Alle Songs</option>
+                        <option value="SETLIST">📋 Nur Setlist</option>
                     </select>
                     <select id="status-filter">
                         <option value="ALL">🚦 Alle Status</option>
@@ -655,13 +820,56 @@
         </div>
     </div>
 
-    <div id="sync-modal">
+    <!-- 1. SETLIST GESAMTÜBERSICHT MODAL -->
+    <div id="overview-modal" class="modal-overlay">
+        <div class="modal-card fullscreen-card">
+            <div class="modal-header-row">
+                <h3 style="color: var(--primary); font-size: 1.2rem;">📋 Aktuelle Setlist (Nach Sets)</h3>
+                <div style="display: flex; gap: 6px;">
+                    <button class="btn-tool" onclick="closeOverviewModal(); openSetlistBuilder();">⚡ Setlist umbauen</button>
+                    <button class="btn-tool active-mode" onclick="closeOverviewModal()">✕ Schließen</button>
+                </div>
+            </div>
+            <div id="overview-content" class="modal-body-scroll"></div>
+        </div>
+    </div>
+
+    <!-- 2. SPEED SETLIST BUILDER MODAL -->
+    <div id="builder-modal" class="modal-overlay">
+        <div class="modal-card fullscreen-card">
+            <div class="modal-header-row">
+                <div>
+                    <h3 style="color: var(--primary); font-size: 1.2rem;">⚡ Speed Setlist-Builder</h3>
+                    <div style="font-size: 0.75rem; color: var(--text-dim);">Songs einfach der Reihe nach antippen! Nächste Nummer: <strong id="builder-next-num" style="color: var(--primary);">1</strong></div>
+                </div>
+                <button class="btn-tool active-mode" onclick="finishSetlistBuilder()">✅ Fertig & Speichern</button>
+            </div>
+
+            <div class="builder-toolbar">
+                <div class="set-selector-pills">
+                    <button class="btn-set-pill active" onclick="selectBuilderSet('Set 1')">Set 1</button>
+                    <button class="btn-set-pill" onclick="selectBuilderSet('Set 2')">Set 2</button>
+                    <button class="btn-set-pill" onclick="selectBuilderSet('Set 3')">Set 3</button>
+                    <button class="btn-set-pill" onclick="selectBuilderSet('Zugabe')">Zugabe</button>
+                </div>
+                <div style="display: flex; gap: 6px; align-items: center; flex: 1; min-width: 200px;">
+                    <input type="text" id="builder-search" placeholder="Schnellsuche..." oninput="renderBuilderList()">
+                    <button class="btn-tool" style="border-color: var(--danger); color: var(--danger);" onclick="clearEntireSetlist()">🗑️ Reset</button>
+                </div>
+            </div>
+
+            <div id="builder-list" class="modal-body-scroll builder-song-grid"></div>
+        </div>
+    </div>
+
+    <!-- 3. SYNC MODAL -->
+    <div id="sync-modal" class="modal-overlay">
         <div class="modal-card">
             <h3 style="color: var(--primary);">Google Sheets Synchronisation</h3>
             <ol style="padding-left: 20px; font-size: 0.85rem; line-height: 1.6; color: var(--text-dim);">
-                <li>Öffne <b>Band_Cockpit_Datenbank</b> in deiner Google-Sheets-App.</li>
-                <li>Unter <b>⋮ → Teilen und exportieren → Zugriff verwalten</b> muss <b>„Jeder, der über den Link verfügt“</b> aktiv sein.</li>
-                <li>Mit <b>App-Stand als CSV</b> kannst du spontane Proben-Änderungen sichern.</li>
+                <li>Öffne <b>Band_Cockpit_Datenbank</b> in Google Sheets.</li>
+                <li>Hinweis: <b>„Aus Sheet laden“</b> überschreibt lokal gebaute Setlisten mit dem Stand aus der Google-Tabelle.</li>
+                <li>Mit <b>App-Stand als CSV</b> kannst du deine hier gebaute Setlist jederzeit sichern.</li>
             </ol>
             <input type="url" id="csv-url-input" value="https://docs.google.com/spreadsheets/d/1aQWoR7msLCf3VWyLoSCtjKReqkB4mH81ZX97sY12BpA/edit">
             <div id="sync-feedback" style="font-size: 0.85rem; font-weight: 700; color: var(--primary);"></div>
@@ -677,6 +885,9 @@
 
 <script>
     let autoHideTimer = null;
+
+    // STARTET IMMER IM ÜBE-MODUS!
+    let isPracticeMode = true;
 
     function resetTopAutoHide() {
         if (isPracticeMode) { showTopBar(); return; }
@@ -742,7 +953,6 @@
     let allSongs = [];
     let activeList = [];
     let currentIndex = 0;
-    let isPracticeMode = false;
 
     function normalizeKapo(val) {
         if (!val) return '-';
@@ -753,6 +963,7 @@
         return clean;
     }
 
+    // METRONOM
     let audioCtx = null;
     let isPlayingMetro = false;
     let currentBpm = 120;
@@ -821,6 +1032,7 @@
         if (btn) btn.innerText = isPlayingMetro ? `⏹ ${currentBpm} BPM` : `▶ ${currentBpm} BPM`;
     }
 
+    // STIMMGERÄT
     let audioContextTuner = null;
     let analyserTuner = null;
     let micStream = null;
@@ -950,6 +1162,9 @@
         allSongs = saved ? JSON.parse(saved) : defaultSongs;
         allSongs.forEach(s => { s.Kapo = normalizeKapo(s.Kapo); });
         document.getElementById('csv-url-input').value = localStorage.getItem('band_cockpit_csv_url') || 'https://docs.google.com/spreadsheets/d/1aQWoR7msLCf3VWyLoSCtjKReqkB4mH81ZX97sY12BpA/edit';
+        
+        // Beim Start immer Übe-Modus + Alle Songs aktivieren
+        document.getElementById('view-filter').value = 'ALL';
         populateTuningFilter();
         rebuildActiveList();
     }
@@ -1008,8 +1223,10 @@
             const matchesQuery = (s.Titel || '').toLowerCase().includes(query) || (s.Artist || '').toLowerCase().includes(query);
             const matchesTuning = tuning === 'ALL' || s.Gitarre_Tuning === tuning;
             const matchesStatus = statusFilter === 'ALL' || (s.Status || 'Grün') === statusFilter;
-            const hasSetlistPos = s.Setlist_Pos && s.Setlist_Pos.trim() !== '' && !isNaN(Number(s.Setlist_Pos));
-            const matchesView = (viewMode === 'ALL' || query.length > 0 || statusFilter !== 'ALL') ? true : hasSetlistPos;
+            const hasSetlistPos = s.Setlist_Pos && String(s.Setlist_Pos).trim() !== '' && !isNaN(Number(s.Setlist_Pos));
+            
+            // Im Live-Modus ohne aktive Suche strikt nur Setlist-Songs zeigen
+            const matchesView = (viewMode === 'ALL') ? true : hasSetlistPos;
             return matchesQuery && matchesTuning && matchesStatus && matchesView;
         });
 
@@ -1062,7 +1279,11 @@
         const nextBtn = document.getElementById('btn-next');
 
         if (activeList.length === 0) {
-            contentEl.innerHTML = `<h2 style="color: var(--text-dim); text-align: center; margin-top: 40px;">Keine Songs gefunden.</h2>`;
+            contentEl.innerHTML = `
+                <div style="text-align: center; margin-top: 40px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
+                    <h2 style="color: var(--text-dim);">Keine Songs in dieser Ansicht gefunden.</h2>
+                    <button class="btn-tool active-mode" onclick="openSetlistBuilder()">⚡ Jetzt Setlist zusammenklicken</button>
+                </div>`;
             prevBtn.disabled = true; nextBtn.disabled = true;
             return;
         }
@@ -1072,7 +1293,7 @@
         originalBpm = parseInt(song.BPM, 10) || 120;
         currentBpm = originalBpm;
 
-        document.getElementById('nav-block').innerText = song.Set_Block || (isPracticeMode ? 'ÜBE-ARCHIV' : 'SETLIST');
+        document.getElementById('nav-block').innerText = isPracticeMode ? 'ÜBE-ARCHIV (ALLE)' : (song.Set_Block || 'SETLIST');
         document.getElementById('nav-counter').innerText = `${currentIndex + 1} / ${activeList.length}`;
         prevBtn.disabled = currentIndex === 0;
         nextBtn.disabled = currentIndex === activeList.length - 1;
@@ -1238,6 +1459,12 @@
         if (isTunerActive) toggleTuner();
         isPracticeMode = !isPracticeMode;
         const btn = document.getElementById('btn-mode-toggle');
+        
+        // Beim Modus-Wechsel immer Suchfilter neutralisieren, damit nichts verschluckt wird
+        document.getElementById('search').value = '';
+        document.getElementById('tuning-filter').value = 'ALL';
+        document.getElementById('status-filter').value = 'ALL';
+
         if (isPracticeMode) {
             document.body.classList.add('practice-mode');
             btn.classList.add('active-mode');
@@ -1248,14 +1475,200 @@
         } else {
             document.body.classList.remove('practice-mode');
             btn.classList.remove('active-mode');
-            btn.innerText = '🏋️ Übe-Modus';
+            btn.innerText = '🎸 Live-Modus';
+            // Im Live-Modus strikt auf die definierte Setlist wechseln!
             document.getElementById('view-filter').value = 'SETLIST';
-            document.getElementById('status-filter').value = 'ALL';
             resetTopAutoHide();
         }
         rebuildActiveList();
     }
 
+    /* ==========================================================================
+       1. SETLIST GESAMTÜBERSICHT (GRUPPIERT NACH SETS)
+       ========================================================================== */
+    function openSetlistOverview() {
+        const modal = document.getElementById('overview-modal');
+        const container = document.getElementById('overview-content');
+        
+        const setlistSongs = allSongs.filter(s => s.Setlist_Pos && String(s.Setlist_Pos).trim() !== '' && !isNaN(Number(s.Setlist_Pos)));
+        setlistSongs.sort((a, b) => parseInt(a.Setlist_Pos, 10) - parseInt(b.Setlist_Pos, 10));
+
+        if (setlistSongs.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px; color: var(--text-dim);">
+                    <p style="margin-bottom: 14px; font-weight: 700;">Aktuell sind noch keine Songs einer Setlist zugewiesen.</p>
+                    <button class="btn-tool active-mode" onclick="closeOverviewModal(); openSetlistBuilder();">⚡ Jetzt Setlist bauen</button>
+                </div>`;
+            modal.style.display = 'flex';
+            return;
+        }
+
+        const groups = {};
+        setlistSongs.forEach(s => {
+            const block = (s.Set_Block && s.Set_Block.trim() !== '') ? s.Set_Block.trim() : 'Set 1';
+            if (!groups[block]) groups[block] = [];
+            groups[block].push(s);
+        });
+
+        let html = '';
+        Object.keys(groups).forEach(blockName => {
+            const songsInBlock = groups[blockName];
+            html += `
+                <div class="set-group-block">
+                    <div class="set-group-title">
+                        <span>${blockName}</span>
+                        <span>${songsInBlock.length} Songs</span>
+                    </div>
+            `;
+            songsInBlock.forEach(song => {
+                const kapo = normalizeKapo(song.Kapo);
+                html += `
+                    <div class="overview-song-row" onclick="jumpToSongFromOverview('${song.Titel.replace(/'/g, "\\'")}')">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span class="badge-pos">${song.Setlist_Pos}</span>
+                            <div>
+                                <div style="font-weight: 800; font-size: 0.98rem;">${song.Titel}</div>
+                                <div style="font-size: 0.78rem; color: var(--text-dim);">${song.Artist || ''}</div>
+                            </div>
+                        </div>
+                        <div class="overview-meta">
+                            ${song.Gitarre_Tuning ? `<span class="meta-pill">🎸 ${song.Gitarre_Tuning}</span>` : ''}
+                            ${kapo !== '-' ? `<span class="meta-pill kapo">Kapo: ${kapo}</span>` : ''}
+                            ${song.Rig_Start ? `<span class="meta-pill rig">🎛️ ${song.Rig_Start}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            html += `</div>`;
+        });
+
+        container.innerHTML = html;
+        modal.style.display = 'flex';
+    }
+
+    function closeOverviewModal() {
+        document.getElementById('overview-modal').style.display = 'none';
+    }
+
+    function jumpToSongFromOverview(songTitle) {
+        closeOverviewModal();
+        // Wenn wir im Live-Modus sind, sicherstellen dass Setlist-Ansicht aktiv ist
+        if (!isPracticeMode) {
+            document.getElementById('view-filter').value = 'SETLIST';
+        }
+        rebuildActiveList();
+        const targetIdx = activeList.findIndex(s => s.Titel === songTitle);
+        if (targetIdx !== -1) {
+            currentIndex = targetIdx;
+            renderSidebarList();
+            renderCurrentSong();
+        }
+    }
+
+    /* ==========================================================================
+       2. SPEED SETLIST-BUILDER (1-CLICK TAP-TO-SEQUENCE)
+       ========================================================================== */
+    let currentBuilderSet = 'Set 1';
+
+    function openSetlistBuilder() {
+        document.getElementById('builder-search').value = '';
+        renderBuilderList();
+        document.getElementById('builder-modal').style.display = 'flex';
+    }
+
+    function selectBuilderSet(setName) {
+        currentBuilderSet = setName;
+        document.querySelectorAll('.btn-set-pill').forEach(btn => {
+            btn.classList.toggle('active', btn.innerText === setName);
+        });
+    }
+
+    function getHighestSetlistPos() {
+        let max = 0;
+        allSongs.forEach(s => {
+            const p = parseInt(s.Setlist_Pos, 10);
+            if (!isNaN(p) && p > max) max = p;
+        });
+        return max;
+    }
+
+    function toggleSongInBuilder(songIndex) {
+        const song = allSongs[songIndex];
+        if (!song) return;
+
+        const currentPos = parseInt(song.Setlist_Pos, 10);
+
+        if (!isNaN(currentPos) && currentPos > 0) {
+            // Song war schon drin -> Rausnehmen und nachfolgende Nummern sauber nachrücken!
+            song.Setlist_Pos = "";
+            song.Set_Block = "";
+            allSongs.forEach(s => {
+                const p = parseInt(s.Setlist_Pos, 10);
+                if (!isNaN(p) && p > currentPos) {
+                    s.Setlist_Pos = String(p - 1);
+                }
+            });
+        } else {
+            // Song neu aufnehmen -> Nächste freie Nummer + aktuelles Set zuweisen!
+            const nextPos = getHighestSetlistPos() + 1;
+            song.Setlist_Pos = String(nextPos);
+            song.Set_Block = currentBuilderSet;
+        }
+
+        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
+        renderBuilderList();
+    }
+
+    function clearEntireSetlist() {
+        if (!confirm('Aktuelle Setlist wirklich komplett leeren, um eine neue zu klicken?')) return;
+        allSongs.forEach(s => {
+            s.Setlist_Pos = "";
+            s.Set_Block = "";
+        });
+        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
+        selectBuilderSet('Set 1');
+        renderBuilderList();
+    }
+
+    function renderBuilderList() {
+        const query = (document.getElementById('builder-search').value || '').toLowerCase();
+        const listEl = document.getElementById('builder-list');
+        document.getElementById('builder-next-num').innerText = getHighestSetlistPos() + 1;
+
+        // Alphabetisch sortierte Anzeige aller Songs (mit Original-Index)
+        const indexedSongs = allSongs.map((s, idx) => ({ song: s, idx: idx }))
+            .filter(item => (item.song.Titel || '').toLowerCase().includes(query) || (item.song.Artist || '').toLowerCase().includes(query))
+            .sort((a, b) => (a.song.Titel || '').localeCompare(b.song.Titel || ''));
+
+        listEl.innerHTML = indexedSongs.map(item => {
+            const s = item.song;
+            const hasPos = s.Setlist_Pos && String(s.Setlist_Pos).trim() !== '' && !isNaN(Number(s.Setlist_Pos));
+            return `
+                <div class="builder-song-card ${hasPos ? 'selected' : ''}" onclick="toggleSongInBuilder(${item.idx})">
+                    <div style="min-width: 0;">
+                        <div style="font-weight: 800; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.Titel}</div>
+                        <div style="font-size: 0.78rem; color: var(--text-dim);">
+                            ${s.Artist || ''} ${hasPos ? `· <strong style="color: var(--primary);">${s.Set_Block || 'Set 1'}</strong>` : ''}
+                        </div>
+                    </div>
+                    <div class="builder-pos-circle">${hasPos ? s.Setlist_Pos : '+'}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function finishSetlistBuilder() {
+        document.getElementById('builder-modal').style.display = 'none';
+        // Wenn man eine Setlist gebaut hat, direkt in die Setlist-Ansicht aktualisieren
+        if (!isPracticeMode) {
+            document.getElementById('view-filter').value = 'SETLIST';
+        }
+        rebuildActiveList();
+    }
+
+    /* ==========================================================================
+       3. GOOGLE SHEETS SYNC & CSV BACKUP
+       ========================================================================== */
     function openSyncModal() { document.getElementById('sync-modal').style.display = 'flex'; }
     function closeSyncModal() { document.getElementById('sync-modal').style.display = 'none'; }
 
