@@ -714,7 +714,7 @@
         }
 
         /* ==========================================================================
-           MODALS & FULLSCREEN OVERLAYS (INKL. SCROLL-FIX FÜR SETLIST & BUILDER)
+           MODALS & FULLSCREEN OVERLAYS (INKL. SCHIEBEN IN SETLIST-ÜBERSICHT)
            ========================================================================== */
         .modal-overlay {
             position: fixed;
@@ -765,7 +765,6 @@
             padding-right: 4px;
         }
 
-        /* FIX 1: SETLIST ÜBERSICHT DARF KIND-ELEMENTE NICHT QUETSCHEN */
         .set-group-block {
             background: var(--surface-card);
             border: 1px solid var(--border);
@@ -786,16 +785,25 @@
             justify-content: space-between;
         }
         .overview-song-row {
-            padding: 10px 12px;
+            padding: 9px 12px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 10px;
-            cursor: pointer;
+            transition: background 0.12s ease;
         }
         .overview-song-row:last-child { border-bottom: none; }
         .overview-song-row:hover { background: var(--primary-glow); }
+        .overview-song-row.dragging-item { opacity: 0.45; background: var(--primary-glow); }
+        .overview-clickable-main {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+            min-width: 0;
+            cursor: pointer;
+        }
         .overview-meta {
             display: flex;
             gap: 6px;
@@ -811,11 +819,12 @@
             font-size: 0.75rem;
             font-weight: 800;
             color: var(--text);
+            white-space: nowrap;
         }
         .meta-pill.rig { color: var(--primary); border-color: var(--primary-dim); }
         .meta-pill.kapo { color: var(--warning); border-color: var(--warning); }
 
-        /* FIX 2: PROBERAUM SETLIST-BUILDER (AKTIVE LISTE MIT SCHIEBEN/ERSETZEN + POOL) */
+        /* PROBERAUM SETLIST-BUILDER */
         .builder-toolbar {
             display: flex;
             gap: 6px;
@@ -926,7 +935,8 @@
             cursor: pointer;
             line-height: 1;
         }
-        .btn-mini-ctrl:active { background: var(--primary); color: #000; }
+        .btn-mini-ctrl:active:not(:disabled) { background: var(--primary); color: #000; }
+        .btn-mini-ctrl:disabled { opacity: 0.25; cursor: not-allowed; }
         .btn-mini-ctrl.replace-btn.active {
             background: var(--warning);
             color: #000;
@@ -1111,13 +1121,16 @@
         </div>
     </div>
 
-    <!-- 1. SETLIST GESAMTÜBERSICHT MODAL (SCROLLBAR FIX) -->
+    <!-- 1. SETLIST GESAMTÜBERSICHT MODAL (MIT DIREKTEM SCHIEBEN ▲/▼ & ☰) -->
     <div id="overview-modal" class="modal-overlay">
         <div class="modal-card fullscreen-card">
             <div class="modal-header-row">
-                <h3 style="color: var(--primary); font-size: 1.15rem;">📋 Aktuelle Setlist (Nach Sets)</h3>
+                <div>
+                    <h3 style="color: var(--primary); font-size: 1.15rem;">📋 Aktuelle Setlist (Nach Sets)</h3>
+                    <div style="font-size: 0.75rem; color: var(--text-dim);">Titel antippen = Zum Song springen · <strong>▲ / ▼ / ☰</strong> = Direkt verschieben</div>
+                </div>
                 <div style="display: flex; gap: 6px;">
-                    <button class="btn-tool" onclick="closeOverviewModal(); openSetlistBuilder();">⚡ Setlist bearbeiten</button>
+                    <button class="btn-tool" onclick="closeOverviewModal(); openSetlistBuilder();">⚡ Builder (+Songs)</button>
                     <button class="btn-tool active-mode" onclick="closeOverviewModal()">✕ Schließen</button>
                 </div>
             </div>
@@ -1125,7 +1138,7 @@
         </div>
     </div>
 
-    <!-- 2. PROBERAUM SETLIST-BUILDER MODAL (SCHIEBEN, EINFÜGEN & TAUSCHEN) -->
+    <!-- 2. PROBERAUM SETLIST-BUILDER MODAL -->
     <div id="builder-modal" class="modal-overlay">
         <div class="modal-card fullscreen-card">
             <div class="modal-header-row">
@@ -1153,7 +1166,6 @@
             </div>
 
             <div class="builder-split-layout">
-                <!-- LINKE/OBERE SPALTE: AKTUELLE SETLIST (SCHIEBEN / TAUSCHEN / LÖSCHEN) -->
                 <div class="builder-column">
                     <div class="builder-col-header">
                         <span>1. Deine Setlist (Schieben & Tauschen)</span>
@@ -1162,7 +1174,6 @@
                     <div id="builder-active-list" class="builder-col-scroll"></div>
                 </div>
 
-                <!-- RECHTE/UNTERE SPALTE: ALLE SONGS AUS DATENBANK -->
                 <div class="builder-column">
                     <div class="builder-col-header">
                         <span id="builder-pool-title">2. Song-Archiv (Antippen zum Einfügen)</span>
@@ -1197,7 +1208,7 @@
 <script>
     let isPracticeMode = true;
 
-    // NOTFALL-MODUS STATE (FÜR LIVE-EINSCHÜBE MIT RÜCKSPRUNG-ANKER)
+    // NOTFALL-MODUS STATE
     let savedSetlistIndexBeforeEmergency = null;
     let emergencyActiveSong = null;
 
@@ -1495,7 +1506,7 @@
     }
 
     function updateSongVariable(field, selectElement) {
-        if (!isPracticeMode) return; // Strikt Read-Only im Live-Modus
+        if (!isPracticeMode) return;
         const song = emergencyActiveSong || activeList[currentIndex];
         if (!song) return;
         let newVal = selectElement.value;
@@ -1511,7 +1522,6 @@
         renderCurrentSong();
     }
 
-    // LIVE-SPEICHERUNG FÜR CHORDS & CUES IM ÜBE-MODUS
     function updateSongTextDirect(field, rawValue) {
         if (!isPracticeMode) return;
         const song = emergencyActiveSong || activeList[currentIndex];
@@ -1572,7 +1582,6 @@
         document.getElementById('quicksearch-results').style.display = 'none';
         document.getElementById('quicksearch-input').value = '';
         
-        // Sicherstellen, dass im Übe-Modus alle Songs durchsuchbar sind
         const idx = activeList.findIndex(s => s.Titel === songTitle);
         if (idx !== -1) {
             currentIndex = idx;
@@ -1594,7 +1603,6 @@
     function triggerSearchOrEmergency() {
         const sb = document.getElementById('sidebar');
         if (!isPracticeMode) {
-            // Im Live-Modus öffnet die Suche das komplette Archiv als "Notfall-Auswahl"
             document.getElementById('sidebar-mode-label').innerText = '🚨 Notfall-Song einschieben (Alle Songs)';
             document.getElementById('view-filter').value = 'ALL';
             renderEmergencySidebarList();
@@ -1637,7 +1645,6 @@
     }
 
     function triggerEmergencySong(songObj) {
-        // Merke aktuelle Position in der regulären Setlist (falls noch nicht im Notfall-Modus)
         if (savedSetlistIndexBeforeEmergency === null) {
             savedSetlistIndexBeforeEmergency = currentIndex;
         }
@@ -1688,13 +1695,14 @@
         renderCurrentSong();
     }
 
-    function rebuildActiveList() {
+    function rebuildActiveList(preserveCurrentSong = false) {
+        const currentSongTitle = (preserveCurrentSong && activeList[currentIndex]) ? activeList[currentIndex].Titel : null;
+
         const query = document.getElementById('search').value.toLowerCase();
         const viewMode = document.getElementById('view-filter').value;
         const tuning = document.getElementById('tuning-filter').value;
         const statusFilter = document.getElementById('status-filter').value;
 
-        // Falls im Live-Modus die Sidebar für Notfall-Suche offen ist
         if (!isPracticeMode && !document.getElementById('sidebar').classList.contains('hidden')) {
             renderEmergencySidebarList();
             return;
@@ -1720,7 +1728,12 @@
         });
 
         activeList = filtered;
-        if (currentIndex >= activeList.length) currentIndex = 0;
+        if (currentSongTitle) {
+            const foundIdx = activeList.findIndex(s => s.Titel === currentSongTitle);
+            currentIndex = foundIdx !== -1 ? foundIdx : 0;
+        } else if (currentIndex >= activeList.length) {
+            currentIndex = 0;
+        }
         renderSidebarList();
         renderCurrentSong();
     }
@@ -1795,7 +1808,6 @@
         const currentStatus = song.Status || 'Grün';
         const hasKapo = song.Kapo && song.Kapo !== '-';
 
-        // UNTERSCHEIDUNG: ÜBE-MODUS (EDITIERBAR) vs. LIVE-MODUS (STRIKT READ-ONLY)
         const hudGuitarHtml = isPracticeMode
             ? `<select class="hud-value-select" onchange="updateSongVariable('Gitarre_Tuning', this)">${buildSelectOptionsHtml(getMergedOptions('Gitarre_Tuning', BASE_GUITARS), song.Gitarre_Tuning || '')}</select>`
             : `<div class="hud-readonly-val">${song.Gitarre_Tuning || '-'}</div>`;
@@ -1933,7 +1945,6 @@
         const titleEl = document.getElementById('next-info-title');
         const guitarEl = document.getElementById('next-info-guitar');
 
-        // Falls wir im Notfall-Einschub sind, zeige als "Nächsten Song" den regulären Rücksprung-Song!
         let nextSong = null;
         if (emergencyActiveSong && savedSetlistIndexBeforeEmergency !== null) {
             nextSong = activeList[savedSetlistIndexBeforeEmergency];
@@ -1964,7 +1975,6 @@
     }
 
     function stepSong(direction) {
-        // Wenn man aus einem Notfall-Song heraus weiterwischt, kehrt man automatisch zur Setlist zurück!
         if (emergencyActiveSong) {
             returnFromEmergency(direction > 0 ? 1 : 0);
             return;
@@ -2028,14 +2038,17 @@
     }
 
     /* ==========================================================================
-       1. SETLIST GESAMTÜBERSICHT (GRUPPIERT NACH SETS - SCROLLBAR)
+       1. SETLIST GESAMTÜBERSICHT (MIT DIREKTEM SCHIEBEN ▲/▼ & DRAG-DROP)
        ========================================================================== */
     function openSetlistOverview() {
-        const modal = document.getElementById('overview-modal');
+        normalizeSetlistPositions();
+        renderOverviewList();
+        document.getElementById('overview-modal').style.display = 'flex';
+    }
+
+    function renderOverviewList() {
         const container = document.getElementById('overview-content');
-        
-        const setlistSongs = allSongs.filter(s => s.Setlist_Pos && String(s.Setlist_Pos).trim() !== '' && !isNaN(Number(s.Setlist_Pos)));
-        setlistSongs.sort((a, b) => parseInt(a.Setlist_Pos, 10) - parseInt(b.Setlist_Pos, 10));
+        const setlistSongs = getSortedSetlistSongs();
 
         if (setlistSongs.length === 0) {
             container.innerHTML = `
@@ -2043,7 +2056,6 @@
                     <p style="margin-bottom: 14px; font-weight: 700;">Aktuell sind noch keine Songs einer Setlist zugewiesen.</p>
                     <button class="btn-tool active-mode" onclick="closeOverviewModal(); openSetlistBuilder();">⚡ Jetzt Setlist bauen</button>
                 </div>`;
-            modal.style.display = 'flex';
             return;
         }
 
@@ -2054,7 +2066,9 @@
             groups[block].push(s);
         });
 
+        const totalCount = setlistSongs.length;
         let html = '';
+
         Object.keys(groups).forEach(blockName => {
             const songsInBlock = groups[blockName];
             html += `
@@ -2065,20 +2079,30 @@
                     </div>
             `;
             songsInBlock.forEach(song => {
+                const pos = parseInt(song.Setlist_Pos, 10);
                 const kapo = normalizeKapo(song.Kapo);
+                const safeTitle = (song.Titel || '').replace(/'/g, "\\'");
                 html += `
-                    <div class="overview-song-row" onclick="jumpToSongFromOverview('${song.Titel.replace(/'/g, "\\'")}')">
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span class="badge-pos">${song.Setlist_Pos}</span>
-                            <div>
-                                <div style="font-weight: 800; font-size: 0.98rem;">${song.Titel}</div>
-                                <div style="font-size: 0.78rem; color: var(--text-dim);">${song.Artist || ''}</div>
+                    <div class="overview-song-row"
+                         draggable="true"
+                         ondragstart="onDragStartSetlist(event, ${pos})"
+                         ondragover="onDragOverSetlist(event)"
+                         ondrop="onDropOverviewSetlist(event, ${pos})">
+                        <div class="overview-clickable-main" onclick="jumpToSongFromOverview('${safeTitle}')">
+                            <span class="drag-handle" onclick="event.stopPropagation()" title="Ziehen zum Verschieben">☰</span>
+                            <span class="badge-pos">${pos}</span>
+                            <div style="min-width: 0;">
+                                <div style="font-weight: 800; font-size: 0.96rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${song.Titel}</div>
+                                <div style="font-size: 0.76rem; color: var(--text-dim);">${song.Artist || ''}</div>
                             </div>
                         </div>
                         <div class="overview-meta">
                             ${song.Gitarre_Tuning ? `<span class="meta-pill">🎸 ${song.Gitarre_Tuning}</span>` : ''}
                             ${kapo !== '-' ? `<span class="meta-pill kapo">Kapo: ${kapo}</span>` : ''}
                             ${song.Rig_Start ? `<span class="meta-pill rig">🎛️ ${song.Rig_Start}</span>` : ''}
+                            <button class="btn-mini-ctrl" style="color: var(--primary);" onclick="event.stopPropagation(); cycleOverviewSongSetBlock(${pos})" title="Set wechseln">${song.Set_Block || 'Set 1'}</button>
+                            <button class="btn-mini-ctrl" onclick="event.stopPropagation(); moveOverviewSong(${pos}, -1)" ${pos === 1 ? 'disabled' : ''} title="Nach oben schieben">▲</button>
+                            <button class="btn-mini-ctrl" onclick="event.stopPropagation(); moveOverviewSong(${pos}, 1)" ${pos === totalCount ? 'disabled' : ''} title="Nach unten schieben">▼</button>
                         </div>
                     </div>
                 `;
@@ -2087,7 +2111,47 @@
         });
 
         container.innerHTML = html;
-        modal.style.display = 'flex';
+    }
+
+    function moveOverviewSong(pos, delta) {
+        const list = getSortedSetlistSongs();
+        const idx = pos - 1;
+        const targetIdx = idx + delta;
+        if (idx < 0 || idx >= list.length || targetIdx < 0 || targetIdx >= list.length) return;
+
+        // Falls der Song über eine Set-Grenze geschoben wird, übernimmt er das Ziel-Set, damit er optisch wandert
+        const targetSet = list[targetIdx].Set_Block || 'Set 1';
+        list[idx].Set_Block = targetSet;
+
+        const tempPos = list[idx].Setlist_Pos;
+        list[idx].Setlist_Pos = list[targetIdx].Setlist_Pos;
+        list[targetIdx].Setlist_Pos = tempPos;
+
+        normalizeSetlistPositions();
+        renderOverviewList();
+        rebuildActiveList(true);
+    }
+
+    function cycleOverviewSongSetBlock(pos) {
+        cycleSongSetBlock(pos);
+        renderOverviewList();
+        rebuildActiveList(true);
+    }
+
+    function onDropOverviewSetlist(e, targetPos) {
+        e.preventDefault();
+        if (draggedSetlistPos !== null && draggedSetlistPos !== targetPos) {
+            const list = getSortedSetlistSongs();
+            const targetSong = list[targetPos - 1];
+            const movedSong = list[draggedSetlistPos - 1];
+            if (movedSong && targetSong) {
+                movedSong.Set_Block = targetSong.Set_Block || 'Set 1';
+            }
+            reorderSetlistDrag(draggedSetlistPos, targetPos);
+            renderOverviewList();
+            rebuildActiveList(true);
+        }
+        draggedSetlistPos = null;
     }
 
     function closeOverviewModal() {
@@ -2116,7 +2180,7 @@
        2. PROBERAUM SETLIST-BUILDER (SCHIEBEN, EINFÜGEN & PLATZ-TAUSCH)
        ========================================================================== */
     let currentBuilderSet = 'Set 1';
-    let replaceTargetPos = null; // Wenn gesetzt (z.B. 5), tauscht der nächste Klick im Pool exakt Platz 5 aus!
+    let replaceTargetPos = null;
     let draggedSetlistPos = null;
 
     function openSetlistBuilder() {
@@ -2150,11 +2214,7 @@
     }
 
     function toggleReplaceModeForPos(pos) {
-        if (replaceTargetPos === pos) {
-            replaceTargetPos = null;
-        } else {
-            replaceTargetPos = pos;
-        }
+        replaceTargetPos = (replaceTargetPos === pos) ? null : pos;
         renderBuilderList();
     }
 
@@ -2164,7 +2224,6 @@
         const targetIdx = idx + delta;
         if (idx < 0 || idx >= list.length || targetIdx < 0 || targetIdx >= list.length) return;
 
-        // Positionen tauschen
         const tempPos = list[idx].Setlist_Pos;
         list[idx].Setlist_Pos = list[targetIdx].Setlist_Pos;
         list[targetIdx].Setlist_Pos = tempPos;
@@ -2216,12 +2275,10 @@
 
         const list = getSortedSetlistSongs();
 
-        // FALL A: Wir sind im "🔄 Platz-Ersetzen-Modus" (z.B. Platz 5 tauschen)
         if (replaceTargetPos !== null) {
             const oldSongOnTarget = list[replaceTargetPos - 1];
             const targetSetBlock = oldSongOnTarget ? (oldSongOnTarget.Set_Block || currentBuilderSet) : currentBuilderSet;
 
-            // Falls der neu geklickte Song schon woanders in der Setlist war -> Tausche beide Plätze direkt!
             const existingPosOfClicked = parseInt(clickedSong.Setlist_Pos, 10);
             if (!isNaN(existingPosOfClicked) && existingPosOfClicked > 0) {
                 if (oldSongOnTarget) {
@@ -2230,7 +2287,6 @@
                 clickedSong.Setlist_Pos = String(replaceTargetPos);
                 clickedSong.Set_Block = targetSetBlock;
             } else {
-                // Alten Song von Platz X aus der Setlist nehmen, neuen exakt auf Platz X setzen!
                 if (oldSongOnTarget) {
                     oldSongOnTarget.Setlist_Pos = "";
                     oldSongOnTarget.Set_Block = "";
@@ -2245,13 +2301,10 @@
             return;
         }
 
-        // FALL B: Normaler Klick im Pool
         const currentPos = parseInt(clickedSong.Setlist_Pos, 10);
         if (!isNaN(currentPos) && currentPos > 0) {
-            // Wenn schon drin -> per Klick auf "🔄" in den Tausch-Modus für genau diesen Platz gehen
             toggleReplaceModeForPos(currentPos);
         } else {
-            // Neu ans Ende hängen
             clickedSong.Setlist_Pos = String(list.length + 1);
             clickedSong.Set_Block = currentBuilderSet;
             normalizeSetlistPositions();
@@ -2287,7 +2340,6 @@
             poolTitle.innerText = `2. Song-Archiv (Antippen zum Einfügen)`;
         }
 
-        // 1. LINKE SPALTE: AKTUELLE SETLIST RENDERN
         if (activeSetlist.length === 0) {
             activeContainer.innerHTML = `<div style="text-align: center; padding: 30px 10px; color: var(--text-dim); font-size: 0.85rem;">Noch leer. Tippe rechts die Songs der Reihe nach an!</div>`;
         } else {
@@ -2321,7 +2373,6 @@
             }).join('');
         }
 
-        // 2. RECHTE SPALTE: SONG-POOL RENDERN
         const indexedSongs = allSongs.map((s, idx) => ({ song: s, idx: idx }))
             .filter(item => (item.song.Titel || '').toLowerCase().includes(query) || (item.song.Artist || '').toLowerCase().includes(query))
             .sort((a, b) => (a.song.Titel || '').localeCompare(b.song.Titel || ''));
@@ -2465,15 +2516,14 @@
         URL.revokeObjectURL(url);
     }
 
-    document.getElementById('search').addEventListener('input', rebuildActiveList);
-    document.getElementById('view-filter').addEventListener('change', rebuildActiveList);
-    document.getElementById('tuning-filter').addEventListener('change', rebuildActiveList);
-    document.getElementById('status-filter').addEventListener('change', rebuildActiveList);
+    document.getElementById('search').addEventListener('input', () => rebuildActiveList());
+    document.getElementById('view-filter').addEventListener('change', () => rebuildActiveList());
+    document.getElementById('tuning-filter').addEventListener('change', () => rebuildActiveList());
+    document.getElementById('status-filter').addEventListener('change', () => rebuildActiveList());
 
     requestWakeLock();
     loadSavedData();
 
-    // Wischgesten (Ignoriert Textfelder & geöffnete Modals!)
     let touchstartX = 0, touchendX = 0, touchstartY = 0, touchendY = 0, ignoreSwipe = false;
     const mainArea = document.getElementById('main');
     mainArea.addEventListener('touchstart', e => {
@@ -2490,7 +2540,6 @@
         touchendY = e.changedTouches[0].screenY;
         const diffX = touchendX - touchstartX;
         const diffY = Math.abs(touchendY - touchstartY);
-        // Nur blättern, wenn primär horizontal gewischt wurde
         if (Math.abs(diffX) > 65 && diffY < 60) {
             if (diffX < 0) stepSong(1);
             else stepSong(-1);
