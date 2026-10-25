@@ -255,7 +255,6 @@
             font-weight: 900;
         }
 
-        /* SCHNELL-SCHNALLE FÜR SETLIST IM QUERFORMAT */
         #landscape-quick-setlist {
             position: fixed;
             top: 8px;
@@ -1051,7 +1050,7 @@
         <button class="btn-tool active-mode" onclick="toggleFullScreen()" style="padding: 4px 10px; font-size: 0.78rem;">⛶ Vollbild starten</button>
     </div>
 
-    <!-- BOTTOM-SHEET MENÜ ( MIT ANGEPASSTEN BEZEICHNUNGEN ) -->
+    <!-- BOTTOM-SHEET MENÜ ( ANGEPASSTE BEZEICHNUNGEN ) -->
     <div id="bottom-sheet-overlay" onclick="closeBottomSheet()">
         <div id="bottom-sheet-card" onclick="event.stopPropagation()">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -1508,9 +1507,15 @@
         const saved = localStorage.getItem('band_cockpit_songs_v1');
         allSongs = saved ? JSON.parse(saved) : defaultSongs;
         allSongs.forEach(s => { s.Kapo = normalizeKapo(s.Kapo); });
+        
+        // Ensure filters are reset to ALL so songs are never hidden on startup
+        const viewSel = document.getElementById('view-filter');
+        const statusSel = document.getElementById('status-filter');
+        if (viewSel) viewSel.value = 'ALL';
+        if (statusSel) statusSel.value = 'ALL';
+
         document.getElementById('csv-url-input').value = localStorage.getItem('band_cockpit_csv_url') || 'https://docs.google.com/spreadsheets/d/1aQWoR7msLCf3VWyLoSCtjKReqkB4mH81ZX97sY12BpA/edit';
         
-        document.getElementById('view-filter').value = 'ALL';
         populateTuningFilter();
         rebuildActiveList();
     }
@@ -1751,7 +1756,7 @@
                 renderCurrentSong();
                 if (window.innerWidth <= 768) toggleSidebar(false);
             };
-            li.appendChild(li);
+            listEl.appendChild(li);
         });
     }
 
