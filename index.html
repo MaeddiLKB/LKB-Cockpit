@@ -104,29 +104,38 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* SCHWEBBENDER DAUMEN-BUTTON (FLOATING ACTION BUTTON) */
+        /* SCHWEBBENDER DAUMEN-BUTTON (SICHER ÜBER DEM NEXT-SONG BANNER PLATZIERT) */
         #fab-menu-btn {
             position: fixed;
-            bottom: 24px;
-            right: 20px;
-            width: 58px;
-            height: 58px;
+            bottom: 68px;
+            right: 16px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             background: var(--primary);
             color: #ffffff;
             border: none;
-            font-size: 1.4rem;
+            font-size: 1.3rem;
             font-weight: 900;
             display: flex;
             justify-content: center;
             align-items: center;
             box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
             cursor: pointer;
-            z-index: 90;
+            z-index: 85;
             transition: transform 0.15s ease, background 0.15s ease;
         }
         body:not(.practice-mode) #fab-menu-btn { color: #000000; }
         #fab-menu-btn:active { transform: scale(0.92); }
+
+        @media (orientation: landscape) {
+            #fab-menu-btn {
+                bottom: 58px;
+                right: 12px;
+                width: 46px;
+                height: 46px;
+            }
+        }
 
         /* QUERFORMAT VOLLBILD HINWEIS */
         #landscape-fullscreen-banner {
@@ -1121,17 +1130,18 @@
         </div>
     </div>
 
-    <!-- ZENTRALE SETLIST-ÜBERSICHT -->
+    <!-- ZENTRALE SETLIST-ÜBERSICHT (LIVE = NUR ANSICHT, ÜBE = VOLL BEARBEITBAR) -->
     <div id="overview-modal" class="modal-overlay">
         <div class="modal-card fullscreen-card">
             <div class="modal-header-row">
                 <h3 style="color: var(--primary); font-size: 1.1rem;">📋 Setlist (<span id="overview-total-count">0</span> Songs)</h3>
                 <div style="display: flex; gap: 6px;">
-                    <button class="btn-tool" style="border-color: var(--danger); color: var(--danger); padding: 5px 8px;" onclick="clearEntireSetlist()">🗑️ Reset</button>
+                    <button class="btn-tool" id="overview-reset-btn" style="border-color: var(--danger); color: var(--danger); padding: 5px 8px;" onclick="clearEntireSetlist()">🗑️ Reset</button>
                     <button class="btn-tool active-mode" onclick="closeOverviewModal()">✕ Fertig</button>
                 </div>
             </div>
 
+            <!-- SONGS HINZUFÜGEN LEISTE (NUR IM ÜBE-MODUS SICHTBAR) -->
             <div class="overview-add-bar" id="overview-add-box">
                 <div class="overview-add-top">
                     <div class="set-selector-pills">
@@ -1621,7 +1631,7 @@
                 triggerEmergencySong(song);
                 toggleSidebar(false);
             };
-            li.appendChild(li); // fixed typo in appendChild
+            listEl.appendChild(li);
         });
     }
 
@@ -2022,7 +2032,7 @@
     }
 
     /* ==========================================================================
-       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT (KUGELSICHER & DEFINIVIERT)
+       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT (LIVE = NUR ANSICHT, ÜBE = EDITIERBAR)
        ========================================================================== */
     let currentTargetSet = 'Set 1';
     let isAddPoolOpen = false;
@@ -2053,6 +2063,13 @@
     function openSetlistOverview() {
         try {
             normalizeSetlistPositions();
+            
+            // Im Live-Modus: Hinzufügen-Leiste und Reset-Button ausblenden (Reine Ansicht!)
+            const addBox = document.getElementById('overview-add-box');
+            const resetBtn = document.getElementById('overview-reset-btn');
+            if (addBox) addBox.style.display = isPracticeMode ? 'flex' : 'none';
+            if (resetBtn) resetBtn.style.display = isPracticeMode ? 'inline-flex' : 'none';
+
             const inputEl = document.getElementById('overview-add-input');
             if (inputEl) inputEl.value = '';
             isAddPoolOpen = false;
@@ -2165,7 +2182,7 @@
         if (setlistSongs.length === 0) {
             container.innerHTML = `
                 <div style="text-align: center; padding: 30px 15px; color: var(--text-dim); font-size: 0.9rem;">
-                    Die Setlist ist leer.<br>Tippe oben auf <strong>➕ Archiv</strong> oder suche einen Song, um ihn hinzuzufügen!
+                    Die Setlist ist leer.<br>${isPracticeMode ? 'Tippe oben auf <strong>➕ Archiv</strong> oder suche einen Song, um ihn hinzuzufügen!' : ''}
                 </div>`;
             return;
         }
@@ -2202,6 +2219,16 @@
                 const guitarText = (song.Gitarre_Tuning || '-') + (kapo !== '-' ? ` · Kapo ${kapo}` : '');
                 const safeTitle = (song.Titel || '').replace(/'/g, "\\'");
 
+                // IM LIVE-MODUS: KEINE EDITIER-ODER SCHIEBEBUTTONS (REINE ANSICHT)
+                const controlsHtml = isPracticeMode ? `
+                    <div class="overview-controls">
+                        <button class="btn-mini-ctrl" style="color: var(--primary);" onclick="cycleOverviewSongSetBlock(${pos})" title="Set wechseln">${shortSetLabel(song.Set_Block)}</button>
+                        <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, -1)" ${pos === 1 ? 'disabled' : ''} title="Hoch">▲</button>
+                        <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, 1)" ${pos === totalCount ? 'disabled' : ''} title="Runter">▼</button>
+                        <button class="btn-mini-ctrl" style="color: var(--danger);" onclick="removeSongFromOverview(${pos})" title="Entfernen">✕</button>
+                    </div>
+                ` : '';
+
                 html += `
                     <div class="overview-song-row">
                         <div class="overview-song-info" onclick="jumpToSongFromOverview('${safeTitle}')">
@@ -2211,12 +2238,7 @@
                                 <div class="overview-song-guitar">🎸 ${guitarText}</div>
                             </div>
                         </div>
-                        <div class="overview-controls">
-                            <button class="btn-mini-ctrl" style="color: var(--primary);" onclick="cycleOverviewSongSetBlock(${pos})" title="Set wechseln">${shortSetLabel(song.Set_Block)}</button>
-                            <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, -1)" ${pos === 1 ? 'disabled' : ''} title="Hoch">▲</button>
-                            <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, 1)" ${pos === totalCount ? 'disabled' : ''} title="Runter">▼</button>
-                            <button class="btn-mini-ctrl" style="color: var(--danger);" onclick="removeSongFromOverview(${pos})" title="Entfernen">✕</button>
-                        </div>
+                        ${controlsHtml}
                     </div>
                 `;
             });
@@ -2227,6 +2249,7 @@
     }
 
     function moveOverviewSong(pos, delta) {
+        if (!isPracticeMode) return;
         const list = getSortedSetlistSongs();
         const idx = pos - 1;
         const targetIdx = idx + delta;
@@ -2243,6 +2266,7 @@
     }
 
     function cycleOverviewSongSetBlock(pos) {
+        if (!isPracticeMode) return;
         const sets = ['Set 1', 'Set 2', 'Set 3', 'Zugabe'];
         const list = getSortedSetlistSongs();
         const song = list[pos - 1];
@@ -2254,6 +2278,7 @@
     }
 
     function removeSongFromOverview(pos) {
+        if (!isPracticeMode) return;
         const list = getSortedSetlistSongs();
         const song = list[pos - 1];
         if (!song) return;
@@ -2265,6 +2290,7 @@
     }
 
     function clearEntireSetlist() {
+        if (!isPracticeMode) return;
         if (!confirm('Setlist wirklich komplett leeren?')) return;
         allSongs.forEach(s => {
             s.Setlist_Pos = "";
