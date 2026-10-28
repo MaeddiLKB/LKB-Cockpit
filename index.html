@@ -104,7 +104,7 @@
             100% { transform: scale(1); opacity: 1; }
         }
 
-        /* SCHWEBBENDER DAUMEN-BUTTON (MENÜ) */
+        /* FREI VERSCHIEBBARER DAUMEN-BUTTON (FAB) */
         #fab-menu-btn {
             position: fixed;
             bottom: 68px;
@@ -114,22 +114,25 @@
             border-radius: 50%;
             background: var(--primary);
             color: #ffffff;
-            border: none;
+            border: 2px solid rgba(255,255,255,0.25);
             font-size: 1.3rem;
             font-weight: 900;
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.55);
+            cursor: grab;
             z-index: 85;
-            transition: transform 0.15s ease, background 0.15s ease;
+            touch-action: none;
+            user-select: none;
+            transition: transform 0.12s ease, background 0.15s ease, box-shadow 0.15s ease;
         }
         body:not(.practice-mode) #fab-menu-btn { color: #000000; }
-        #fab-menu-btn:active { transform: scale(0.92); }
-
-        @media (orientation: landscape) {
-            #fab-menu-btn { bottom: 58px; right: 12px; width: 46px; height: 46px; }
+        #fab-menu-btn.dragging {
+            transform: scale(1.16);
+            box-shadow: 0 12px 30px rgba(0, 214, 67, 0.5);
+            cursor: grabbing;
+            opacity: 0.92;
         }
 
         /* SCHNELL-LEISTE IM QUERFORMAT (OBEN RECHTS) */
@@ -221,7 +224,6 @@
         }
         .sheet-option-btn:active { background: var(--primary-glow); border-color: var(--primary); }
 
-        /* FIX: KEIN OVERFLOW:HIDDEN AUF DER KOPFLEISTE, DAMIT DAS SUCH-DROPDOWN NICHT ABGESCHNITTEN WIRD! */
         #top-collapsible {
             display: flex;
             flex-direction: column;
@@ -284,7 +286,7 @@
         }
 
         /* ==========================================================================
-           SCHNELLSUCHE & NOTFALL-LEISTE (INKL. VERTIKAL- UND EBENEN-FIX)
+           SCHNELLSUCHE & NOTFALL-LEISTE
            ========================================================================== */
         #practice-quicksearch-bar {
             display: flex;
@@ -313,7 +315,6 @@
             border-color: var(--warning);
         }
 
-        /* FIX: FLEX-DIRECTION COLUMN & HOHER Z-INDEX ÜBER DEM SONGBEREICH */
         #quicksearch-results {
             position: absolute;
             top: calc(100% + 2px);
@@ -610,10 +611,10 @@
             cursor: pointer;
             width: auto;
         }
-        .audio-links-compact { display: flex; align-items: center; gap: 5px; }
+        .audio-links-compact { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
         .btn-audio-pill {
             border: 1px solid var(--border);
-            padding: 5px 9px;
+            padding: 6px 10px;
             border-radius: 5px;
             font-size: 0.78rem;
             font-weight: 800;
@@ -622,6 +623,37 @@
             align-items: center;
             gap: 4px;
             white-space: nowrap;
+            cursor: pointer;
+        }
+
+        /* IN-APP YOUTUBE VIDEO CONTAINER & TABS-EDITOR */
+        .yt-embed-box {
+            display: none;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            max-height: 280px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid var(--primary);
+            background: #000;
+        }
+        .yt-embed-box.open { display: block; }
+        .yt-embed-box iframe { width: 100%; height: 100%; border: none; }
+
+        textarea.tabs-editor {
+            width: 100%;
+            min-height: 120px;
+            margin-top: 6px;
+            background: var(--surface);
+            color: var(--text);
+            border: 1.5px solid var(--border-highlight);
+            border-radius: 6px;
+            padding: 9px 10px;
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            font-size: 0.92rem;
+            font-weight: 700;
+            line-height: 1.45;
+            resize: vertical;
         }
 
         #tuner-container {
@@ -840,7 +872,7 @@
             max-width: 780px;
             height: 94vh;
             padding: 12px;
-            gap: 10px;
+            gap: 8px;
             overflow: hidden;
         }
         .modal-header-row {
@@ -859,7 +891,49 @@
             overscroll-behavior: contain;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 10px;
+        }
+
+        #overview-set-tabs {
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            padding-bottom: 2px;
+            flex-shrink: 0;
+            user-select: none;
+        }
+        .overview-tab-pill {
+            flex: 1;
+            min-width: 80px;
+            background: var(--surface-elevated);
+            color: var(--text-dim);
+            border: 1.5px solid var(--border);
+            padding: 8px 10px;
+            border-radius: 7px;
+            font-size: 0.82rem;
+            font-weight: 900;
+            text-align: center;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s ease;
+        }
+        .overview-tab-pill.active {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 10px var(--primary-glow);
+        }
+        body:not(.practice-mode) .overview-tab-pill.active {
+            color: #000;
+        }
+        .overview-swipe-hint {
+            text-align: center;
+            font-size: 0.68rem;
+            font-weight: 800;
+            color: var(--text-dim);
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            flex-shrink: 0;
         }
 
         .overview-add-bar {
@@ -928,7 +1002,7 @@
         .set-group-title {
             background: var(--surface-elevated);
             color: var(--primary);
-            padding: 7px 12px;
+            padding: 8px 12px;
             font-size: 0.85rem;
             font-weight: 900;
             text-transform: uppercase;
@@ -937,9 +1011,10 @@
             border-radius: 8px 8px 0 0;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
         .overview-song-row {
-            padding: 8px 10px;
+            padding: 9px 10px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
@@ -1068,8 +1143,8 @@
         <div class="splash-hint">Tippen zum Überspringen</div>
     </div>
 
-    <!-- SCHWEBBENDER DAUMEN-BUTTON (MENÜ) -->
-    <button id="fab-menu-btn" onclick="openBottomSheet()" title="Menü öffnen">≡</button>
+    <!-- FREI VERSCHIEBBARER DAUMEN-BUTTON (MENÜ) -->
+    <button id="fab-menu-btn" title="Tippen für Menü · Ziehen zum Verschieben">≡</button>
 
     <!-- SCHNELL-AKTIONEN IM QUERFORMAT (OBEN RECHTS) -->
     <div id="landscape-quick-actions">
@@ -1197,9 +1272,9 @@
         </div>
     </div>
 
-    <!-- ZENTRALE SETLIST-ÜBERSICHT -->
+    <!-- ZENTRALE SETLIST-ÜBERSICHT (MIT SEITWÄRTS-WISCHEN ZWISCHEN SETS) -->
     <div id="overview-modal" class="modal-overlay">
-        <div class="modal-card fullscreen-card">
+        <div class="modal-card fullscreen-card" id="overview-modal-card">
             <div class="modal-header-row">
                 <h3 style="color: var(--primary); font-size: 1.1rem;">📋 Setlist (<span id="overview-total-count">0</span> Songs)</h3>
                 <div style="display: flex; gap: 6px;">
@@ -1225,6 +1300,9 @@
                 <div id="overview-add-results"></div>
             </div>
 
+            <div id="overview-set-tabs"></div>
+            <div id="overview-swipe-hint" class="overview-swipe-hint">◀ Wischen zum Set-Wechsel ▶</div>
+
             <div id="overview-content" class="modal-body-scroll"></div>
         </div>
     </div>
@@ -1236,7 +1314,7 @@
             <ol style="padding-left: 20px; font-size: 0.85rem; line-height: 1.6; color: var(--text-dim);">
                 <li>Öffne <b>Band_Cockpit_Datenbank</b> in Google Sheets.</li>
                 <li>Hinweis: <b>„Aus Sheet laden“</b> überschreibt lokal gebaute Setlisten und lokale Notizen mit dem Stand aus der Google-Tabelle.</li>
-                <li>Mit <b>App-Stand als CSV</b> kannst du deine hier gebaute Setlist und Chords-Notizen jederzeit sichern.</li>
+                <li>Mit <b>App-Stand als CSV</b> kannst du deine hier gebaute Setlist, Referenz-Links und Chords-Notizen jederzeit sichern.</li>
             </ol>
             <input type="url" id="csv-url-input" value="https://docs.google.com/spreadsheets/d/1aQWoR7msLCf3VWyLoSCtjKReqkB4mH81ZX97sY12BpA/edit">
             <div id="sync-feedback" style="font-size: 0.85rem; font-weight: 700; color: var(--primary);"></div>
@@ -1263,6 +1341,124 @@
         document.getElementById('bottom-sheet-overlay').style.display = 'none';
     }
 
+    /* ==========================================================================
+       FREI VERSCHIEBBARER DAUMEN-BUTTON (GETRENNT FÜR HOCH- & QUERFORMAT)
+       ========================================================================== */
+    function getFabStorageKey() {
+        return window.innerWidth > window.innerHeight ? 'lkb_fab_pos_landscape' : 'lkb_fab_pos_portrait';
+    }
+
+    function applySavedFabPosition() {
+        const fab = document.getElementById('fab-menu-btn');
+        if (!fab) return;
+        const saved = localStorage.getItem(getFabStorageKey());
+        if (saved) {
+            try {
+                const pos = JSON.parse(saved);
+                const maxX = window.innerWidth - fab.offsetWidth - 8;
+                const maxY = window.innerHeight - fab.offsetHeight - 8;
+                const clampedX = Math.max(8, Math.min(maxX, pos.x));
+                const clampedY = Math.max(8, Math.min(maxY, pos.y));
+                fab.style.left = clampedX + 'px';
+                fab.style.top = clampedY + 'px';
+                fab.style.right = 'auto';
+                fab.style.bottom = 'auto';
+                return;
+            } catch (e) {}
+        }
+        fab.style.left = 'auto';
+        fab.style.top = 'auto';
+        if (window.innerWidth > window.innerHeight) {
+            fab.style.bottom = '58px';
+            fab.style.right = '12px';
+        } else {
+            fab.style.bottom = '68px';
+            fab.style.right = '16px';
+        }
+    }
+
+    function initDraggableFab() {
+        const fab = document.getElementById('fab-menu-btn');
+        if (!fab) return;
+
+        let isDragging = false;
+        let hasMoved = false;
+        let startX = 0, startY = 0;
+        let initialLeft = 0, initialTop = 0;
+
+        function onStart(clientX, clientY) {
+            isDragging = true;
+            hasMoved = false;
+            startX = clientX;
+            startY = clientY;
+            const rect = fab.getBoundingClientRect();
+            initialLeft = rect.left;
+            initialTop = rect.top;
+        }
+
+        function onMove(clientX, clientY) {
+            if (!isDragging) return;
+            const dx = clientX - startX;
+            const dy = clientY - startY;
+            if (!hasMoved && Math.hypot(dx, dy) > 8) {
+                hasMoved = true;
+                fab.classList.add('dragging');
+            }
+            if (hasMoved) {
+                const maxX = window.innerWidth - fab.offsetWidth - 8;
+                const maxY = window.innerHeight - fab.offsetHeight - 8;
+                const newLeft = Math.max(8, Math.min(maxX, initialLeft + dx));
+                const newTop = Math.max(8, Math.min(maxY, initialTop + dy));
+                fab.style.left = newLeft + 'px';
+                fab.style.top = newTop + 'px';
+                fab.style.right = 'auto';
+                fab.style.bottom = 'auto';
+            }
+        }
+
+        function onEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            fab.classList.remove('dragging');
+            if (hasMoved) {
+                const rect = fab.getBoundingClientRect();
+                localStorage.setItem(getFabStorageKey(), JSON.stringify({ x: rect.left, y: rect.top }));
+            } else {
+                openBottomSheet();
+            }
+        }
+
+        fab.addEventListener('touchstart', e => {
+            if (e.touches.length !== 1) return;
+            onStart(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: true });
+
+        fab.addEventListener('touchmove', e => {
+            if (!isDragging) return;
+            e.preventDefault();
+            onMove(e.touches[0].clientX, e.touches[0].clientY);
+        }, { passive: false });
+
+        fab.addEventListener('touchend', () => {
+            onEnd();
+        });
+
+        fab.addEventListener('mousedown', e => {
+            e.preventDefault();
+            onStart(e.clientX, e.clientY);
+            const mouseMove = mv => onMove(mv.clientX, mv.clientY);
+            const mouseUp = () => {
+                window.removeEventListener('mousemove', mouseMove);
+                window.removeEventListener('mouseup', mouseUp);
+                onEnd();
+            };
+            window.addEventListener('mousemove', mouseMove);
+            window.addEventListener('mouseup', mouseUp);
+        });
+
+        applySavedFabPosition();
+    }
+
     function toggleLandscapeSearch() {
         const topEl = document.getElementById('top-collapsible');
         if (!topEl) return;
@@ -1278,18 +1474,20 @@
 
     function checkOrientation() {
         const banner = document.getElementById('landscape-fullscreen-banner');
-        if (!banner) return;
-        const isLandscape = window.innerWidth > window.innerHeight;
-        const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
-        if (isLandscape && !isFullscreen) {
-            banner.classList.add('visible');
-        } else {
-            banner.classList.remove('visible');
+        if (banner) {
+            const isLandscape = window.innerWidth > window.innerHeight;
+            const isFullscreen = document.fullscreenElement || document.webkitFullscreenElement;
+            if (isLandscape && !isFullscreen) {
+                banner.classList.add('visible');
+            } else {
+                banner.classList.remove('visible');
+            }
+            if (!isLandscape) {
+                const topEl = document.getElementById('top-collapsible');
+                if (topEl) topEl.classList.remove('force-show-landscape');
+            }
         }
-        if (!isLandscape) {
-            const topEl = document.getElementById('top-collapsible');
-            if (topEl) topEl.classList.remove('force-show-landscape');
-        }
+        applySavedFabPosition();
     }
     window.addEventListener('resize', checkOrientation);
     window.addEventListener('orientationchange', checkOrientation);
@@ -1340,7 +1538,7 @@
             Tonart: "C Major",
             BPM: "137",
             Status: "Grün",
-            Link: "https://open.spotify.com/",
+            Link: "",
             Tabs: "e|-------\nB|--5-8--\nG|------- (Oktav-Riff Bridge: A-Saite 3-7-8)"
         }
     ];
@@ -1541,16 +1739,60 @@
         if (wakeLock !== null && document.visibilityState === 'visible') requestWakeLock();
     });
 
-    function getSpotifyLinkHtml(song) {
+    /* ==========================================================================
+       SMART-REFERENCE-SYSTEM (EIGENE QUELLE, YOUTUBE-EMBED & TABS)
+       ========================================================================== */
+    function extractYoutubeVideoId(url) {
+        if (!url) return null;
+        const m = String(url).match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+        return m ? m[1] : null;
+    }
+
+    function editCustomReferenceLink() {
+        if (!isPracticeMode) return;
+        const song = emergencyActiveSong || activeList[currentIndex];
+        if (!song) return;
+        const current = (song.Link && !song.Link.endsWith('spotify.com/')) ? song.Link : '';
+        const input = prompt(
+            'Eigene Übe-Quelle hinterlegen (YouTube-Video, Ultimate-Guitar, Songsterr etc.).\nLeer lassen für automatische YouTube-Suche:',
+            current
+        );
+        if (input === null) return;
+        song.Link = input.trim();
+        localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
+        renderCurrentSong();
+    }
+
+    function toggleYoutubeEmbed(videoId) {
+        const box = document.getElementById('yt-embed-container');
+        if (!box) return;
+        const isOpen = box.classList.toggle('open');
+        if (isOpen) {
+            box.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?rel=0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+        } else {
+            box.innerHTML = '';
+        }
+    }
+
+    function getReferenceLinksHtml(song) {
         const query = encodeURIComponent((song.Artist || '') + ' ' + (song.Titel || ''));
-        const spotifyWebUrl = (song.Link && song.Link.startsWith('http') && !song.Link.endsWith('spotify.com/')) ? song.Link : 'https://open.spotify.com/search/' + query;
-        const ytUrl = 'https://www.youtube.com/results?search_query=' + query;
-        return `
-            <div class="audio-links-compact">
-                <a href="${spotifyWebUrl}" target="_blank" rel="noopener noreferrer" class="btn-audio-pill" style="background: #1db954; color: #000; border-color: #169c46;">🟢 Spotify</a>
-                <a href="${ytUrl}" target="_blank" rel="noopener noreferrer" class="btn-audio-pill" style="background: #e62117; color: #fff; border-color: #b81911;">▶️ YT</a>
-            </div>
-        `;
+        const defaultYtSearch = 'https://www.youtube.com/results?search_query=' + query;
+        const rawLink = (song.Link || '').trim();
+        const hasCustomLink = rawLink.startsWith('http') && !rawLink.endsWith('spotify.com/');
+        const ytId = hasCustomLink ? extractYoutubeVideoId(rawLink) : null;
+
+        let html = `<div class="audio-links-compact">`;
+        if (hasCustomLink) {
+            if (ytId) {
+                html += `<button type="button" class="btn-audio-pill" style="background: var(--primary); color: #fff; border-color: var(--primary);" onclick="toggleYoutubeEmbed('${ytId}')">📺 Video hier öffnen</button>`;
+            }
+            html += `<a href="${rawLink}" target="_blank" rel="noopener noreferrer" class="btn-audio-pill" style="background: var(--surface-elevated); color: var(--primary); border-color: var(--primary);">⭐ Meine Quelle</a>`;
+        } else {
+            html += `<a href="${defaultYtSearch}" target="_blank" rel="noopener noreferrer" class="btn-audio-pill" style="background: #e62117; color: #fff; border-color: #b81911;">▶️ YT-Suche</a>`;
+        }
+        html += `<button type="button" class="btn-audio-pill" style="background: var(--surface-card); color: var(--text-dim);" onclick="editCustomReferenceLink()" title="Eigene Video- oder Tab-URL speichern">✎ Quelle</button>`;
+        html += `</div>`;
+        return html;
     }
 
     function loadSavedData() {
@@ -1634,7 +1876,6 @@
         const resBox = document.getElementById('quicksearch-results');
         const q = (query || '').trim().toLowerCase();
 
-        // Im Live-Modus bei Fokus ins Feld direkt alle Songs als vertikale Liste anbieten, im Übe-Modus ab 1 Zeichen
         if (!q && isPracticeMode) {
             resBox.style.display = 'none';
             return;
@@ -1822,7 +2063,7 @@
                 renderCurrentSong();
                 if (window.innerWidth <= 768) toggleSidebar(false);
             };
-            listEl.appendChild(li); // KRITISCHER BUGFIX: listEl statt li!
+            listEl.appendChild(li);
         });
     }
 
@@ -1866,6 +2107,7 @@
 
         const currentStatus = song.Status || 'Grün';
         const hasKapo = song.Kapo && song.Kapo !== '-';
+        const hasTabsContent = song.Tabs && String(song.Tabs).trim() !== '';
 
         const hudGuitarHtml = isPracticeMode
             ? `<select class="hud-value-select" onchange="updateSongVariable('Gitarre_Tuning', this)">${buildSelectOptionsHtml(getMergedOptions('Gitarre_Tuning', BASE_GUITARS), song.Gitarre_Tuning || '')}</select>`
@@ -1943,8 +2185,20 @@
                                 <option value="Rot" ${currentStatus === 'Rot' ? 'selected' : ''}>🔴 Lernen</option>
                             </select>
                         </div>
-                        ${getSpotifyLinkHtml(song)}
+                        ${getReferenceLinksHtml(song)}
                     </div>
+
+                    <!-- IN-APP YOUTUBE PLAYER (KLAPPT BEI BEDARF AUF) -->
+                    <div id="yt-embed-container" class="yt-embed-box"></div>
+
+                    <!-- EDITIERBARES TABS & REFERENZ-SCHUBFACH -->
+                    <details style="margin-top: 2px; border-top: 1px solid var(--border); padding-top: 6px;">
+                        <summary style="cursor: pointer; font-weight: 800; font-size: 0.78rem; text-transform: uppercase; color: var(--primary); display: flex; justify-content: space-between; align-items: center;">
+                            <span>🎸 Tabs, Riffs & Referenz-Notizen ${hasTabsContent ? '●' : '(Leer)'}</span>
+                            <span style="font-size: 0.65rem; color: var(--text-dim);">▼ Aufklappen</span>
+                        </summary>
+                        <textarea class="tabs-editor" placeholder="ASCII-Tabs (z.B. Solo/Riff), Timecodes zum Video oder Links hier eintragen..." oninput="updateSongTextDirect('Tabs', this.value)">${song.Tabs || ''}</textarea>
+                    </details>
 
                     <div id="tuner-container">
                         <div class="tuner-display">
@@ -1957,12 +2211,6 @@
                         </div>
                         <button class="btn-tool" id="btn-tuner-toggle" onclick="toggleTuner()" style="width: 100%; justify-content: center; margin-top: 2px;">🎙️ Mikrofon für Stimmgerät aktivieren</button>
                     </div>
-
-                    ${song.Tabs ? `
-                    <details style="margin-top: 2px; border-top: 1px solid var(--border); padding-top: 4px;">
-                        <summary style="cursor: pointer; font-weight: 800; font-size: 0.75rem; text-transform: uppercase; color: var(--primary);">🎸 Tabs & Notizen einblenden</summary>
-                        <pre style="margin-top: 6px; font-size: 0.95rem; background: var(--surface-card); padding: 8px 10px; border-radius: 5px; border: 1px solid var(--border); white-space: pre-wrap; overflow-wrap: anywhere;">${song.Tabs}</pre>
-                    </details>` : ''}
                 </div>
 
                 <div class="stage-hud">
@@ -2111,10 +2359,12 @@
     }
 
     /* ==========================================================================
-       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT
+       ALL-IN-ONE SETLIST-MANAGER & ÜBERSICHT (MIT SEITWÄRTS-WISCHEN PRO SET)
        ========================================================================== */
     let currentTargetSet = 'Set 1';
     let isAddPoolOpen = false;
+    let activeOverviewSetList = [];
+    let currentOverviewSetIndex = 0;
 
     function selectTargetSet(setName) {
         currentTargetSet = setName;
@@ -2156,22 +2406,30 @@
             const toggleBtn = document.getElementById('btn-toggle-pool');
             if (toggleBtn) toggleBtn.innerText = '➕ Archiv';
             
-            renderOverviewList();
+            const currentPlayingSong = (emergencyActiveSong || activeList[currentIndex]);
+            const preferredSet = (currentPlayingSong && currentPlayingSong.Set_Block) ? currentPlayingSong.Set_Block.trim() : null;
+
+            renderOverviewList(preferredSet);
             
             const modal = document.getElementById('overview-modal');
             if (modal) {
                 modal.style.display = 'flex';
-                
-                setTimeout(() => {
-                    const activeRow = modal.querySelector('.current-playing-song');
-                    if (activeRow) {
-                        activeRow.scrollIntoView({ block: 'center', behavior: 'smooth' });
-                    }
-                }, 60);
+                scrollToCurrentSongInOverview();
             }
         } catch (err) {
             console.error('Setlist open error:', err);
         }
+    }
+
+    function scrollToCurrentSongInOverview() {
+        setTimeout(() => {
+            const modal = document.getElementById('overview-modal');
+            if (!modal) return;
+            const activeRow = modal.querySelector('.current-playing-song');
+            if (activeRow) {
+                activeRow.scrollIntoView({ block: 'center', behavior: 'smooth' });
+            }
+        }, 60);
     }
 
     function closeOverviewModal() {
@@ -2242,7 +2500,7 @@
         normalizeSetlistPositions();
         document.getElementById('overview-add-input').value = '';
         renderAddPoolResults();
-        renderOverviewList();
+        renderOverviewList(currentTargetSet);
     }
 
     function shortSetLabel(block) {
@@ -2254,14 +2512,34 @@
         return b;
     }
 
-    function renderOverviewList() {
+    function switchOverviewSet(index) {
+        if (index < 0 || index >= activeOverviewSetList.length) return;
+        currentOverviewSetIndex = index;
+        renderOverviewList(activeOverviewSetList[currentOverviewSetIndex]);
+        scrollToCurrentSongInOverview();
+    }
+
+    function stepOverviewSet(direction) {
+        if (activeOverviewSetList.length <= 1) return;
+        const nextIdx = currentOverviewSetIndex + direction;
+        if (nextIdx >= 0 && nextIdx < activeOverviewSetList.length) {
+            switchOverviewSet(nextIdx);
+        }
+    }
+
+    function renderOverviewList(preferredSetName = null) {
         const container = document.getElementById('overview-content');
+        const tabsContainer = document.getElementById('overview-set-tabs');
+        const swipeHint = document.getElementById('overview-swipe-hint');
         if (!container) return;
+
         const setlistSongs = getSortedSetlistSongs();
         const totalCountEl = document.getElementById('overview-total-count');
         if (totalCountEl) totalCountEl.innerText = setlistSongs.length;
 
         if (setlistSongs.length === 0) {
+            if (tabsContainer) tabsContainer.style.display = 'none';
+            if (swipeHint) swipeHint.style.display = 'none';
             container.innerHTML = `
                 <div style="text-align: center; padding: 30px 15px; color: var(--text-dim); font-size: 0.9rem;">
                     Die Setlist ist leer.<br>${isPracticeMode ? 'Tippe oben auf <strong>➕ Archiv</strong> oder suche einen Song, um ihn hinzuzufügen!' : ''}
@@ -2279,60 +2557,80 @@
             groups[block].push(s);
         });
 
-        const sortedBlocks = Object.keys(groups).sort((a, b) => {
+        activeOverviewSetList = Object.keys(groups).sort((a, b) => {
             const iA = setOrder.indexOf(a);
             const iB = setOrder.indexOf(b);
             return (iA === -1 ? 99 : iA) - (iB === -1 ? 99 : iB);
         });
 
+        if (preferredSetName && activeOverviewSetList.includes(preferredSetName)) {
+            currentOverviewSetIndex = activeOverviewSetList.indexOf(preferredSetName);
+        } else if (currentOverviewSetIndex >= activeOverviewSetList.length) {
+            currentOverviewSetIndex = 0;
+        }
+
+        if (activeOverviewSetList.length > 1) {
+            if (tabsContainer) {
+                tabsContainer.style.display = 'flex';
+                tabsContainer.innerHTML = activeOverviewSetList.map((blockName, idx) => `
+                    <button class="overview-tab-pill ${idx === currentOverviewSetIndex ? 'active' : ''}" onclick="switchOverviewSet(${idx})">
+                        ${blockName} (${groups[blockName].length})
+                    </button>
+                `).join('');
+            }
+            if (swipeHint) swipeHint.style.display = 'block';
+        } else {
+            if (tabsContainer) tabsContainer.style.display = 'none';
+            if (swipeHint) swipeHint.style.display = 'none';
+        }
+
+        const currentBlockName = activeOverviewSetList[currentOverviewSetIndex];
+        const songsInBlock = groups[currentBlockName] || [];
         const totalCount = setlistSongs.length;
-        let html = '';
 
-        sortedBlocks.forEach(blockName => {
-            const songsInBlock = groups[blockName];
+        let html = `
+            <div class="set-group-block">
+                <div class="set-group-title">
+                    <span>${currentBlockName}</span>
+                    <span>${songsInBlock.length} Songs ${activeOverviewSetList.length > 1 ? `· Set ${currentOverviewSetIndex + 1}/${activeOverviewSetList.length}` : ''}</span>
+                </div>
+        `;
+
+        songsInBlock.forEach(song => {
+            const pos = parseInt(song.Setlist_Pos, 10);
+            const kapo = normalizeKapo(song.Kapo);
+            const guitarText = (song.Gitarre_Tuning || '-') + (kapo !== '-' ? ` · Kapo ${kapo}` : '');
+            const safeTitle = (song.Titel || '').replace(/'/g, "\\'");
+
+            const isCurrent = currentPlayingSong && currentPlayingSong.Titel === song.Titel;
+
+            const clickAction = isPracticeMode 
+                ? `jumpToSongFromOverview('${safeTitle}')` 
+                : `closeOverviewModal()`;
+
+            const controlsHtml = isPracticeMode ? `
+                <div class="overview-controls">
+                    <button class="btn-mini-ctrl" style="color: var(--primary);" onclick="cycleOverviewSongSetBlock(${pos})" title="Set wechseln">${shortSetLabel(song.Set_Block)}</button>
+                    <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, -1)" ${pos === 1 ? 'disabled' : ''} title="Hoch">▲</button>
+                    <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, 1)" ${pos === totalCount ? 'disabled' : ''} title="Runter">▼</button>
+                    <button class="btn-mini-ctrl" style="color: var(--danger);" onclick="removeSongFromOverview(${pos})" title="Entfernen">✕</button>
+                </div>
+            ` : '';
+
             html += `
-                <div class="set-group-block">
-                    <div class="set-group-title">
-                        <span>${blockName}</span>
-                        <span>${songsInBlock.length} Songs</span>
-                    </div>
-            `;
-            songsInBlock.forEach(song => {
-                const pos = parseInt(song.Setlist_Pos, 10);
-                const kapo = normalizeKapo(song.Kapo);
-                const guitarText = (song.Gitarre_Tuning || '-') + (kapo !== '-' ? ` · Kapo ${kapo}` : '');
-                const safeTitle = (song.Titel || '').replace(/'/g, "\\'");
-
-                const isCurrent = currentPlayingSong && currentPlayingSong.Titel === song.Titel;
-
-                const clickAction = isPracticeMode 
-                    ? `jumpToSongFromOverview('${safeTitle}')` 
-                    : `closeOverviewModal()`;
-
-                const controlsHtml = isPracticeMode ? `
-                    <div class="overview-controls">
-                        <button class="btn-mini-ctrl" style="color: var(--primary);" onclick="cycleOverviewSongSetBlock(${pos})" title="Set wechseln">${shortSetLabel(song.Set_Block)}</button>
-                        <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, -1)" ${pos === 1 ? 'disabled' : ''} title="Hoch">▲</button>
-                        <button class="btn-mini-ctrl" onclick="moveOverviewSong(${pos}, 1)" ${pos === totalCount ? 'disabled' : ''} title="Runter">▼</button>
-                        <button class="btn-mini-ctrl" style="color: var(--danger);" onclick="removeSongFromOverview(${pos})" title="Entfernen">✕</button>
-                    </div>
-                ` : '';
-
-                html += `
-                    <div class="overview-song-row ${isCurrent ? 'current-playing-song' : ''}">
-                        <div class="overview-song-info" onclick="${clickAction}" title="${isPracticeMode ? 'Zum Song springen' : 'Setlist schließen'}">
-                            <span class="badge-pos">${pos}</span>
-                            <div class="overview-title-stack">
-                                <div class="overview-song-title">${song.Titel} ${isCurrent ? '◄ (Aktuell)' : ''}</div>
-                                <div class="overview-song-guitar">🎸 ${guitarText}</div>
-                            </div>
+                <div class="overview-song-row ${isCurrent ? 'current-playing-song' : ''}">
+                    <div class="overview-song-info" onclick="${clickAction}" title="${isPracticeMode ? 'Zum Song springen' : 'Setlist schließen'}">
+                        <span class="badge-pos">${pos}</span>
+                        <div class="overview-title-stack">
+                            <div class="overview-song-title">${song.Titel} ${isCurrent ? '◄ (Aktuell)' : ''}</div>
+                            <div class="overview-song-guitar">🎸 ${guitarText}</div>
                         </div>
-                        ${controlsHtml}
                     </div>
-                `;
-            });
-            html += `</div>`;
+                    ${controlsHtml}
+                </div>
+            `;
         });
+        html += `</div>`;
 
         container.innerHTML = html;
     }
@@ -2351,7 +2649,7 @@
         list[targetIdx].Setlist_Pos = tempPos;
 
         normalizeSetlistPositions();
-        renderOverviewList();
+        renderOverviewList(list[idx].Set_Block);
     }
 
     function cycleOverviewSongSetBlock(pos) {
@@ -2360,10 +2658,11 @@
         const list = getSortedSetlistSongs();
         const song = list[pos - 1];
         if (!song) return;
-        const curIdx = sets.indexOf(song.Set_Block || 'Set 1');
+        const oldSet = song.Set_Block || 'Set 1';
+        const curIdx = sets.indexOf(oldSet);
         song.Set_Block = sets[(curIdx + 1) % sets.length];
         localStorage.setItem('band_cockpit_songs_v1', JSON.stringify(allSongs));
-        renderOverviewList();
+        renderOverviewList(oldSet);
     }
 
     function removeSongFromOverview(pos) {
@@ -2371,10 +2670,11 @@
         const list = getSortedSetlistSongs();
         const song = list[pos - 1];
         if (!song) return;
+        const currentSet = song.Set_Block || 'Set 1';
         song.Setlist_Pos = "";
         song.Set_Block = "";
         normalizeSetlistPositions();
-        renderOverviewList();
+        renderOverviewList(currentSet);
         if (isAddPoolOpen) renderAddPoolResults();
     }
 
@@ -2511,7 +2811,9 @@
 
     requestWakeLock();
     loadSavedData();
+    initDraggableFab();
 
+    // SWIPE FÜR HAUPTANSICHT (SONGS VOR/ZURÜCK)
     let touchstartX = 0, touchendX = 0, touchstartY = 0, touchendY = 0, ignoreSwipe = false;
     const mainArea = document.getElementById('main');
     mainArea.addEventListener('touchstart', e => {
@@ -2531,6 +2833,27 @@
         if (Math.abs(diffX) > 65 && diffY < 60) {
             if (diffX < 0) stepSong(1);
             else stepSong(-1);
+        }
+    }, {passive: true});
+
+    // SEITWÄRTS-SWIPE FÜR SET-WECHSEL IN DER SETLIST-ÜBERSICHT
+    let ovTouchStartX = 0, ovTouchStartY = 0, ovIgnoreSwipe = false;
+    const overviewCard = document.getElementById('overview-modal-card');
+    overviewCard.addEventListener('touchstart', e => {
+        const tag = e.target && e.target.tagName;
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) { ovIgnoreSwipe = true; return; }
+        ovIgnoreSwipe = false;
+        ovTouchStartX = e.changedTouches[0].screenX;
+        ovTouchStartY = e.changedTouches[0].screenY;
+    }, {passive: true});
+
+    overviewCard.addEventListener('touchend', e => {
+        if (ovIgnoreSwipe) { ovIgnoreSwipe = false; return; }
+        const diffX = e.changedTouches[0].screenX - ovTouchStartX;
+        const diffY = Math.abs(e.changedTouches[0].screenY - ovTouchStartY);
+        if (Math.abs(diffX) > 60 && diffY < 55) {
+            if (diffX < 0) stepOverviewSet(1);
+            else stepOverviewSet(-1);
         }
     }, {passive: true});
 
