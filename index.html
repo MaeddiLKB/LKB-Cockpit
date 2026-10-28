@@ -132,6 +132,34 @@
             #fab-menu-btn { bottom: 58px; right: 12px; width: 46px; height: 46px; }
         }
 
+        /* SCHNELL-LEISTE IM QUERFORMAT (OBEN RECHTS) */
+        #landscape-quick-actions {
+            position: fixed;
+            top: 8px;
+            right: 12px;
+            z-index: 65;
+            display: none;
+            gap: 6px;
+        }
+        @media (orientation: landscape) {
+            #landscape-quick-actions { display: flex; align-items: center; }
+        }
+        .btn-landscape-quick {
+            background: var(--surface-elevated);
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            padding: 5px 11px;
+            border-radius: 6px;
+            font-size: 0.78rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+        }
+        .btn-landscape-quick.emergency {
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+
         /* QUERFORMAT VOLLBILD HINWEIS */
         #landscape-fullscreen-banner {
             position: fixed;
@@ -193,19 +221,19 @@
         }
         .sheet-option-btn:active { background: var(--primary-glow); border-color: var(--primary); }
 
+        /* FIX: KEIN OVERFLOW:HIDDEN AUF DER KOPFLEISTE, DAMIT DAS SUCH-DROPDOWN NICHT ABGESCHNITTEN WIRD! */
         #top-collapsible {
             display: flex;
             flex-direction: column;
             width: 100%;
-            max-height: 220px;
-            opacity: 1;
-            overflow: hidden;
-            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.25s ease;
-            z-index: 30;
+            position: relative;
+            z-index: 60;
             flex-shrink: 0;
         }
         @media (orientation: landscape) {
-            #top-collapsible { max-height: 0 !important; opacity: 0; pointer-events: none; }
+            #top-collapsible:not(.force-show-landscape) {
+                display: none;
+            }
         }
 
         header {
@@ -255,70 +283,71 @@
             font-weight: 900;
         }
 
-        #landscape-quick-setlist {
-            position: fixed;
-            top: 8px;
-            right: 12px;
-            z-index: 45;
-            display: none;
-            background: var(--surface-elevated);
-            color: var(--primary);
-            border: 1.5px solid var(--primary);
-            padding: 5px 12px;
-            border-radius: 6px;
-            font-size: 0.78rem;
-            font-weight: 900;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-        }
-        @media (orientation: landscape) {
-            #landscape-quick-setlist { display: inline-flex; align-items: center; gap: 4px; }
-        }
-
-        /* SCHNELLSUCHE */
+        /* ==========================================================================
+           SCHNELLSUCHE & NOTFALL-LEISTE (INKL. VERTIKAL- UND EBENEN-FIX)
+           ========================================================================== */
         #practice-quicksearch-bar {
+            display: flex;
             background: var(--surface-card);
             border-bottom: 2px solid var(--primary);
             padding: 8px 12px;
             gap: 8px;
             align-items: center;
             position: relative;
+            z-index: 70;
+        }
+        body:not(.practice-mode) #practice-quicksearch-bar {
+            border-bottom-color: var(--warning);
         }
         #quicksearch-input {
             flex: 1;
             padding: 9px 14px;
-            font-size: 1.05rem;
+            font-size: 1rem;
             font-weight: 800;
             border: 2px solid var(--primary);
             border-radius: 8px;
             background: var(--surface);
             color: var(--text);
         }
+        body:not(.practice-mode) #quicksearch-input {
+            border-color: var(--warning);
+        }
+
+        /* FIX: FLEX-DIRECTION COLUMN & HOHER Z-INDEX ÜBER DEM SONGBEREICH */
         #quicksearch-results {
             position: absolute;
-            top: 100%;
-            left: 12px;
-            right: 12px;
+            top: calc(100% + 2px);
+            left: 10px;
+            right: 10px;
             background: var(--surface);
             border: 2px solid var(--primary);
-            border-radius: 0 0 8px 8px;
-            max-height: 300px;
+            border-radius: 0 0 10px 10px;
+            max-height: 60vh;
             overflow-y: auto;
-            z-index: 90;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+            -webkit-overflow-scrolling: touch;
+            z-index: 999;
+            box-shadow: 0 14px 34px rgba(0, 0, 0, 0.85);
             display: none;
+            flex-direction: column;
+        }
+        body:not(.practice-mode) #quicksearch-results {
+            border-color: var(--warning);
         }
         .quicksearch-item {
-            padding: 12px 14px;
+            width: 100%;
+            padding: 13px 14px;
             border-bottom: 1px solid var(--border);
             cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 10px;
             font-weight: 800;
-            font-size: 0.95rem;
+            font-size: 0.96rem;
+            flex-shrink: 0;
         }
-        .quicksearch-item:hover { background: var(--primary-glow); }
+        .quicksearch-item:last-child { border-bottom: none; }
+        .quicksearch-item:hover, .quicksearch-item:active { background: var(--primary-glow); }
 
         #cockpit-nav {
             background: var(--surface);
@@ -368,8 +397,9 @@
             align-items: center;
             gap: 10px;
             border-bottom: 2px solid #ffffff;
-            z-index: 35;
+            z-index: 55;
             flex-shrink: 0;
+            flex-wrap: wrap;
         }
         #emergency-return-banner.active { display: flex; }
         .btn-emergency-return {
@@ -384,7 +414,7 @@
             white-space: nowrap;
         }
 
-        #workspace { display: flex; flex: 1; overflow: hidden; position: relative; }
+        #workspace { display: flex; flex: 1; overflow: hidden; position: relative; z-index: 10; }
 
         #sidebar {
             width: 350px;
@@ -432,7 +462,7 @@
         .song-sub-text { color: var(--text-dim); font-size: 0.8rem; }
         .badge-pos { background: var(--primary); color: #fff; font-weight: 900; font-size: 0.75rem; padding: 2px 6px; border-radius: 4px; min-width: 24px; text-align: center; flex-shrink: 0; }
         body:not(.practice-mode) .badge-pos { color: #000; }
-        .badge-tuning { background: var(--surface-elevated); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; color: var(--primary); white-space: nowrap; }
+        .badge-tuning { background: var(--surface-elevated); border: 1px solid var(--border); padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; color: var(--primary); white-space: nowrap; flex-shrink: 0; }
         .dot-status { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
         .dot-Grün { background: #00d643; }
         .dot-Gelb { background: #ffb700; }
@@ -791,7 +821,7 @@
             justify-content: center;
             align-items: center;
             padding: 8px;
-            z-index: 100;
+            z-index: 1000;
         }
         .modal-card {
             background: var(--surface);
@@ -1041,8 +1071,11 @@
     <!-- SCHWEBBENDER DAUMEN-BUTTON (MENÜ) -->
     <button id="fab-menu-btn" onclick="openBottomSheet()" title="Menü öffnen">≡</button>
 
-    <!-- SCHNELL-SCHNALLE FÜR SETLIST IM QUERFORMAT (OBEN RECHTS) -->
-    <button id="landscape-quick-setlist" onclick="openSetlistOverview()">📋 Setlist</button>
+    <!-- SCHNELL-AKTIONEN IM QUERFORMAT (OBEN RECHTS) -->
+    <div id="landscape-quick-actions">
+        <button class="btn-landscape-quick emergency" onclick="toggleLandscapeSearch()">🚨 Notfall</button>
+        <button class="btn-landscape-quick" onclick="openSetlistOverview()">📋 Setlist</button>
+    </div>
 
     <!-- QUERFORMAT VOLLBILD HINWEIS -->
     <div id="landscape-fullscreen-banner">
@@ -1050,7 +1083,7 @@
         <button class="btn-tool active-mode" onclick="toggleFullScreen()" style="padding: 4px 10px; font-size: 0.78rem;">⛶ Vollbild starten</button>
     </div>
 
-    <!-- BOTTOM-SHEET MENÜ ( ANGEPASSTE BEZEICHNUNGEN ) -->
+    <!-- BOTTOM-SHEET MENÜ -->
     <div id="bottom-sheet-overlay" onclick="closeBottomSheet()">
         <div id="bottom-sheet-card" onclick="event.stopPropagation()">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
@@ -1082,9 +1115,9 @@
             </div>
         </header>
 
-        <!-- PROMINENTE SCHNELLSUCHE -->
+        <!-- PROMINENTE SCHNELLSUCHE / LIVE NOTFALL-LEISTE -->
         <div id="practice-quicksearch-bar">
-            <span id="search-icon-label" style="font-weight: 900; font-size: 0.85rem; color: var(--primary);">🔍 Song-Schnellsuche:</span>
+            <span id="search-icon-label" style="font-weight: 900; font-size: 0.85rem; color: var(--primary); white-space: nowrap;">🔍 Suche:</span>
             <input type="text" id="quicksearch-input" placeholder="Songtitel oder Artist tippen..." autocomplete="off" oninput="handleQuickSearch(this.value)" onfocus="handleQuickSearch(this.value)">
             <button class="btn-tool" id="btn-sidebar-filter" onclick="toggleSidebar()">📚 Filter</button>
             <div id="quicksearch-results"></div>
@@ -1230,6 +1263,19 @@
         document.getElementById('bottom-sheet-overlay').style.display = 'none';
     }
 
+    function toggleLandscapeSearch() {
+        const topEl = document.getElementById('top-collapsible');
+        if (!topEl) return;
+        topEl.classList.toggle('force-show-landscape');
+        if (topEl.classList.contains('force-show-landscape')) {
+            const inp = document.getElementById('quicksearch-input');
+            if (inp) {
+                inp.focus();
+                handleQuickSearch(inp.value);
+            }
+        }
+    }
+
     function checkOrientation() {
         const banner = document.getElementById('landscape-fullscreen-banner');
         if (!banner) return;
@@ -1239,6 +1285,10 @@
             banner.classList.add('visible');
         } else {
             banner.classList.remove('visible');
+        }
+        if (!isLandscape) {
+            const topEl = document.getElementById('top-collapsible');
+            if (topEl) topEl.classList.remove('force-show-landscape');
         }
     }
     window.addEventListener('resize', checkOrientation);
@@ -1504,11 +1554,15 @@
     }
 
     function loadSavedData() {
-        const saved = localStorage.getItem('band_cockpit_songs_v1');
-        allSongs = saved ? JSON.parse(saved) : defaultSongs;
+        try {
+            const saved = localStorage.getItem('band_cockpit_songs_v1');
+            const parsed = saved ? JSON.parse(saved) : null;
+            allSongs = (Array.isArray(parsed) && parsed.length > 0) ? parsed : defaultSongs;
+        } catch (e) {
+            allSongs = defaultSongs;
+        }
         allSongs.forEach(s => { s.Kapo = normalizeKapo(s.Kapo); });
         
-        // Ensure filters are reset to ALL so songs are never hidden on startup
         const viewSel = document.getElementById('view-filter');
         const statusSel = document.getElementById('status-filter');
         if (viewSel) viewSel.value = 'ALL';
@@ -1574,31 +1628,38 @@
     }
 
     /* ==========================================================================
-       SCHNELLSUCHE (SPOTLIGHT) IM ÜBE-MODUS / NOTFALL IM LIVE-MODUS
+       SCHNELLSUCHE IM ÜBE-MODUS / NOTFALL-SUCHE IM LIVE-MODUS
        ========================================================================== */
     function handleQuickSearch(query) {
         const resBox = document.getElementById('quicksearch-results');
         const q = (query || '').trim().toLowerCase();
-        if (!q) {
+
+        // Im Live-Modus bei Fokus ins Feld direkt alle Songs als vertikale Liste anbieten, im Übe-Modus ab 1 Zeichen
+        if (!q && isPracticeMode) {
             resBox.style.display = 'none';
             return;
         }
         
-        const pool = (!isPracticeMode) ? allSongs : activeList;
-        const matches = pool.filter(s =>
+        const matches = allSongs.filter(s =>
+            !q ||
             (s.Titel || '').toLowerCase().includes(q) ||
             (s.Artist || '').toLowerCase().includes(q)
-        );
+        ).sort((a, b) => (a.Titel || '').localeCompare(b.Titel || ''));
 
         if (matches.length === 0) {
             resBox.innerHTML = `<div class="quicksearch-item" style="color: var(--text-dim);">Kein Song gefunden</div>`;
         } else {
             resBox.innerHTML = matches.map(s => {
-                const badge = !isPracticeMode ? `<span class="badge-tuning" style="background: var(--warning); color: #000;">🚨 Einschieben</span>` : `<span class="badge-tuning">${s.Gitarre_Tuning || '-'}</span>`;
+                const badge = !isPracticeMode
+                    ? `<span class="badge-tuning" style="background: var(--warning); color: #000; border-color: var(--warning);">🚨 Einschieben</span>`
+                    : `<span class="badge-tuning">${s.Gitarre_Tuning || '-'}</span>`;
                 const safeTitle = (s.Titel || '').replace(/'/g, "\\'");
                 return `
                     <div class="quicksearch-item" onclick="selectQuickSearchSong('${safeTitle}')">
-                        <span>${s.Titel} <small style="color: var(--text-dim);">(${s.Artist || ''})</small></span>
+                        <div style="min-width: 0; flex: 1;">
+                            <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${s.Titel}</div>
+                            <div style="font-size: 0.75rem; color: var(--text-dim); font-weight: 600;">${s.Artist || ''}</div>
+                        </div>
                         ${badge}
                     </div>
                 `;
@@ -1610,7 +1671,8 @@
     document.addEventListener('click', (e) => {
         const bar = document.getElementById('practice-quicksearch-bar');
         const res = document.getElementById('quicksearch-results');
-        if (bar && res && !bar.contains(e.target)) {
+        const landscapeActions = document.getElementById('landscape-quick-actions');
+        if (bar && res && !bar.contains(e.target) && (!landscapeActions || !landscapeActions.contains(e.target))) {
             res.style.display = 'none';
         }
     });
@@ -1618,6 +1680,8 @@
     function selectQuickSearchSong(songTitle) {
         document.getElementById('quicksearch-results').style.display = 'none';
         document.getElementById('quicksearch-input').value = '';
+        const topEl = document.getElementById('top-collapsible');
+        if (topEl) topEl.classList.remove('force-show-landscape');
 
         if (!isPracticeMode) {
             const songObj = allSongs.find(s => s.Titel === songTitle);
@@ -1632,6 +1696,7 @@
                 renderCurrentSong();
             } else {
                 document.getElementById('view-filter').value = 'ALL';
+                document.getElementById('search').value = '';
                 rebuildActiveList();
                 const newIdx = activeList.findIndex(s => s.Titel === songTitle);
                 if (newIdx !== -1) {
@@ -1734,6 +1799,7 @@
 
     function renderSidebarList() {
         const listEl = document.getElementById('song-list');
+        if (!listEl) return;
         listEl.innerHTML = '';
         activeList.forEach((song, idx) => {
             const li = document.createElement('li');
@@ -1756,7 +1822,7 @@
                 renderCurrentSong();
                 if (window.innerWidth <= 768) toggleSidebar(false);
             };
-            listEl.appendChild(li);
+            listEl.appendChild(li); // KRITISCHER BUGFIX: listEl statt li!
         });
     }
 
@@ -1776,6 +1842,7 @@
                     <div style="display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;">
                         <button class="btn-tool active-mode" onclick="openSetlistOverview()">📋 Setlist öffnen</button>
                         <button class="btn-tool" onclick="openSyncModal()">🔄 Aus Sheet laden</button>
+                        ${!isPracticeMode ? `<button class="btn-tool" onclick="togglePracticeMode()">☀️ Zum Übe-Modus (Alle Songs)</button>` : ''}
                     </div>
                 </div>`;
             prevBtn.disabled = true; nextBtn.disabled = true;
@@ -2012,13 +2079,15 @@
         document.getElementById('search').value = '';
         document.getElementById('tuning-filter').value = 'ALL';
         document.getElementById('status-filter').value = 'ALL';
+        document.getElementById('quicksearch-results').style.display = 'none';
         toggleSidebar(false);
 
         if (isPracticeMode) {
             document.body.classList.add('practice-mode');
             statusBadge.innerText = '☀️ Übe-Modus';
             statusBadge.style.color = 'var(--primary)';
-            searchLabel.innerText = '🔍 Song-Schnellsuche:';
+            searchLabel.innerText = '🔍 Suche:';
+            searchLabel.style.color = 'var(--primary)';
             searchInput.placeholder = 'Songtitel oder Artist tippen...';
             filterBtn.style.display = 'inline-flex';
             document.getElementById('view-filter').value = 'ALL';
@@ -2029,8 +2098,9 @@
             document.body.classList.remove('practice-mode');
             statusBadge.innerText = '🎸 Live-Modus';
             statusBadge.style.color = 'var(--warning)';
-            searchLabel.innerText = '🚨 Notfall-Song:';
-            searchInput.placeholder = 'Song für spontanen Einschub suchen...';
+            searchLabel.innerText = '🚨 Notfall:';
+            searchLabel.style.color = 'var(--warning)';
+            searchInput.placeholder = 'Notfall-Song tippen oder auswählen...';
             filterBtn.style.display = 'none';
             document.getElementById('view-filter').value = 'SETLIST';
 
