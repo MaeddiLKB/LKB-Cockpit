@@ -1106,7 +1106,7 @@
         .btn-mini-ctrl:disabled { opacity: 0.22; cursor: not-allowed; }
 
         /* ==========================================================================
-           SÄNGER-EXCEL IMPORTER STYLES
+           SETLIST IMPORTER STYLES
            ========================================================================== */
         #excel-import-box {
             display: none;
@@ -1356,7 +1356,7 @@
             </div>
             <button class="sheet-option-btn" onclick="closeBottomSheet(); openSetlistOverview();">
                 <svg class="icon icon-lg" viewBox="0 0 24 24" style="color: var(--primary);"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                Setlist & Excel-Import
+                Setlist & Import
             </button>
             <button class="sheet-option-btn" onclick="closeBottomSheet(); togglePracticeMode();">
                 <span id="sheet-mode-svg"><svg class="icon icon-lg" viewBox="0 0 24 24" style="color: var(--primary);"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg></span>
@@ -1477,7 +1477,7 @@
         </div>
     </div>
 
-    <!-- ZENTRALE SETLIST-ÜBERSICHT INKL. SÄNGER-EXCEL IMPORTER -->
+    <!-- ZENTRALE SETLIST-ÜBERSICHT INKL. IMPORTER -->
     <div id="overview-modal" class="modal-overlay">
         <div class="modal-card fullscreen-card" id="overview-modal-card">
             <div class="modal-header-row">
@@ -1486,21 +1486,21 @@
                     Setlist (<span id="overview-total-count">0</span>)
                 </h3>
                 <div style="display: flex; gap: 5px; flex-wrap: wrap;">
-                    <button class="btn-tool" id="overview-import-btn" style="border-color: var(--primary); color: var(--primary); padding: 5px 9px;" onclick="toggleExcelImporter()">📋 Excel-Import</button>
+                    <button class="btn-tool" id="overview-import-btn" style="border-color: var(--primary); color: var(--primary); padding: 5px 9px;" onclick="toggleExcelImporter()">📋 Import</button>
                     <button class="btn-tool" id="overview-reset-btn" style="border-color: var(--danger); color: var(--danger); padding: 5px 8px;" onclick="clearEntireSetlist()">🗑️ Reset</button>
                     <button class="btn-tool active-mode" onclick="closeOverviewModal()">✕ Schließen</button>
                 </div>
             </div>
 
-            <!-- SÄNGER-EXCEL SMART IMPORTER -->
+            <!-- SMART IMPORTER BOX -->
             <div id="excel-import-box">
                 <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap;">
                     <span style="font-size: 0.76rem; font-weight: 900; color: var(--primary); text-transform: uppercase;">
-                        📋 Sänger-Excel einfügen (Spalten-Sets, Kürzel & „GRÜN/GELB“-Filter aktiv)
+                        📋 Setlist-Text oder Excel kopieren (Spalten, Kürzel & Filter aktiv)
                     </span>
                     <button class="btn-tool" style="padding: 3px 8px; font-size: 0.72rem;" onclick="toggleExcelImporter(false)">✕ Schließen</button>
                 </div>
-                <textarea id="excel-paste-area" placeholder="In der Excel-Datei des Sängers einfach Strg+A & Strg+C drücken und hier mit Strg+V einfügen..." oninput="parsePastedSetlist(this.value)"></textarea>
+                <textarea id="excel-paste-area" placeholder="Tabelle aus Excel, WhatsApp oder Notiz hier mit Strg+V einfügen..." oninput="parsePastedSetlist(this.value)"></textarea>
                 <div id="excel-import-summary" style="font-size: 0.8rem; font-weight: 800; color: var(--text-dim);"></div>
                 <div id="excel-preview-list"></div>
                 <div id="excel-import-actions" style="display: none; justify-content: flex-end; gap: 8px; padding-top: 2px;">
@@ -2588,7 +2588,7 @@
     }
 
     /* ==========================================================================
-       SÄNGER-EXCEL IMPORTER (NEBENEINANDER-SETS, SÄNGER-KÜRZEL & FUZZY-MATCH)
+       SMART IMPORTER (EXCEL, WHATSAPP & TEXT)
        ========================================================================== */
     let pendingImportedSetlist = [];
 
@@ -2629,13 +2629,11 @@
 
         const targetAlias = SINGER_SHORTHAND_MAP[normKey] ? cleanCompareString(SINGER_SHORTHAND_MAP[normKey]) : normKey;
 
-        // 1. Exakter Match auf bereinigten Titel
         for (let i = 0; i < allSongs.length; i++) {
             const dbClean = cleanCompareString(allSongs[i].Titel);
             if (dbClean === targetAlias || dbClean === normKey) return i;
         }
 
-        // 2. StartsWith / Teilstring-Match (z.B. "i was made for" -> "I Was Made For Lovin' You")
         for (let i = 0; i < allSongs.length; i++) {
             const dbClean = cleanCompareString(allSongs[i].Titel);
             if (!dbClean) continue;
@@ -2647,7 +2645,6 @@
             }
         }
 
-        // 3. Enthält-Suche & Wort-Überlappung
         let bestIdx = null;
         let bestScore = 0;
         const rawWords = cleanedRaw.toLowerCase()
@@ -2681,11 +2678,8 @@
     function isIgnoredCellToken(val) {
         const t = String(val || '').trim();
         if (!t) return true;
-        // Reine Positionsnummern (1, 2, 12.0)
         if (/^\d+(\.\d+)?\.?$/.test(t) && Number(t) !== 45) return true;
-        // Sänger-Vocals-Kürzel (r, v, vr, m, c)
         if (/^(r|v|vr|rv|m|c|b|k|d|g)(\.\d+)?$/i.test(t)) return true;
-        // Pool-Header
         if (/^(grün|gruen|gelb|rot|pool|reserve|ersatz)\s*:?$/i.test(t)) return true;
         return false;
     }
@@ -2729,11 +2723,9 @@
         const extractedEntries = [];
 
         if (hasTabs) {
-            // 2D-Grid aufbauen (Excel Copy & Paste)
             const grid = lines.map(l => l.split('\t').map(c => c.trim()));
             const maxCols = Math.max(...grid.map(r => r.length));
 
-            // Stop-Spalte ermitteln (sobald "GRÜN:" oder "GELB:" in Zeile 1-3 steht -> Reserve-Pool ignorieren!)
             let stopCol = maxCols;
             for (let c = 0; c < maxCols; c++) {
                 for (let r = 0; r < Math.min(3, grid.length); r++) {
@@ -2744,14 +2736,12 @@
                 }
             }
 
-            // Welche Spalten (vor stopCol) enthalten echte Songtitel?
             const songColumns = [];
             for (let c = 0; c < stopCol; c++) {
                 let songLikeCount = 0;
                 for (let r = 0; r < grid.length; r++) {
                     const val = (grid[r][c] || '').trim();
                     if (!val) continue;
-                    // Prüfen ob Zahl "45" als Songtitel neben einer Positionsnummer steht
                     const prevVal = c > 0 ? (grid[r][c - 1] || '').trim() : '';
                     const isSong45 = (val === '45' && /^\d+(\.\d+)?$/.test(prevVal));
                     if (isSong45 || !isIgnoredCellToken(val)) {
@@ -2763,7 +2753,6 @@
                 }
             }
 
-            // Jede erkannte Song-Spalte von oben nach unten als eigenes Set auslesen
             songColumns.forEach((colIdx, setIdx) => {
                 let currentSetName = setIdx === 0 ? 'Set 1' : (setIdx === 1 ? 'Set 2' : (setIdx === 2 ? 'Set 3' : 'Zugabe'));
                 let hadSongsInThisCol = false;
@@ -2778,7 +2767,6 @@
                         continue;
                     }
 
-                    // Explizite Set-Überschrift in der Zelle?
                     if (/^(set\s*\d+|zugabe|encore)$/i.test(cellVal)) {
                         if (/zugabe|encore/i.test(cellVal)) currentSetName = 'Zugabe';
                         else {
@@ -2792,7 +2780,6 @@
                     const isSong45 = (cellVal === '45' && /^\d+(\.\d+)?$/.test(prevVal));
                     if (!isSong45 && isIgnoredCellToken(cellVal)) continue;
 
-                    // Wenn im 2. Set nach mind. 8 Songs eine Leerzeile kommt (wie vor "i will survive" in LKB-Hochzeit_26), als Zugabe markieren
                     if (gapDetectedAfterSongs && setIdx >= 1 && currentSetName !== 'Zugabe') {
                         currentSetName = 'Zugabe';
                     }
@@ -2807,7 +2794,6 @@
                 }
             });
         } else {
-            // Einfache Liste (untereinander z.B. aus WhatsApp oder Notiz)
             let currentSetName = 'Set 1';
             lines.forEach(line => {
                 let cleaned = line.trim();
@@ -2823,7 +2809,6 @@
                     return;
                 }
 
-                // Führende Nummerierung ("1.", "02 - ") und hintere Sänger-Kürzel (" r", " vr") abschneiden
                 cleaned = cleaned.replace(/^\d+[\.\)\-\s]+\s*/, '').replace(/\s+(r|v|vr|rv|m|c)$/i, '').trim();
                 if (!cleaned || isIgnoredCellToken(cleaned)) return;
 
@@ -2874,7 +2859,7 @@
                 <div class="import-preview-row ${isMatched ? '' : 'unmatched'}">
                     <span class="badge-pos">${rowIdx + 1}</span>
                     <button type="button" class="btn-mini-ctrl" style="color: var(--primary);" onclick="cycleImportRowSet(${rowIdx})" title="Set ändern">${shortSetLabel(item.setBlock)}</button>
-                    <div style="min-width: 85px; max-width: 135px;" class="import-raw-label" title="Aus Sänger-Liste: ${item.rawText}">"${item.rawText}" ➔</div>
+                    <div style="min-width: 85px; max-width: 135px;" class="import-raw-label" title="Aus Import: ${item.rawText}">"${item.rawText}" ➔</div>
                     <select class="import-song-select" onchange="updateImportRowMatch(${rowIdx}, this.value)">
                         ${optionsHtml}
                     </select>
@@ -2897,7 +2882,6 @@
         const sets = ['Set 1', 'Set 2', 'Set 3', 'Zugabe'];
         const cur = pendingImportedSetlist[rowIdx].setBlock || 'Set 1';
         const nextSet = sets[(sets.indexOf(cur) + 1) % sets.length];
-        // Diesen und alle nachfolgenden Songs im selben Block mitschalten? Nur diesen Song umschalten:
         pendingImportedSetlist[rowIdx].setBlock = nextSet;
         renderExcelImportPreview();
     }
@@ -2909,13 +2893,11 @@
             return;
         }
 
-        // Alte Setlist-Positionen zurücksetzen (Datenbank bleibt 100% erhalten!)
         allSongs.forEach(s => {
             s.Setlist_Pos = "";
             s.Set_Block = "";
         });
 
-        // Neue Reihenfolge und Set-Blöcke eintragen
         let posCounter = 1;
         validItems.forEach(item => {
             const song = allSongs[item.songIndex];
@@ -3120,7 +3102,7 @@
             if (swipeHint) swipeHint.style.display = 'none';
             container.innerHTML = `
                 <div style="text-align: center; padding: 30px 15px; color: var(--text-dim); font-size: 0.9rem;">
-                    Die Setlist ist leer.<br>${isPracticeMode ? 'Tippe oben auf <strong>📋 Excel-Import</strong> oder <strong>➕ Archiv</strong>, um Songs hinzuzufügen!' : ''}
+                    Die Setlist ist leer.<br>${isPracticeMode ? 'Tippe oben auf <strong>📋 Import</strong> oder <strong>➕ Archiv</strong>, um Songs hinzuzufügen!' : ''}
                 </div>`;
             return;
         }
@@ -3182,9 +3164,7 @@
 
             const isCurrent = currentPlayingSong && currentPlayingSong.Titel === song.Titel;
 
-            const clickAction = isPracticeMode 
-                ? `jumpToSongFromOverview('${safeTitle}')` 
-                : `closeOverviewModal()`;
+            const clickAction = `jumpToSongFromOverview('${safeTitle}')`;
 
             const controlsHtml = isPracticeMode ? `
                 <div class="overview-controls">
@@ -3197,7 +3177,7 @@
 
             html += `
                 <div class="overview-song-row ${isCurrent ? 'current-playing-song' : ''}">
-                    <div class="overview-song-info" onclick="${clickAction}" title="${isPracticeMode ? 'Zum Song springen' : 'Setlist schließen'}">
+                    <div class="overview-song-info" onclick="${clickAction}" title="Zum Song springen">
                         <span class="badge-pos">${pos}</span>
                         <div class="overview-title-stack">
                             <div class="overview-song-title">${song.Titel} ${isCurrent ? '◄ (Aktuell)' : ''}</div>
